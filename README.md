@@ -23,7 +23,7 @@ COMPASS simulates atmosphere disturbance, telescope pupil, WFS, DM and RTC. The 
 
 ### WFS
 - Shack-Hartmann WFS
-- High resolution pyramid WFS
+- High resolution pyramid WFS ![pyrhr](High-res-pyr.png)
 - LGS with cone effect and elongation
 - "Geomtric" model : the average phase gradient at each sub-aperture, based on the phase itself
 
