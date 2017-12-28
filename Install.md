@@ -1,14 +1,3 @@
-Table of Contents
-=================
-
-  * [Requirements](#requirements)
-  * [Installation de COMPASS via conda](#installation-de-compass-via-conda)
-  * [Installation de SHESHA package for COMPASS](#installation-de-shesha-package-for-compass)
-  * [More documentation (maybe not fully up-to-date)](#more-documentation-maybe-not-fully-up-to-date)
-  * [Questions?](#questions)
-
-Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
-
 ## Requirements
 
 Linux computer with CUDA 9.0
