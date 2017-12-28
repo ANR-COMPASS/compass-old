@@ -2,3 +2,65 @@
 ---
 
 @import "{{ site.theme }}";
+
+#left-column
+{
+    float: left;
+    width: 45px;
+    margin: 0;
+    padding: 0;
+}
+
+#right-column
+{
+    float: right;
+    width: 45px;
+    margin: 0;
+    padding: 0;
+}
+
+#center
+{
+    background:white;
+    margin: 0 9 0 9;
+    border-left:   2px solid #bbbbbb;
+    border-right:   2px solid #bbbbbb;
+
+}
+
+
+#banner
+{
+    width:100%;
+    height: 100px;
+    margin:0 0 0 0;
+    padding:36 0 0 0;
+    background-repeat:repeat-x;
+    font: 25pt Courier, "Courier New", monospace; 
+    color:white;
+}
+
+
+#container
+{
+    width:92%;
+    margin:-36 4% 0 4%;
+    padding:35 0 0 0;
+    background:#ffffff;
+}
+
+
+
+
+div.figure {
+    float: right;
+    margin: 10px;
+    padding: 10px;
+}
+
+div.figure p {
+    text-align: center;
+    font-style: italic;
+    font-size: smaller;
+    text-indent: 0;
+}
