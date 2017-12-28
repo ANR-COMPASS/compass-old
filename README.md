@@ -9,7 +9,7 @@ COMPASS is available on GitHub for Linux platform only, equiped with a Nvidia GP
 ```markdown
 git clone https://github.com/ANR-COMPASS/compass.git
 ```
-Follow the [installation instructions](install.md) to get all the dependencies.
+Follow the [installation instructions](Install.md) to get all the dependencies.
 The user manual is available here (soon)
 
 # Main features
