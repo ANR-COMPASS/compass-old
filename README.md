@@ -60,4 +60,4 @@ sim.loop(sim.config.p_loop.niter)
 
 # Performance
 COMPASS computing performance is scalable according to the Nvidia GPU card used. A speed up of 9 has been reached with the last Nvidia V100 GPU compared to the project start's state of the art GPU, without changing a single line of code. Performance will continue to evolve with next GPU generations. Here is the evolution measured on a SCAO ELT scale.
-![perfs](perf-GPUs.png)
+![perfs](perf-GPUs.png){: float="left"}.
