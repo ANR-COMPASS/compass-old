@@ -16,7 +16,7 @@ The user manual is available here (soon)
 ## Models
 COMPASS simulates atmosphere disturbance, telescope pupil, WFS, DM and RTC. The output is the long exposure PSF.
 ### Telescope
-- ELT pupil ![text](ELT-pupil.png)
+- ELT pupil ![text](ELT-pupil.png){:height="50px" width="50px"}.
 - Phase aberration,, NCPA
 
 ### Atmosphere
