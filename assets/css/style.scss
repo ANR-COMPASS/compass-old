@@ -3,7 +3,7 @@
 
 @import "{{ site.theme }}";
 #links_banner {
-  display: block;
+  float: right;
   position: absolute;
   top:100;
   right: 300px;
