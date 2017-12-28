@@ -13,29 +13,36 @@ git clone https://github.com/ANR-COMPASS/compass.git
 ## Models
 COMPASS simulates atmosphere disturbance, telescope pupil, WFS, DM and RTC. The output is the long exposure PSF.
 ### Telescope
-- ELT pupil ![ELT-pupil](https://github.com/ANR-COMPASS/compass/blob/master/ELT-pupil.png)
+- ELT pupil ![ELT-pupil]({{https://github.com/ANR-COMPASS/compass/blob/master}}/ELT-pupil.png)
 - Phase aberration,, NCPA
+
 ### Atmosphere
 - User defined number of independent turbulent layers
 - Kolmogorov or Von Karman spectrum
 - Customizable r0, outer scale and profile
+
 ### WFS
 - Shack-Hartmann WFS
 - High resolution pyramid WFS
 - LGS with cone effect and elongation
 - "Geomtric" model : the average phase gradient at each sub-aperture, based on the phase itself
+
 ### DM
 - piezo-stack type DM with multiple influence functions available
 - tip-tilt mirror
 - Karhunen-Loeve mirror
 - Possibility to insert any custom DM in the simulation via HDF5 file
+
 ### RTC
 - Multiple centroiding methods : CoG, thresholded CoG, brightest pixels, etc...
 - Various wavefront reconstruction models : least-square, minimum variance, CuReD, phase projection, etc...
+
 ## User interface
 COMPASS UI is coded in Python 3, allowing easy interactions with the simulation.
+
 ### GUI
 A pyQtgraph based graphical interface is available
+
 ### Script
 Object oriented programmation of COMPASS makes scripts of simulation light and easy to write.
 ```python
@@ -47,4 +54,6 @@ sim = shesha_sim.Simulator(param_file)
 sim.init_sim()
 sim.loop(sim.config.p_loop.niter)
 ```
+
+# Performance
 
