@@ -1,4 +1,4 @@
-theme: jekyll-theme-midnight
+theme: jekyll-theme-slate
 title: COMPASS
 description: an end-to-end AO simulation tool using GPU acceleration
 markdown: kramdown
