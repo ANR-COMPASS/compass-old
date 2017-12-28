@@ -2,3 +2,7 @@ theme: jekyll-theme-slate
 title: COMPASS
 description: an end-to-end AO simulation tool using GPU acceleration
 markdown: kramdown
+webrick:
+  headers:
+    My-Header: My-Value
+    My-Other-Header: My-Other-Value
