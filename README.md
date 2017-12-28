@@ -4,11 +4,14 @@ The COMPASS platform can be used to carry a wide variety of simulations to
 both test specific components of AO of the E-ELT (such as wavefront analysis
 device with a pyramid or elongated Laser star), and various systems
 configurations such as multi-conjugate AO.
-
+# Get started
 COMPASS is available on GitHub for Linux platform only, equiped with a Nvidia GPU card.
 ```markdown
 git clone https://github.com/ANR-COMPASS/compass.git
 ```
+Follow the installation instructions (soon) to get all the dependencies.
+The user manual is available here (soon)
+
 # Main features
 ## Models
 COMPASS simulates atmosphere disturbance, telescope pupil, WFS, DM and RTC. The output is the long exposure PSF.
@@ -56,4 +59,5 @@ sim.loop(sim.config.p_loop.niter)
 ```
 
 # Performance
-
+COMPASS computing performance is scalable according to the Nvidia GPU card used. A speed up of 9 has been reached with the last Nvidia V100 GPU compared to the project start's state of the art GPU, without changing a single line of code. Performance will continue to evolve with next GPU generations. Here is the evolution measured on a SCAO ELT scale.
+![perfs](perf-GPUs.png)
