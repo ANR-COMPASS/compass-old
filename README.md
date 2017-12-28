@@ -13,7 +13,7 @@ git clone https://github.com/ANR-COMPASS/compass.git
 ## Models
 COMPASS simulates atmosphere disturbance, telescope pupil, WFS, DM and RTC. The output is the long exposure PSF.
 ### Telescope
-- ELT pupil ![ELT-pupil]({{https://github.com/ANR-COMPASS/compass/blob/master}}/ELT-pupil.png)
+- ELT pupil ![ELT-pupil]({{https://github.com/ANR-COMPASS/compass}}/blob/master/ELT-pupil.png)
 - Phase aberration,, NCPA
 
 ### Atmosphere
