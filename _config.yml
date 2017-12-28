@@ -1,2 +1,4 @@
 theme: jekyll-theme-midnight
-title: COMPASS, an end-to-end AO simulation tool using GPU acceleration
+title: COMPASS
+description: an end-to-end AO simulation tool using GPU acceleration
+markdown: kramdown
