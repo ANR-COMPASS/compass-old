@@ -1,3 +1,6 @@
+---
+layout: default
+---
 ## Requirements
 
 Linux computer with CUDA 9.0
