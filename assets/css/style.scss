@@ -9,7 +9,21 @@
   border-bottom-left-radius: 1px;
   border-bottom-right-radius: 1px;
 }
-
+#forkme_banner {
+    display: block;
+    position: absolute;
+    top:249px;
+    bottom:-40px;
+    right: 10px;
+    z-index: 10;
+    padding: 10px 50px 10px 10px;
+    color: #fff;
+    background: url('../images/blacktocat.png') #0090ff no-repeat 95% 50%;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(0,0,0,.5);
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+  }
 .inner {
   position: relative;
   max-width: 840px;
@@ -20,7 +34,7 @@ img {
   float: right;
   position: relative;
   margin: 0 auto;
-  max-width: 739px;
+  max-width: 840px;
   padding: 5px;
   margin: 10px 0 10px 0;
   border: 1px solid #ebebeb;
