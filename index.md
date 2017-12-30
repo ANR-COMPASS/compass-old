@@ -16,14 +16,14 @@ Follow the [installation instructions](install.html) to get all the dependencies
 The user manual is available here (soon)
 
 # Performance
-![perfs](perf-GPUs.png){: height="auto" width="400px"}
+![perfs](images/perf-GPUs.png){: height="auto" width="400px"}
 COMPASS computing performance is scalable according to the Nvidia GPU card used. A speed up of 9 has been reached with the last Nvidia V100 GPU compared to the project start's state of the art GPU, without changing a single line of code. Performance will continue to evolve with next GPU generations. Here is the evolution measured on a SCAO ELT scale.
 
 # Main features
 ## Models
 COMPASS simulates atmosphere disturbance, telescope pupil, WFS, DM and RTC. The output is the long exposure PSF.
 ### Telescope 
-![text](ELT-pupil.png){:height="250px" width="250px" float=right}
+![text](images/ELT-pupil.png){:height="250px" width="250px" float=right}
 - Customizable spiders
 - ELT pupil features including missing segments and reflectivity
 - Phase aberration between segments including piston, tip and tilt 
@@ -35,7 +35,7 @@ COMPASS simulates atmosphere disturbance, telescope pupil, WFS, DM and RTC. The 
 - Customizable r0, outer scale and profile
 
 ### WFS
-![pyrhr](High-res-pyr.png){:height="250px" width="250px"}
+![pyrhr](images/High-res-pyr.png){:height="250px" width="250px"}
 - Shack-Hartmann WFS
 - High resolution pyramid WFS 
 - LGS with cone effect and elongation
@@ -56,7 +56,7 @@ COMPASS UI is coded in Python 3, allowing easy interactions with the simulation.
 
 ### GUI
 A pyQtgraph based graphical interface is available
-![gui](compass_widget.gif)
+![gui](images/compass_widget.gif)
 
 ### Script
 Object oriented programmation of COMPASS makes scripts of simulation light and easy to write.
