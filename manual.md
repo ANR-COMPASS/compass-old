@@ -207,3 +207,95 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | **zerop**                                     | float | degree  | yes      | 1       | Flux for magnitude 0                  |
 | **dms_seens**                                 | list  | none    | yes      | all DMs | List of DM indices seen by the target |
 
+### Param_wfs
+
+| Attribute name                                     | Type   | Units             | Settable | Default | Comments                                                                                         |
+| :------------------------------------------------- | :----- | :---------------- | :------- | :------ | :----------------------------------------------------------------------------------------------- |
+| <span style="color:red"> **type** </span>          | string | none              | required |         | Type of WFS : "sh" or "pyrhr"                                                                    |
+| <span style="color:red"> **nxsub** </span>         | int    | none              | required |         | Number of subaperture along the pupil diameter                                                   |
+| <span style="color:red"> **npix** </span>          | int    | pixels            | required |         | Number of pixels per subaperture                                                                 |
+| <span style="color:red"> **pixsize** </span>       | float  | arcsec            | required |         | Pixel size                                                                                       |
+| <span style="color:red"> **Lambda** </span>        | float  | microns           | required |         | Wavelength                                                                                       |
+| <span style="color:red"> **optthroughput** </span> | float  |                   | required |         | Optiical throughput coefficient                                                                  |
+| <span style="color:red"> **fracsub** </span>       | float  |                   | required |         | Minimal illumination fraction for valid subap.                                                   |
+| <span style="color:red"> **xpos** </span>          | float  | arcsec            | required |         | X position of the guide star in the FoV                                                          |
+| <span style="color:red"> **ypos** </span>          | float  | arcsec            | required |         | Y position of the guide star in the FoV                                                          |
+| <span style="color:red"> **gsmag** </span>         | float  |                   | required |         | Guide star magnitude                                                                             |
+| <span style="color:red"> **zerop** </span>         | float  | photons/m²/s      | required |         | Zero point in the bandwidth of the WFS                                                           |
+| <span style="color:red"> **noise** </span>         | float  | electrons         | required |         | Std of electronic noise. If <0, no noise, if =0 photon noise enabled, if >0 add electronic noise |
+| <span style="color:red"> **pyr_ampl** </span>      | float  | units of lambda/D | required |         | Pyramid modulation amplitude (pyramid only)                                                      |
+| <span style="color:red"> **pyr_npts** </span>      | int    | none              | required |         | Number of modulation point along the circle                                                      |
+| **openloop**                                       | bool   | none              | yes      | False   | If True, the WFS don't see the DMs                                                               |
+| **fstop**                                          | string | none              | yes      | "none"  | Field stop : "square", "round" or "none"                                                         |
+| **fssize**                                         | float  | arcsec            | yes      | 0       | Size of the field stop                                                                           |
+| **atmos_seen**                                     | bool   | none              | yes      | False   | If False, the WFS don't see the atmosphere layers                                                |
+| **dms_seen**                                       | list   | none              | yes      | All DMs | Indices of DMs seen by the WFS                                                                   |
+| **gsalt**                                          | float  | meters            | yes      | 0       | Guide star altitude: 0 for NGS, >0 for LGS                                                       |
+| **lltx**                                           | float  | meters            | yes      | 0       | X position of the laser launch telescope                                                         |
+| **llty**                                           | float  | meters            | yes      | 0       | Y position of the laser launch telescope                                                         |
+| **laserpower**                                     | float  | Watts             | yes      | 0       | Laser power                                                                                      |
+| **lgsreturnperwatt**                               | float  | ph/cm²/s/W        | yes      | 0       | Return per watt factor                                                                           |
+| **proftype**                                       | string | none              | yes      | "gauss" | Sodium profile type: "gauss" or " Exp"                                                           |
+| **beamsize**                                       | float  | arcsec            | yes      |         | laser beam FWHM                                                                                  |
+| **G**                                              | float  | none              | yes      | 1       | Magnifying factor (for misalignment)                                                             |
+| **thetaML**                                        | float  | degree            | yes      | 0       | WFS rotation angle in the pupil                                                                  |
+| **dx**                                             | float  | pixels            | yes      | 0       | X axis misalignment                                                                              |
+| **dy**                                             | float  | pixels            | yes      | 0       | Y axis misalignment                                                                              |
+| **pyr_pos**                                        | array  |                   | yes      |         | positions for modulation points. Overwrite pyr_ampl and pyr_npts                                 |
+| **pyr_loc**                                        | string |                   | yes      | "after" | Location of the modulation, "before" or "after" the field stop                                   |
+| **pyr_pup_sep**                                    | int    |                   | yes      | nxsub   | Pyramid pupils separation                                                                        |
+| *_pdiam*                                           | int    | pixels            | no       |         | Subap. diameter                                                                                  |
+| *_Nftt*                                            | int    | pixels            | no       |         | Size of FFT support                                                                              |
+| *_Ntot*                                            | int    | pixels            | no       |         | Size of high resolution support                                                                  |
+| *_nrebin*                                          | int    |                   | no       |         | Rebin factor from HR image to final one                                                          |
+| *_nvalid*                                          | int    |                   | no       |         | Number of valid subap.                                                                           |
+| *_nphotons*                                        | float  | photons           | no       |         | Number of photons per subap. (or total number for a pyramid)                                     |
+| *_nphotons4imat*                                   | float  | photons           | no       | 1e5     | Number of photons per subap when doing imat                                                      |
+| *_subapd*                                          | float  | meters            | no       |         | Subap. diameter                                                                                  |
+| *_fluxPerSub*                                      | array  |                   | no       |         | Fraction of _nphotons for each subap.                                                            |
+| *_qpixsize*                                        | float  | arcsec            | no       |         | Quantum pixel size                                                                               |
+| *_istart*                                          | array  | pixels            | no       |         | X position of the bottom left corner of each subap. in the _spupil support (1-indexed)           |
+| *_jstart*                                          | array  | pixels            | no       |         | Y position of the bottom left corner of each subap. in the _spupil support (1-indexed)           |
+| *_validsubsx*                                      | array  |                   | no       |         | X indices of valid subap.                                                                        |
+| *_validsubsy*                                      | array  |                   | no       |         | Y indices of valid subap.                                                                        |
+| *_isvalid*                                         | array  |                   | no       |         | Array of 0 or 1 for valid subap.                                                                 |
+| *_phasemap*                                        | array  |                   | no       |         | Transform from phase screen to subap. screen                                                     |
+| *_hrmap*                                           | array  |                   | no       |         |                                                                                                  |
+| *_sincar*                                          | array  |                   | no       |         |                                                                                                  |
+| *_binmap*                                          | array  |                   | no       |         | Transform from HR image to binned image                                                          |
+| *_halfxy*                                          | array  |                   | no       |         | Phase offset of 0.5 pixel shift (SH) or pyramid function (pyrhr)                                 |
+| *_submask*                                         | array  |                   | no       |         | Field stop for each subap.                                                                       |
+| *_lgskern*                                         | array  |                   | no       |         | LGS kernel convolution                                                                           |
+| *_profna*                                          | array  |                   | no       |         | Sodium profile                                                                                   |
+| *_altna*                                           | array  | meters            | no       |         | Corresponding altitude                                                                           |
+| *_prof1d*                                          | array  |                   | no       |         | HR profile                                                                                       |
+| *_profcum*                                         | array  |                   | no       |         | Cumulated HR profile                                                                             |
+| *_beam*                                            | array  |                   | no       |         | 1D beam function                                                                                 |
+| *_ftbeam*                                          | array  |                   | no       |         | 1D beam function FFT                                                                             |
+| *_azimuth*                                         | array  |                   | no       |         | Rotation angle for each spot                                                                     |
+| *_pyr_cx*                                          | array  | arcsec            | no       |         | X position of the modulation points                                                              |
+| *_pyr_cy*                                          | array  | arcsec            | no       |         | Y position of the modulation points                                                              |
+
+### Param_dm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
