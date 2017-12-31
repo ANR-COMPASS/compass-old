@@ -2,7 +2,7 @@
 layout: default
 ---
 # User manual
-This is the user manual for COMPASS. We will try to be as exhaustive as possible, but if you don't get the answer you are looking for, [contact us on the project GitHub](https://github.com/anr-compass/shesha).
+This is the user manual for COMPASS. We will try to be as exhaustive as possible, but if you don't get the answer you are looking for, [contact us on the GitHub project](https://github.com/anr-compass/shesha).
 
 * blabla
 {:toc}
@@ -279,10 +279,89 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 ### Param_dm
 
 
+| Attribute name                              | Type   | Units                                    | Settable | Default   | Comments                                                                                                      |
+| :------------------------------------------ | :----- | :--------------------------------------- | :------- | :-------- | :------------------------------------------------------------------------------------------------------------ |
+| <span style="color:red"> **type** </span>   | string | none                                     | required |           | DM type: "pzt", "kl" or "tt"                                                                                  |
+| <span style="color:red"> **nact** </span>   | int    | none                                     | required |           | Number of actuators along the diameter   ("pzt" only)                                                         |
+| <span style="color:red"> **nkl** </span>    | int    | none                                     | required |           | Number of KL modes produced by the DM  ("kl" only)                                                            |
+| <span style="color:red"> **alt** </span>    | float  | meters                                   | required |           | Conjugation altitude                                                                                          |
+| <span style="color:red"> **thresh** </span> | float  | fraction                                 | required |           | Threshold on response for selection of valid actuators. Expressed in fraction of the maximal response         |
+| **type_pattern**                            | string | none                                     | yes      | "square"  | Actuators position pattern: "square" or "hexa"                                                                |
+| **influType**                               | string | none                                     | yes      | "default" | Influence function to use: "default", "radialSchwartz", "squareSchwartz", "blacknutt", "gaussian" or "bessel" |
+| **file_influ_hdf5**                         | string | none                                     | yes      | None      | HDF5 file name of custom influence functions. Overwrites influType, type_pattern, nact                        |
+| **center_name**                             | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the center is stored                                             |
+| **cube_name**                               | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the influence function cube is stored                            |
+| **x_name**                                  | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the actuators X coordinates are stored                           |
+| **y_name**                                  | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the actuators Y coordinates are stored                           |
+| **influ_res**                               | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the influence functions resolution is stored                     |
+| **diam_dm**                                 | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the DM diameter is stored                                        |
+| **diam_dm_proj**                            | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the DM diameter in the pupil plane is stored                     |
+| **coupling**                                | float  | fraction                                 | yes      | 0.2       | Coupling between actuators                                                                                    |
+| **gain**                                    | float  | none                                     | yes      | 1         | Actuator gain                                                                                                 |
+| **unitpervolt**                             | float  | microns/volt ("pzt"), arcsec/volt ("tt") | yes      | 0.01      | Influence function sensitivity                                                                                |
+| **push4imat**                               | float  | volt                                     | yes      | 1         | Nominal voltage for imat                                                                                      |
+| **margin_out**                              | float  | pitch                                    | yes      | 0         | Outer margin for actuator selection on the pupil edge                                                         |
+| **margin_int**                              | float  | pitch                                    | yes      | 0         | Inner margin for actuator selection in the central obstruction                                                |
+| **pzt_extent**                              | float  | pitch                                    | yes      | 5         | "pzt" DM extension                                                                                            |
+| *_pitch*                                    | float  | pixels                                   | no       |           | Inter actuator space ("pzt" only)                                                                             |
+| *_ntotact*                                  | int    | none                                     | no       |           | Total number of valid actuators                                                                               |
+| *_influsize*                                | int    | none                                     | no       |           | Influence function support size                                                                               |
+| *_n1*                                       | int    | none                                     | no       |           | Left border position of the DM support in _ipupil                                                             |
+| *_n2*                                       | int    | none                                     | no       |           | Right border position of the DM support in _ipupil                                                            |
+| *_influ*                                    | cube   | none                                     | no       |           | Influence functions cube                                                                                      |
+| *_xpos*                                     | array  | none                                     | no       |           | X coordinates of the actuators in _ipupil                                                                     |
+| *_ypos*                                     | array  | none                                     | no       |           | Y coordinates of the actuators in _ipupil                                                                     |
+| *_i1*                                       | array  | none                                     | no       |           | X coordinates of the bottom left corner of each influence function support in the DM support                  |
+| *_j1*                                       | array  | none                                     | no       |           | Y coordinates of the bottom left corner of each influence function support in the DM support                  |
+| *_influpos*                                 | cube   | none                                     | no       |           | Influence functions pixels that contributes to each DM pixel                                                  |
+| *_ninflu*                                   | array  | none                                     | no       |           | Number of influence functions pixels that contributes to each DM pixel                                        |
+| *_influstart*                               | array  | none                                     | no       |           | Index where to start a new DM pixel shape in the array influpos to each DM pixel                              |
+| *_nr*                                       | int    | none                                     | no       |           | Number of radial points (KL only)                                                                             |
+| *_npp*                                      | int    | none                                     | no       |           | Number of elements (KL only)                                                                                  |
+| *_ord*                                      | array  | none                                     | no       |           | Radial orders (KL only)                                                                                       |
+| *_rabas*                                    | array  | none                                     | no       |           | Radial array (KL only)                                                                                        |
+| *_azbas*                                    | array  | none                                     | no       |           | Azimuthal array (KL only)                                                                                     |
+| *_ncp*                                      | int    | none                                     | no       |           | Grid dimension (KL only)                                                                                      |
+| *_cr*                                       | array  | none                                     | no       |           | Radial coordinates in cartesian grid (KL only)                                                                |
+| *_cp*                                       | array  | none                                     | no       |           | Phi coordinates in cartesian grid (KL only)                                                                   |
 
+### Param_centroider
 
+| Attribute name                            | Type   | Units  | Settable | Default | Comments                                                                                                       |
+| :---------------------------------------- | :----- | :----- | :------- | :------ | :------------------------------------------------------------------------------------------------------------- |
+| <span style="color:red"> **type** </span> | string | none   | required |         | Centroider type: "cog", "tcog", "wcog", "bpcog", "corr" or "pyr"                                               |
+| <span style="color:red"> **nwfs** </span> | int    | none   | required |         | WFS index handled by this centroider                                                                           |
+| <span style="color:red"> **nmax** </span> | int    | none   | required |         | Number of brightest pixels ("bpcog" only)                                                                      |
+| *weights*                                 | array  | none   | yes      |         | Weights applied for a "wcog"                                                                                   |
+| *thresh*                                  | float  | arcsec | yes      |         | Absolute threshold for "tcog"                                                                                  |
+| *type_fct*                                | string | none   | yes      | "gauss" | Reference function for weights computing ("wcog") : "gauss" or "model"                                         |
+| *width*                                   | float  |        | yes      |         | Gaussian width if type_fct = "gauss"                                                                           |
+| *method*                                  | int    | none   | yes      | 1       | Method used for pyramid centroider. 0: no sinus, global. 1: sinus, global. 2: no sinus, local, 3: sinus, local |
+| *sizex*                                   | int    | none   | yes      |         | X size of the interpolation matrix for correlation                                                             |
+| *sizey*                                   | int    | none   | yes      |         | Y size of the interpolation matrix for correlation                                                             |
+| *interpmat*                               | array  | none   | yes      |         | Interpolation matrix for correlation centroider                                                                |
 
+### Param_controller
 
+| Attribute name                                   | Type   | Units | Settable | Default | Comments                                                                   |
+| :----------------------------------------------- | :----- | :---- | :------- | :------ | :------------------------------------------------------------------------- |
+| <span style="color:red"> **type** </span>        | string | none  | required |         | Controller type: "ls", "mv", "cured", "geo" or "generic"                   |
+| <span style="color:red"> **nwfs** </span>        | list   | none  | required |         | WFS indices handled by this controller                                     |
+| <span style="color:red"> **ndm** </span>         | list   | none  | required |         | DM indices handled by this controller                                      |
+| <span style="color:red"> **maxcond** </span>     | float  | none  | required |         | Conditioning number for imat.T.dot(imat) inversion                         |
+| <span style="color:red"> **delay** </span>       | float  | frame | required |         | Loop delay                                                                 |
+| <span style="color:red"> **gain** </span>        | float  | none  | required |         | Loop gain                                                                  |
+| <span style="color:red"> **cured_ndivs** </span> | int    | none  | yes      |         | Subdivision levels for CuReD                                               |
+| **modopti**                                      | bool   | none  | yes      | False   | Flag for modal optimization ("ls" only)                                    |
+| **nrec**                                         | int    | none  | yes      | 2048    | Number of open loop samples for modal optimization computation ("ls" only) |
+| **nmodes**                                       | int    | none  | yes      | ntotact | Number of modes taken into account for modal optimization ("ls" only)      |
+| **gmin**                                         | float  | none  | yes      | 0       | Minimum gain for modal optimization ("ls" only)                            |
+| **gmax**                                         | float  | none  | yes      | 1       | Maximum gain for modal optimization ("ls" only)                            |
+| **ngain**                                        | int    | none  | yes      | 15      | Number of gains to test between gmin and gmax ("ls" only)                  |
+| *_nvalid*                                        | list   | none  | no       |         | Number of valid subap. per WFS                                             |
+| *_nactu*                                         | int    | none  | no       |         | Number of actuators per DM                                                 |
+| *_imat*                                          | array  | none  | no       |         | Interaction matrix                                                         |
+| *_cmat*                                          | array  | none  | no       |         | Command matrix                                                             |
 
 
 
