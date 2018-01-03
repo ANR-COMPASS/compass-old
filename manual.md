@@ -7,11 +7,13 @@ This is the user manual for COMPASS. We will try to be as exhaustive as possible
 * blabla
 {:toc}
 
-## Quick start
+## 1. Quick start
+
+### 1. Basic simulation
 To launch a basic simulation with COMPASS, you can use our script with a parameter file as an argument :
 ```bash
 cd $SHESHA_ROOT
-ipython test/closed_loop.py path_to_your_parfile/parfile.py
+ipython -i test/closed_loop.py path_to_your_parfile/parfile.py
 ```
 Some basic parameter files are provided in the directory ```$SHESHA_ROOT/data/par/par4bench``` and an example is provided [here](#parameter-file)
 
@@ -33,8 +35,14 @@ After an initialization phase, the script will prompt in the terminal the short 
  loop execution time: 1.4643762111663818   ( 1000 iterations),  0.0014643762111663818 (mean)   682.8846251220482 Hz
 ```
 
-## Parameter file
-For COMPASS,  a parameter file is a python file where the parameter classes are instantiated and setted to be imported by the simulation script. An example of parameter file follows. All the parameter classes are described in details [here](#parameter-classes).
+### 2. Parameter file
+For COMPASS,  a parameter file is a python file where the parameter classes are instantiated and setted to be imported by the simulation script. All the parameter classes are described in details [here](#parameter-classes). 
+To write your own paramater file, remember those important points :
+- Starts by importing the ```shesha_config``` module: it contains all the parameter classes
+- Instantiates the paramater classes you need for your simulation. **Note that some of those classes are required to perform a simulation : Param_loop, Param_geom, Param_tel and Param_atmos.**
+- Set the classes parameters using the setter functions. Those functions are usually named as ```set_<parameter name>```. 
+
+An example of parameter file follows and others can be found in ```$SHESHA_ROOT/data/par/par4bench``` directory
 ```python
 import shesha_config as conf
 
@@ -133,10 +141,77 @@ p_controller0.set_delay(1)
 p_controller0.set_gain(0.4)
 ```
 
-## Parameter classes
+###  3. Script
+Thanks to the architecture of COMPASS, writing a script is easy. 
+
+Let's take a look at our ```closed_loop.py``` script :
+```python
+import shesha_sim
+from docopt import docopt
+arguments = docopt(__doc__)
+param_file = arguments["<parameters_filename>"]
+sim = shesha_sim.Simulator(param_file)
+sim.init_sim()
+sim.loop(sim.config.p_loop.niter)
+```
+Let's go step-by-step :
+- The first line imports the ```shesha_sim``` module: it contains the Simulator class used to perform the simulation. This class is described properly [here](#simulator-class).
+- The next lines : 
+```python
+from docopt import docopt
+arguments = docopt(__doc__)
+param_file = arguments["<parameters_filename>"]
+```
+are used to get the parameter file name. ```docopt``` module is a command line arguments parser for python that can also set proper usage pattern and options for your script. For more information, visit [docopt.org](http://docopt.org/)
+- ```sim = shesha_sim.Simulator(param_file)``` instantiates the Simulator class and loads the parameters define in the parameter file
+- ```sim.init_sim()``` initializes the simulation.
+- ```sim.loop(sim.config.p_loop.niter)``` runs the simulation for ```niter``` iterations
+
+### 4. Interactions
+If you had launched your script with python or ipython in interaction mode (```-i``` option), you will have access to the prompt after the iterations loop. At this point, you can interact with your simulation to display images (PSF, command matrix...) or to access at any internal quantity for debug. You can also modify your simulation and launch new iterations.
+
+Remember that your Simulator instance ```sim``` has created objects and you can access to them:
+- ```sim.config``` contains all the simulation parameters imported from your parameter file
+- ```sim.tel``` is the telescope object
+- ```sim.atm``` is the atmosphere object
+- ```sim.wfs``` is the wavefront sensor object. It could contain several WFS depending on your parameter file
+- ```sim.tar``` is the target object
+- ```sim.dms``` is the DM object. It could contain several DM depending on your parameter file
+- ```sim.rtc``` is the RTC object. It contains the centroiders and the controller that you have defined in the parameter file
+
+All those objects have getter and setter methods which you can use to get information on what is going on your simulation or to set new parameters.
+
+Some of the most useful methods are listed below:
+
+| Method                         | Description                                                                 |
+| :----------------------------- | :-------------------------------------------------------------------------- |
+| **sim.tar.get_image(0,b"le")** | Return the long exposure PSF. Use ```b"se"``` to get the short exposure one |
+| **sim.tar.get_phase(0)**       | Return the residual phase                                                   |
+| **sim.wfs.get_binimg(0)**      | Return the SH WFS spots image                                               |
+| **sim.wfs.get_pyrimg(0)**      | Return the pyramid WFS image                                                |
+| **sim.dms.get_dm(b"pzt",0)**   | Return the DM shape                                                         |
+| **sim.rtc.get_centroids(0)**   | Return the lastest centroids (X measurements first, then Y)                 |
+| **sim.rtc.get_com(0)**         | Return the lastest DM commands                                              |
+| **sim.rtc.get_imat(0)**        | Return the interaction matrix                                               |
+| **sim.rtc.get_cmat(0)**        | Return the command matrix                                                   |
+
+You can find all the methods description and usage in the [shesha package documentation](http://shesha.readthedocs.io/), autogenerated from the source code documentation using Sphinx. You can also use the ```help``` command of python to get information about a method.
+
+### 5. Using the GUI
+Coming soon...
+
+## 2. Features implementation
+Coming soon...
+
+## 3. The shesha package
+
+### 1. COMPASS achitecture
+![archi](images/compass_archi.png){:height="280px"}
+
+### 2. shesha_config: parameter classes
 We describe here all the parameters used in COMPASS and all the classes attributes that could be retrieved by the user during or after the simulation. The following tables give, for each class, the attribute name, a boolean that says if this attribute is settable in the parameters file, its default value and its unit. <span style="color:red"> Parameters displayed in red </span> need to be set by the user in the parameter file if its associated class is instantiated.
 
-### Param_loop
+#### Param_loop
 
 | Attribute name                              | Type  | Units   | Settable | Default | Comments                        |
 | :------------------------------------------ | :---- | :------ | :------- | :------ | :------------------------------ |
@@ -144,7 +219,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | **niter**                                   | int   | frames  | yes      | 0       | Number of iterations to perform |
 | **devices**                                 | list  | none    | yes      | [0]     | List of GPU devices to use      |
 
-### Param_geom
+#### Param_geom
 
 | Attribute name   | Type  | Units   | Settable | Default | Comments                                                                                        |
 | :--------------- | :---- | :------ | :------- | :------ | :---------------------------------------------------------------------------------------------- |
@@ -163,7 +238,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | *_phase_ab_M1*   | array | microns | no       |         | Phase aberration in _spupil (will be used if referr, std_piston or std_tt are set in Param_tel) |
 | *_phase_ab_M1_m* | array | microns | no       |         | Phase aberration in _mpupil (will be used if referr, std_piston or std_tt are set in Param_tel) |
 
-### Param_tel
+#### Param_tel
 
 | Attribute name                            | Type   | Units         | Settable | Default   | Comments                                                                                                                       |
 | :---------------------------------------- | :----- | :------------ | :------- | :-------- | :----------------------------------------------------------------------------------------------------------------------------- |
@@ -178,7 +253,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | **std_piston**                            | float  | microns       | yes      | 0         | std of piston error for ELT pupil segments                                                                                     |
 | **std_tt**                                | float  | microns       | yes      | 0         | std of tip-tilt errors for ELT pupil segments                                                                                  |
 
-### Param_atmos
+#### Param_atmos
 
 | Attribute name                                 | Type  | Units    | Settable | Default           | Comments                          |
 | :--------------------------------------------- | :---- | :------- | :------- | :---------------- | :-------------------------------- |
@@ -195,7 +270,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | *_dim_screens*                                 | list  | pixels   | no       |                   | Size of each layer screen         |
 | *_pupixsize*                                   | float | meters   | no       |                   | Layer screens pixel size          |
 
-### Param_target
+#### Param_target
 
 | Attribute name                                | Type  | Units   | Settable | Default | Comments                              |
 | :-------------------------------------------- | :---- | :------ | :------- | :------ | :------------------------------------ |
@@ -207,7 +282,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | **zerop**                                     | float | degree  | yes      | 1       | Flux for magnitude 0                  |
 | **dms_seens**                                 | list  | none    | yes      | all DMs | List of DM indices seen by the target |
 
-### Param_wfs
+#### Param_wfs
 
 | Attribute name                                     | Type   | Units             | Settable | Default | Comments                                                                                         |
 | :------------------------------------------------- | :----- | :---------------- | :------- | :------ | :----------------------------------------------------------------------------------------------- |
@@ -276,7 +351,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | *_pyr_cx*                                          | array  | arcsec            | no       |         | X position of the modulation points                                                              |
 | *_pyr_cy*                                          | array  | arcsec            | no       |         | Y position of the modulation points                                                              |
 
-### Param_dm
+#### Param_dm
 
 
 | Attribute name                              | Type   | Units                                    | Settable | Default   | Comments                                                                                                      |
@@ -325,7 +400,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | *_cr*                                       | array  | none                                     | no       |           | Radial coordinates in cartesian grid (KL only)                                                                |
 | *_cp*                                       | array  | none                                     | no       |           | Phi coordinates in cartesian grid (KL only)                                                                   |
 
-### Param_centroider
+#### Param_centroider
 
 | Attribute name                            | Type   | Units  | Settable | Default | Comments                                                                                                       |
 | :---------------------------------------- | :----- | :----- | :------- | :------ | :------------------------------------------------------------------------------------------------------------- |
@@ -341,7 +416,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | *sizey*                                   | int    | none   | yes      |         | Y size of the interpolation matrix for correlation                                                             |
 | *interpmat*                               | array  | none   | yes      |         | Interpolation matrix for correlation centroider                                                                |
 
-### Param_controller
+#### Param_controller
 
 | Attribute name                                   | Type   | Units | Settable | Default | Comments                                                                   |
 | :----------------------------------------------- | :----- | :---- | :------- | :------ | :------------------------------------------------------------------------- |
@@ -362,6 +437,16 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | *_nactu*                                         | int    | none  | no       |         | Number of actuators per DM                                                 |
 | *_imat*                                          | array  | none  | no       |         | Interaction matrix                                                         |
 | *_cmat*                                          | array  | none  | no       |         | Command matrix                                                             |
+
+### 3. shesha_sim: Simulator class
+Coming soon
+
+## 4. Scripting with COMPASS
+
+### 1. Inheritance
+Coming soon
+### 2. Batch processing
+Coming soon
 
 
 
