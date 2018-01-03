@@ -39,7 +39,7 @@ After an initialization phase, the script will prompt in the terminal the short 
 For COMPASS,  a parameter file is a python file where the parameter classes are instantiated and setted to be imported by the simulation script. All the parameter classes are described in details [here](#parameter-classes). 
 To write your own paramater file, remember those important points :
 - Starts by importing the ```shesha_config``` module: it contains all the parameter classes
-- Instantiates the paramater classes you need for your simulation. **Note that some of those classes are required to perform a simulation : Param_loop, Param_geom, Param_tel and Param_atmos.**
+- Instantiates the paramater classes you need for your simulation. **Note that some of those classes are required to perform a simulation : Param_loop, Param_geom, Param_tel and Param_atmos.** You also have to set a list of Param_wfs called ```p_wfss```, a list of Param_dm called ```p_dms```, a list of Param_centroider called ```p_centroiders``` and a list of Param_controller called ```p_controllers```.
 - Set the classes parameters using the setter functions. Those functions are usually named as ```set_<parameter name>```. 
 
 An example of parameter file follows and others can be found in ```$SHESHA_ROOT/data/par/par4bench``` directory
@@ -201,11 +201,127 @@ You can find all the methods description and usage in the [shesha package docume
 Coming soon...
 
 ## 2. Features implementation
-Coming soon...
+
+### 1. Random number generation
+COMPASS requires the generation of several sets of random numbers which are used for : 
+- turbulent phase generation
+-  WFS image generation
+
+In both cases a pseudo random number generator (PRNG), of the Mersenne Twister family which generates 64 distinct sequences based on different parameter sets for the basic algorithm, is used. More details can be found in the [cuRAND library documentation](http://docs.nvidia.com/cuda/curand/host-api-overview.html) (see details on the MTGP32 generator).
+
+Several sets of random numbers are generated following a Normal distribution to be used in the two above mentioned subsystems. In the case of the simulation of noise for the WFS, an additional set of random numbers is generated following a Poisson distribution, using the raw WFS image to simulate for photon noise. This function returns a set of Poisson-distributed unsigned integers based on a Poisson distribution with the given set of lambda values (i.e. intensities in the image model). It relies on Knuth’s algorithm when the parameter lambda is less than 64, and uses a normal approximation when lambda is greater than 4000. In between 64 and 400, it uses a rejection algorithm based on the [incomplete gamma function approximation](https://people.maths.ox.ac.uk/gilesm/codes/poissinv/paper.pdf)
+
+### 2. Quantum pixels and size of the simulation arrays
+
+A critical parameter in the simulation model is the quantum pixel size. It is the size (expressed in arcsec) of the smallest turbulence cell that can produce a significant optical path difference between two rays of the light beam. It defines how the turbulent phase is sampled in the simulation and put constraints on the size of the largest arrays in the simulation. In COMPASS, the quantum pixel size is computed differently for Shack Hartmann and Pyramid WFS. Concerning the SH WFS, the sampling of the phase in a subaperture is computed as the ratio between the seeing obtained from the Fried parameter at the wavefront sensing wavelength, and the diffraction limit obtained using the physical subaperture diameter (subapdiam). An arbitrary factor in then chosen to determine the final field of view simulated for a subaperture. To ensure that the final image in a subaperture contains most of the speckles of the spot image, we chose a constant value for this arbitrary k factor in our simulation (k=6) and the initial size of the square array containing the phase for a given subaperture is computed as :
+
+```pdiam = long(k * subapdiam / r0)```
+
+This number is then slightly tweaked in order to :
+- use an integer rebin factor to downsample the high resolution image for a subaperture to the actual pixel size requested by the user
+- an adequate array size (Nfft) for optimizing the performance of Fast Fourier Transforms on these high resolution images, assuming Nyquist sampling
+
+The quantum pixel size is then estimated as :
+
+```qpixsize = pdiam * lambda / subapdiam * RASC / Nfft```
+
+where lambda is the observing wavelength of the WFS and RASC is the conversion factor between radians and arcsec. In this case, the size of the turbulent phase screen array to be simulated is
+
+```nphase = pdiam*Nssp```
+
+with Nssp the number of subapertures in the telescope diameter.
+
+Concerning the pyramid WFS, the sampling of the phase is chosen as a trade-off between  several parameters. Similarly to the case of a single subaperture of the SH WFS, we should ensure a good sampling of the turbulence and avoid speckle aliasing in the final image. Hence, P, the pupil diameter (in pixels), i.e. the size of turbulent phase screen array to be simulated, should be larger than several times the ratio between the seeing and the diffraction limit, but this time for the whole telescope aperture.
+
+```P > long(D / r0 * m)```
+
+with m an integer factor similar to the k factor in the case of the SH WFS and D the diameter of the telescope.
+
+Additionally, in the case of the pyramid, an ideal field stop radius is given by :
+
+```Fs = lambda / D . Nssp / 2```
+
+with Nssp the number of pyramid measurement points along the diameter of the pupil. The radius of the simulated field of view, is given by :
+
+```Rf = Fs . N . D / lambda / P```
+
+where N is the size of Fourier transform support of the high resolution image. N should is usually chosen to optimize the execution of the FFT algorithm (power of 2). 
+Finally, we need to avoid as much as possible the overlap of diffractions effects from the 4 pupil images, which is linked to the pyramid angle, and leave enough room between the centers of these pupil images on the final high resolution image. Hence :
+
+```Nfft > P*(2 + 3S)```
+
+with S close to 1. To ease computation we also chose Nssp as a divisor of P. In this case, the scaling factor between the high resolution pupil images in pyramid model and actual pupil size on the camera images would be P / Nssp.
+
+The quantum pixel size in arcsec is given by:
+ 
+```qpixsize = pdiam * Lambda / D * RASC / Nfft```
+
+### 3. Telescope
+![ELTab](images/ELT-ab.png){:height="300px"}
+COMPASS includes the ability to use customizable telescope pupil: the diameter and the eventual central obstruction are parameters of the simulation. ELT and VLT pupils have been also implemented, including spiders, hexagonal segments, and missing segments. Phase aberration due to misalignment of the pupil segments are also configurable by specifying the amount of piston and tip-tilt errors. Reflectivity error between each segment can also be taken into account.
+
+### 4. Atmosphere
+Turbulence is generated on-the-fly during the iterations of the simulation by [the extrusion of Kolmogorov or Von Karman type phase screens](https://www.osapublishing.org/oe/abstract.cfm?id=87803). It is possible to simulate several independent turbulent layers at any set of user-defined altitudes. Each layer has its own arbitrary Fried parameter r0, outer scale values L0, wind speed and direction. The assumption is that the overall turbulence will result from the addition of the phase of these discrete, statistically independent layers, through an appropriate ray-tracing algorithm through each of them taking into account the direction of observation of each WFS and target object. Those phase screens are expressed in terms of optical path difference, in microns.
+
+### 5. Shack-Hartmann WFS
+COMPASS includes a Shack-Hartmann wave-front sensor model based on Fast Fourier Transforms (FFT) of the portion of the complex amplitude of the wave-front seen by each subaperture. This wave-front is computed by raytracing the turbulent layer and/or the DM shape in the guide star (GS) direction. The number of subapertures, the number of pixels per subaperture and the pixel size are specified by the user.
+
+A special care has been brought on the sampling of the wave-front and on the support of the FFT in order to ensure a proper sampling of the PSF, together with an adequate field of view (set to at least 6 times larger than the seeing value) to include most of the speckles. The seeing is user-defined.
+
+The sub-images are simulated at a high spatial resolution, binned to the WFS pixel size, then cropped to match the required field of view. Detector read-out noise and photon noise are simulated using random numbers generation, respectively following Normal and Poisson distributions. The standard deviations of those distributions depend respectively on the read-out noise and on the number of photons per subapertures, both defined by the user through dedicated parameters. The number of photons per subapertures is computed as:
+
+```Nphotons = F0 * 10**(-0.4*m) * dt * T * S```
+
+where:	
+- F0 is the flux at magnitude 0, expressed in photons/m2/s	
+- M is the guide star magnitude
+- dt is the loop iteration time
+- T is the optical throughput 	
+- S is the subaperture surface in m²
+
+![SH-proc](images/SH-proc.png){:width="500px"}
+Each of those parameters are user-defined. The generation of the noise can be switched on or off on demand.
+This model is called “diffractive”, as it results from a computation of Fraunhofer diffraction, using a Fourier transform.
+
+#### Laser guide stars
+Laser Guide Stars can be included in the simulation. It takes into account the sodium profile to compute elongation on each sub-aperture, and also the cone effect. ![LGS-spot](images/LGS-proc.png){:width="500px"} Elongation is computed by convolving the high resolution image on each subaperture by a high resolution elongated spot model. This spot model is computed in respect with the sodium profile that could be analytical (Gaussian) or experimental (read from a file), and with each sub-apertures positions in relation to the laser launch position.
+
+The cone effect, due to the finite height of the sodium layer where the LGS is produced, is taking into account in the simulation thanks to a GPU parallelized raytracing algorithm. For each pixel of the phase screen seen by the WFS, we calculate the sum of the corresponding pixels on each phase screen of the atmosphere layers. Each term is weighting by a the Cn² coefficient of its atmosphere layer. A linear interpolation is performed between the 4-near pixels of the atmosphere layer seen by the pixel of the WFS phase screen. Basically, this is equivalent to do a "zoom" on each phase screen and summing them.
+
+### 6. Pyramid WFS
+![pyr-func](images/pyr-func.png){:width="300px"}
+COMPASS features a pyramid wavefront sensor model based on the concept described in [Ragazzoni 1996](http://www.tandfonline.com/doi/abs/10.1080/09500349608232742). The PSF on the tip of the pyramid is obtained as the square modulus of the EM field in the pyramid plane. The latter is computed at high resolution as the Fourier transform of the EM field in the pupil plane for which the amplitude is given by the pupil intensity distribution and the phase is obtained as a combination of the actual residual phase from atmospheric disturbance (evaluated by raytracing through the turbulence and compensation from the DM) and the phase introduced by modulation.
+The phase term introduced by the pyramid itself is added to this EM field and another Fourier Transform accounting for the relay lens, provides the EM field on the plane of the camera. 
+
+Concerning the modulation, the corresponding Tip-Tilt term is introduced following regularly spaced distribution leading to a circular pattern around the tip of the pyramid. The 4 images of the pupil obtained at each modulation position as the square modulus of the EM field in the camera plane are stacked to form the final short exposure image on the WFS.
+
+Proper undersampling to the users parameters and flux normalization are then performed. Photon and detector noise can then be added if specified.
+
+![pyrimg](images/pyrimg.png){:width="420px"} 
+![pyrhr](images/High-res-pyr.png){:width="420px"} 
+
+### "Geometric" WFS
+COMPASS also features a so-called “geometric model” emulating an ideal Shack-Hartmann wavefront sensor. This algorithm directly computes the average phase gradient at each subaperture, based on the phase itself, with no noise. This estimation of the average slope of the wavefront is considered as an “ideal” measurement, with perfect linearity over an infinite range and that does not suffer from any kind of sampling effect by a detector. This geometric model is embedded in all the WFS in COMPASS. Use the command ```sim.rtc.do_centroids_geom(0)``` to compute it.
+
+Finally, a last level of abstraction is reached with the third type of wave surface analyzer, which is purely theoretical: it is a direct projection of the phase onto the DM influence functions, resulting in a set of DM voltages that best fit the wavefront in a least-square sense. It is fully linear and is free from any WFS effect or reconstruction effect, it is in particular free from aliasing. We call this method “DM projection”, it behaves as a theoretical, perfect WFS. To use it, set your controller type to "geo" : ```p_controllers[0].type = "geo"```
+
+### 7. Deformable mirrors
+COMPASS models the DM as a weighted sum of local influence functions. Several types of built-in influence functions are available, all of them close to a bell-shaped function. They have different analytical expressions, that fit different types of DMs. Each influence function is defined on a local support, chosen to be small with respect to the simulated pupil.
+
+The model also allows the user to tune the width of the influence function, using a user-defined coupling factor between neighbouring actuators. The final DM shape is computed as the sum of the contribution of the influence functions, weighted by their voltage, at each point of the pupil. It is perfectly linear and does not include any kind of hysteresis or non-linearity. The actuators can be placed either across a rectangular, or an hexagonal grid, of selectable pitch.
+
+The second type of DM is a so called tip-tilt mirror, which produces some pure tip and tilt over the pupil area.
+
+Other type of DM is Karhunen-Loeve ones, which produces pure atmospherical Karhunen-Loeve modes.
+
+COMPASS can handle any number of DMs, each of them conjugated at any arbitrary altitude. This parameter is taken into account during the ray-tracing step of the beams through the layers and the Dms.
+
+#### Custom DM
+Coming soon
 
 ## 3. The shesha package
 
-### 1. COMPASS achitecture
+### 1. COMPASS architecture
 ![archi](images/compass_archi.png){:height="280px"}
 
 ### 2. shesha_config: parameter classes
