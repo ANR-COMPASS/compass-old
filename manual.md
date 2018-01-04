@@ -317,12 +317,127 @@ Other type of DM is Karhunen-Loeve ones, which produces pure atmospherical Karhu
 COMPASS can handle any number of DMs, each of them conjugated at any arbitrary altitude. This parameter is taken into account during the ray-tracing step of the beams through the layers and the Dms.
 
 #### Custom DM
-Coming soon
+It is also possible to use your own influence function. To do so, you have to provide a HDF5 file where you have saved your influence function and other informations on your DM in a [pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html) named ```"resAll"```. The simulation will then automatically resize and interpolate properly your influence functions. The needed informations in the dataFrame are listed below:
 
+| Name        | Type                               | Unit                                                                                                                                                                              | Description                                                                                         |
+| :---------- | :--------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
+| xpos        | np.array(ndim=1, dtype=np.float32) | meters                                                                                                                                                                            | X positions of the actuators                                                                        |
+| ypos        | np.array(ndim=1, dtype=np.float32) | meters                                                                                                                                                                            | Y positions of the actuators                                                                        |
+| center      | np.array(ndim=1, dtype=np.float32) | meters                                                                                                                                                                            | 2-elements vector defining the origin of xpos and ypos in relation to the physical center of the DM |
+| res         | float                              | m/pix                                                                                                                                                                             | Pixel resolution of your influence function                                                         |
+| dm_diam     | float                              | meters                                                                                                                                                                            | DM diameter                                                                                         |
+| dm_diam_pup | float                              | meters                                                                                                                                                                            | DM diameter projected in the pupil plane                                                            |
+| influ       | np.array(ndim=3,dtype=np.float32)  | Normalized deformation | Cube containing your influence functions. Cube size is (influ_size x influ_size x nactus). Influence functions must be ordered as the xpos and ypos vectors, and mormalized to 1. |
+
+The names given here are arbitrary : you have to provide the actual names of those fields in the parameter file.
+
+### 8. Centoiders
+
+#### Classical centroiding
+Several centroiding algorithms are implemented to compute the command to apply on the DM from the WFS image and can be selected on demand:	
+- Center of gravity	
+- Thresholded 	center of gravity
+- Weighted center of gravity
+- [Center of gravity on N brightest pixels](https://academic.oup.com/mnras/article/419/2/1628/989454)
+
+The SH-WFS measurements is computed using those algorithms on each sub-apertures. For each sub-apertures, the centroid is computed on both X and Y-axis, leading to a measurement vector of size two times the number of sub-apertures. First half of this vector contains the X-measurements and the second half the Y ones.
+The center of gravity on the X-axis is basically computed for each sub-aperture as:
+
+``` Sx = sum(x * I(x)) / sum(I(x))```
+
+where x is the pixel X-position and I(x) the intensity of the WFS image integrated along the Y-axis at this position. Other center of gravity algorithm are variants of this one, where a threshold or weights are applied before computation, or just considering the N brightest pixels in the computation. The output is the slopes vectors of size 2*Nssp: the first Nssp elements are the X-measurements and the other half contain the Y-measurement.
+
+#### Correlation
+The correlation algorithm requires a reference function to be correlated with the image. The reference function is computed through undersampling of a high resolution image of the spot in each subaperture obtained with no turbulence. Then the slope is estimated as the position of the maximum of the correlation function of the actual spot with turbulence and the reference function, for all subapertures. This position is determined at the sub-pixel level by performing a parabolic fit around the maximum.
+
+#### Pyramid
+In the case of the pyramid WFS, the slopes are computed following several approaches. The “local” approach is based on the original Ragazzoni paper, using the 4 corresponding pixels in pupil images : a, b, c and d:
+
+``` Sx = (a + b) - (c + d) / (a + b + c + d)```
+
+``` Sy = (a + c) - (b + d) / (a + b + c + d)```
+expressed in arcsec using the modulation amplitude.
+
+A modified version of this approach called “global” is also implemented, in which the intensity over the 4 corresponding pixels is replaced by the average intensity I0 in the pupil images.
+
+``` Sx = (a + b) - (c + d) / I0```
+
+``` Sy = (a + c) - (b + d) / I0```
+which is also expressed in arcsec using the modulation amplitude.
+
+On top of these two approaches, the user can also select to retrieve the actual phase gradient by using the sine function as described in [Verinaud 2004](http://www.sciencedirect.com/science/article/pii/S0030401804000628?via%3Dihub).
+
+### 9. Controllers
+
+#### Least-square approach
+The control matrix R is computed via singular value decomposition and pseudo-inversion of the interaction matrix. This reconstruction is plugged in the temporal compensator, an integrator with gain. So, the command vector c at iteration k is computed as: 
+
+```c[k] = c[k-1] - g * R * s[k]```
+
+This approach can handle modal optimization as defined by [E. Gendron](https://hal.archives-ouvertes.fr/tel-01418424).
+
+#### Minimum variance
+The minimum variance reconstructor aims to minimize the variance of the difference between the estimated phase and the real one. If the statistical variables are gaussian, this is equivalent to a Maximum A Priori (MAP) approach where we want to maximize the probability of obtaining such measures knowing the phase. By solving this problem, the reconstructor can be written as : 
+
+R = C&phi; * Dt * (D*C&phi;*Dt + Cn)^(-1)
+
+where C&phi; is the phase covariance matrix, D is the DM interaction matrix (Dt is its transpose) and Cn the noise matrix.
+
+Considering that Dt*C&phi;*D is equivalent to the measurements covariance matrix Cmm, we can rewrite the reconstructor as : 
+
+R = C&phi;m * Cmm^(-1)
+
+where C&phi;m is a covariance matrix between the phase and the DM actuators
+
+C&phi;m and Cmm are computed from the same way described by [Eric Gendron et al.](https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9148/1/A-novel-fast-and-accurate-pseudo-analytical-simulation-approach-for/10.1117/12.2055911.short?SSO=1)
+Then, the reconstructor allows to compute the command matrix and the DM commands are computed thanks to Pseudo-Open Loop Control equations using the interaction matrix and previous commands to estimate open loop measurements from the closed loop one.
+
+#### CuReD
+
+COMPASS also includes an implementation of the CuReD wavefront reconstruction. Find more information in [M. Rosensteiner paper](https://www.osapublishing.org/josaa/abstract.cfm?uri=josaa-29-11-2328).
+
+#### Direct projection
+
+A perfect behaviour of your AO system can also being simulated thanks to a direct projection of the input phase on the DM actuators : 
+
+c[k] = P.&Phi;
+
+The projection matrix P is computed from the DM influence functions IF : 
+
+P = (IFt IF)^(-1) IFt
+
+and filtered from piston mode.
+
+#### Generic controller
+Coming soon...
+
+#### Voltage computation
+The loop delay d is then taken into account and also an eventual perturbation voltage p set by the user. Finally, the voltage vector v that will be apply at iteration k on the DM is computed as:
+
+```v[k] = (a * c[k] + b * c[k-1] + e * c[k-2]) + p[k]```
+with:
+- (a = 1-b ; b = floor(d) ; e = 0) if 0 <= d <= 1
+- (a = 0 ; b = 1-e ; e= floor(d) - 1) if 1 < d <= 2
+
+### 10. Image formation
+![PSF-spiders](images/PSF-spiders.png){:width="300px"}
+The output of a classical COMPASS simulation is the PSF of the simulated system. It is computed as the Fourier transform of the complex field amplitude obtained after a ray-tracing through the turbulent layer screens and the DM shape screen. The wavelength of this PSF is a user parameter; the phase is scaled accordingly. The size of the support for achieving the FFT is chosen among the integer powers of 2 immediately greater than twice the pupil size, in order to provide the user with an adequate sampling of the PSF (in general slightly finer than Nyquist).
+The PSF intensity is normalized in such a way that its maximum value corresponds to the Strehl ratio. Each loop iteration produces a short-exposure PSF, which is averaged over the iterations to produce the long-exposure PSF. As it results from a Monte-Carlo simulation, the PSF includes the statistical non convergence limitation.
+
+The user also has the ability to change the pupil just for PSF computation as shown above. It is useful for example to study the impact of spiders on the PSF without including side effects as differential piston in the AO loop.
 ## 3. The shesha package
 
 ### 1. COMPASS architecture
 ![archi](images/compass_archi.png){:height="280px"}
+The initial objective behind the development of COMPASS was to get a numerical simulation platform able to deliver short exposure PSF (i.e. per WFS frame) with a time-to-solution in the range of the 10th of seconds for an AO system at the E-ELT scale. To reach such performance, the use of GPU as hardware accelerators appeared as the best option.
+
+A comprehensive software stack has been designed to provide at the same time, both high performance computing, brought by core massively parallel algorithms running on GPU and ease of use, brought by a user interface based on python and a graphics toolkit. 
+
+The stack is composed of three main layers. The lowest level is where the optimized libraries are located and in which the memory allocation routines can be found. The intermediate layer is a binding layer, where the arrays in memory are manipulated through addresses. The upper layer is the user interface in which python code interacts with the lower level classes and methods. A number of high level routines can also be found in the upper layer, mostly for initialisation and AO loop data post-processing. All of these layers are composed of libraries and modules that are described in the following section.
+
+On top of this standard stack, a programming interface (API) is available in python to run command-line or scripted simulations and a collection of widgets for an easy-to-use GUI is available, based on the use of the Qt toolkit and the pyQtGraph library. On the other hand, the platform uses the HDF5 file format to maintain a database of simulation parameters and results, which is managed using the Pandas tool. The diagnosis of the results of the simulation can be optimized using the Bokeh tool. Finally, the documentation for the platform is generated automatically using the Sphynx tool.
+
+**Only the shesha package source code is distributed on GitHub. The deeper layers are provided as binaries via conda environment. This configuration already gives to users the possibility to change the behaviour of COMPASS (via hacking/contributing to the shesha package). Users who want to contribute to the core layers for their applications are invited to contact the COMPASS team via the GitHub project.** 
 
 ### 2. shesha_config: parameter classes
 We describe here all the parameters used in COMPASS and all the classes attributes that could be retrieved by the user during or after the simulation. The following tables give, for each class, the attribute name, a boolean that says if this attribute is settable in the parameters file, its default value and its unit. <span style="color:red"> Parameters displayed in red </span> need to be set by the user in the parameter file if its associated class is instantiated.
@@ -555,8 +670,20 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | *_cmat*                                          | array  | none  | no       |         | Command matrix                                                             |
 
 ### 3. shesha_sim: Simulator class
-Coming soon
+This module defines the Simulator class that acts as a layer of abstraction for simulation scripts. The attributes of this class are the various objects defined above during the initialization phase. Then, those objects can be manipulated through this class. The AO loop process is also embedded in a class method, making user script light and easy to write.
 
+The Simulator class can be instantiated without argument, or with the path to a parameter file. If the path is defined, the file is directly loaded during the instantiation. In the other case, the user has to manually load the file thanks to the function load_from_file. Then, the simulation is initialized through a call to the function init_sim. The initialization process is described below.
+![init](images/init-process.png){:width="840px"}
+Each step of this initialization process depends on the parameters file. For example, if no DM parameters are defined in the parameter file, then no DM will be initialized and the simulation will run without any DM.
+
+![loop](images/loop-process.png){:width="500px"}
+The AO loop process is also depicted. Note that, due to this process order, there is an inherent 1-frame delay. So if the delay parameter is set to 1 in the parameter file, the simulated delay will be a 2-frames delay.
+
+This module also defines classes that inherits from the Simulator class: the Bench class and the SimulatorBrama one. 
+
+The Bench class is used to perform benchmarks of COMPASS. It times every initialization functions and every function that are called in the AO loop. As those functions are executed on the GPU, the timer used is a custom timer based on CUDA event.
+
+The SimulatorBrama class is used to use COMPASS as a simulated AO bench. As it is using specific implementation of shesha_rtc and shesha_target built on top of SuTrA and BrAMA, you can subscribe to telemetry sent by COMPASS and modify parameters in the loop (CM, control law used, …).
 ## 4. Scripting with COMPASS
 
 ### 1. Inheritance
