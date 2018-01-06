@@ -319,14 +319,14 @@ COMPASS can handle any number of DMs, each of them conjugated at any arbitrary a
 #### Custom DM
 It is also possible to use your own influence function. To do so, you have to provide a HDF5 file where you have saved your influence function and other informations on your DM in a [pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html) named ```"resAll"```. The simulation will then automatically resize and interpolate properly your influence functions. The needed informations in the dataFrame are listed below:
 
-| Name        | Type                               | Unit                                                                                                                                                                              | Description                                                                                         |
-| :---------- | :--------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| xpos        | np.array(ndim=1, dtype=np.float32) | meters                                                                                                                                                                            | X positions of the actuators                                                                        |
-| ypos        | np.array(ndim=1, dtype=np.float32) | meters                                                                                                                                                                            | Y positions of the actuators                                                                        |
-| center      | np.array(ndim=1, dtype=np.float32) | meters                                                                                                                                                                            | 2-elements vector defining the origin of xpos and ypos in relation to the physical center of the DM |
-| res         | float                              | m/pix                                                                                                                                                                             | Pixel resolution of your influence function                                                         |
-| dm_diam     | float                              | meters                                                                                                                                                                            | DM diameter                                                                                         |
-| dm_diam_pup | float                              | meters                                                                                                                                                                            | DM diameter projected in the pupil plane                                                            |
+| Name        | Type                               | Unit                   | Description                                                                                                                                                                       |
+| :---------- | :--------------------------------- | :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| xpos        | np.array(ndim=1, dtype=np.float32) | meters                 | X positions of the actuators                                                                                                                                                      |
+| ypos        | np.array(ndim=1, dtype=np.float32) | meters                 | Y positions of the actuators                                                                                                                                                      |
+| center      | np.array(ndim=1, dtype=np.float32) | meters                 | 2-elements vector defining the origin of xpos and ypos in relation to the physical center of the DM                                                                               |
+| res         | float                              | m/pix                  | Pixel resolution of your influence function                                                                                                                                       |
+| dm_diam     | float                              | meters                 | DM diameter                                                                                                                                                                       |
+| dm_diam_pup | float                              | meters                 | DM diameter projected in the pupil plane                                                                                                                                          |
 | influ       | np.array(ndim=3,dtype=np.float32)  | Normalized deformation | Cube containing your influence functions. Cube size is (influ_size x influ_size x nactus). Influence functions must be ordered as the xpos and ypos vectors, and mormalized to 1. |
 
 The names given here are arbitrary : you have to provide the actual names of those fields in the parameter file.
@@ -425,6 +425,7 @@ The output of a classical COMPASS simulation is the PSF of the simulated system.
 The PSF intensity is normalized in such a way that its maximum value corresponds to the Strehl ratio. Each loop iteration produces a short-exposure PSF, which is averaged over the iterations to produce the long-exposure PSF. As it results from a Monte-Carlo simulation, the PSF includes the statistical non convergence limitation.
 
 The user also has the ability to change the pupil just for PSF computation as shown above. It is useful for example to study the impact of spiders on the PSF without including side effects as differential piston in the AO loop.
+ 
 ## 3. The shesha package
 
 ### 1. COMPASS architecture
@@ -670,28 +671,151 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | *_cmat*                                          | array  | none  | no       |         | Command matrix                                                             |
 
 ### 3. shesha_sim: Simulator class
-This module defines the Simulator class that acts as a layer of abstraction for simulation scripts. The attributes of this class are the various objects defined above during the initialization phase. Then, those objects can be manipulated through this class. The AO loop process is also embedded in a class method, making user script light and easy to write.
+This module defines the Simulator class that acts as a layer of abstraction for simulation scripts. The attributes of this class are the various objects defined during the initialization phase : 
 
-The Simulator class can be instantiated without argument, or with the path to a parameter file. If the path is defined, the file is directly loaded during the instantiation. In the other case, the user has to manually load the file thanks to the function load_from_file. Then, the simulation is initialized through a call to the function init_sim. The initialization process is described below.
+| Attribute name     | Type         | Description                             |
+| :----------------- | :----------- | :-------------------------------------- |
+| **atm**            | Atmos        | Atmosphere GPU object                   |
+| **tel**            | Telescope    | Telescope GPU object                    |
+| **tar**            | Target       | Target GPU object                       |
+| **rtc**            | Rtc          | RTC GPU object                          |
+| **wfs**            | Sensors      | Sensors GPU object                      |
+| **dms**            | Dms          | DMs GPU object                          |
+| **config**         | ModuleType   | Parameters imported from your paramfile |
+| **c**              | naga_context | GPU context                             |
+| **is_init**        | bool         | Flag for completed initialization       |
+| **loaded**         | bool         | Flag for loaded parameters              |
+| **iter**           | int          | Number of iterations performed          |
+| **use_DB**         | bool         | Flag for using the database system      |
+| **matricesToLoad** | dict         | Dictionary of teh database              |
+
+Then, those objects can be manipulated through this class. The AO loop process is also embedded in a class method, making user script light and easy to write.
+
+The Simulator class can be instantiated without argument:
+
+```python
+import shesha_sim
+sim = shesha_sim.Simulator()
+```
+
+or with the path to a parameter file : 
+
+```python
+import shesha_sim
+sim = shesha_sim.Simulator("/path_to_file/param_file.py")
+```
+ If the path is defined, the file is directly loaded during the instantiation. In the other case, the user has to manually load the file thanks to the function ```load_from_file```: 
+ 
+ ```python
+ sim.load_from_file("/path_to_file/param_file.py")
+ ```
+
+ Then, the simulation is initialized through a call to the function ```init_sim```:
+ 
+ ```python
+ sim.init_sim()
+ ```
+
+The initialization process is described below.
 ![init](images/init-process.png){:width="840px"}
 Each step of this initialization process depends on the parameters file. For example, if no DM parameters are defined in the parameter file, then no DM will be initialized and the simulation will run without any DM.
 
-![loop](images/loop-process.png){:width="500px"}
+After this initialization phase, you can run the AO loop with function ```loop``` that takes the number of iterations as argument:
+
+```
+sim.loop(sim.config.p_loop.niter)
+```
+![loop](images/loop-process.png){:width="480px"}
+
+Note that ```sim.config.p_loop.niter``` is used to retieve the number of iterations specified in the parameter file : you can replace it by any integer.
+
 The AO loop process is also depicted. Note that, due to this process order, there is an inherent 1-frame delay. So if the delay parameter is set to 1 in the parameter file, the simulated delay will be a 2-frames delay.
+Note that the PSF is not computed at each iteration. By default, it will be computed each 100 iterations by the command ```tar.comp_image(0)``` in the ```loop``` function. If this behaviour doesn't fulfill your requirements, please refer to the section [Scripting with COMPASS](#4-scripting-with-compass).
 
-This module also defines classes that inherits from the Simulator class: the Bench class and the SimulatorBrama one. 
+Details on the Simulator class functions can be found in [the shesha documentation](http://shesha.readthedocs.io/en/master/shesha_sim.html).
 
-The Bench class is used to perform benchmarks of COMPASS. It times every initialization functions and every function that are called in the AO loop. As those functions are executed on the GPU, the timer used is a custom timer based on CUDA event.
+#### Database management
+The initialization step can be accelerated by re-using previous results from older simulations runs, as phase screens or interaction matrix. To use this feature, you have to instantiate the Simulator with ```use_DB=True```:
+```python
+import shesha_sim
+sim = shesha_sim.Simulator("/path_to_file/param_file.py", use_DB=True)
+```
+At first use, it will create ```$SHESHA_ROOT/data/matricesDataBase.h5``` file where we store all the arrays used to create phase screens, DMs and interaction matrix. The parameters of the simulation are also saved. Then, each time you run a simulation, COMPASS check in this file if some of those arrays can be re-used according to the parameters of your simulation. If it is possible, it will just load those arrays, leading to an acceleration of the initialization phase. In the other case, it will compute normally those arrays and store them in the database.
 
-The SimulatorBrama class is used to use COMPASS as a simulated AO bench. As it is using specific implementation of shesha_rtc and shesha_target built on top of SuTrA and BrAMA, you can subscribe to telemetry sent by COMPASS and modify parameters in the loop (CM, control law used, …).
+**Note :** *We have already encounter some stability problems of the database system. If it occurs, we suggest to remove the ```$SHESHA_ROOT/data/matricesDataBase.h5``` file and all the ```.h5``` files created by the database. This can be done by using the shell script ```$SHESHA_ROOT/cleanDB.sh```.*
+
 ## 4. Scripting with COMPASS
-
+This section aims to provide some tips for writing your own script. We higly recommend to create your own class that inherits from the Simulator class for obvious convenience reasons. Once you have created your own class, just write a python script that will use it properly.
 ### 1. Inheritance
-Coming soon
+You don't know anything about inheritance with python, you can find information in the [Python documentation](https://docs.python.org/3/tutorial/classes.html#inheritance).
+
+We recommend to not overwrite the ```init_sim```, ```load_from_file``` and ```force_context``` functions in your class, unless you really know what you are doing. The interesting function the overwrite are ```next``` and eventually ```loop```.
+
+The ```next``` function defines what happen during an iteration. You can basically rewrite this function if you want a specific behaviour for your loop.
+
+The ```loop``` function basically put the ```next``` function in a loop and performs some operations like PSF computation regularly.
+
+By overwriting those two functions in your own class, you can reach any wanted behaviour for your simulation.
+
 ### 2. Batch processing
-Coming soon
+Once you have wrote your script and tested it, you will probably want to perform a batch of simulations for parameters space exploration.
 
+To do so, we highly recommend to write your batch script as a shell script that will call your python script. Indeed, we have noticed some unexpected problems by performing a high number of simulation in an unique python session. A bash script allows then to close the python session at the end of a simulation and to opena new one for the next simulation, ensuring then correct results.
 
+We recommend to use [docopt](http://docopt.org/) in your python file to easily parse arguments from the shell in your script. This tip will avoid you to write a parameter file per simulation case. Your python script will also have to include a function that will save the results of each simulations.
+
+**Example: performing simulations for various r0**
+
+- **Step 1**: write your parameter file 
+- **Step 2**: write your own class that inherits from Simulator to perform whatever you want during the simulation process
+- **Step3**: write your script using docopt. Here, we want to get r0 as a command line argument. The script should be like:
+
+```python
+"""script for my simulation
+
+Usage:
+  my_script.py <parameters_filename> <save_filename> [options]
+
+with 'parameters_filename' the path to the parameters file
+
+Options:
+  -h --help                   Show this help message and exit
+  --r0 r0                     set the r0
+"""
+
+from docopt import docopt 
+from YourFile import YourClass
+
+arguments = docopt(__doc__)
+param_file = arguments["<parameters_filename>"]
+save_file = arguments["<save_filemane>"]
+
+sim = YourClass(param_file) # Instantiates your class and load parameters
+
+if arguments["--r0"]: # Check if r0 has been given as arguments
+    sim.config.p_atmos.set_r0(float(arguments["--r0"])) # Change the r0 before initalization
+
+sim.init_sim()
+sim.loop()
+
+a_save_function(save_file)
+```
+- **Step 4**: write a shell script
+
+```bash
+#!/bin/bash
+R0="0.12 0.14 0.16 0.18"
+script="/path_to_your_script/my_script.py"
+savepath="/path_where_to_save"
+OUTPUT="/path/logfile.log"
+
+for r in $R0
+do
+    CMD="python $script $savepath/sim_with_r0_"$r".h5 -- --r0 $r"
+    echo "execute $CMD" >> $OUTPUT
+    $CMD 2>> $OUTPUT >> $OUTPUT
+done
+```
 
 
 
