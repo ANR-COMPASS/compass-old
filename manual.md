@@ -234,6 +234,8 @@ if you don't use ipython.
 ![expert](images/expert_panel.png){:width="600px"}
 This panel displays the simulation parameters currently used. Those parameters can be changed manually in the GUI before the initialization : enter the new parameter value and press the corresponding *Set* button. All the *Update* button can be used to change parameters on the fly, without restarting the simulation. For example, it is possible to change the loop gain at any time.
 
+#### Interactions in the terminal
+The terminal is also available when you are using the GUI, as for a classical simulation. All the commands listed in the section [Interactions](#4-interactions) (and all the other) remain valids, but you have to add ```wao.``` before each command. For example, ```sim.tar.get_image(0,b'le')``` becomes ```wao.sim.tar.get_image(0,b'le')```
 
 ## 2. Features implementation
 
