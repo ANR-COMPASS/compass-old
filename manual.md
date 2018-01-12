@@ -337,6 +337,24 @@ Proper undersampling to the users parameters and flux normalization are then per
 ![pyrimg](images/pyrimg.png){:width="420px"} 
 ![pyrhr](images/High-res-pyr.png){:width="420px"} 
 
+Here a pseudo-code of the algorithm :
+```
+for each modulation point k:
+      create phase_modu(k)
+      get phase and multiply by exp(i*phase_modu) and by pupil amplitude
+      do FFT
+      apply field stop
+      multiply by exp(i*pyramid_function)
+      do IFFT
+      do modulus square
+      add to previous modulation image 
+do FFT
+Multiply by sinc (pixels transfer function) 
+Rebin the image
+Normalize
+Add noise
+```
+
 ### "Geometric" WFS
 COMPASS also features a so-called “geometric model” emulating an ideal Shack-Hartmann wavefront sensor. This algorithm directly computes the average phase gradient at each subaperture, based on the phase itself, with no noise. This estimation of the average slope of the wavefront is considered as an “ideal” measurement, with perfect linearity over an infinite range and that does not suffer from any kind of sampling effect by a detector. This geometric model is embedded in all the WFS in COMPASS. Use the command ```sim.rtc.do_centroids_geom(0)``` to compute it.
 
