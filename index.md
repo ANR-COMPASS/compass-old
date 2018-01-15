@@ -10,7 +10,7 @@ configurations such as multi-conjugate AO.
 # Get started
 COMPASS is available on GitHub for Linux platform only, equiped with a Nvidia GPU card.
 ```markdown
-git clone https://github.com/ANR-COMPASS/compass.git
+git clone https://github.com/ANR-COMPASS/shesha.git
 ```
 Follow the [installation instructions](install.html) to get all the dependencies.
 The user manual is available here (soon)
