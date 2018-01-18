@@ -1,6 +1,6 @@
 theme: jekyll-theme-slate
 title: COMPASS
-description: an end-to-end AO simulation tool using GPU acceleration
+description: End-to-end AO simulation tool using GPU acceleration
 markdown: kramdown
 webrick:
   headers:
