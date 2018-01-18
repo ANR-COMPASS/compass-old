@@ -216,7 +216,7 @@ To start your simulation, follows those steps:
 #### Display management
 ![display](images/gui_display.png){:width="600px"}
 
-By default, nothing is displayed when you launched the simulation. You can choose what to display by cheking the corresponding boxes. Then, you can rearrange the displays as you wish by drag and drop. You can also detach the display area from the main window by clicking the button in the bottom right corner of the main window.
+By default, nothing is displayed when you launched the simulation. You can choose what to display by cheking the corresponding boxes in the drop down menus. Then, you can rearrange the displays as you wish by drag and drop. You can also detach the display area from the main window by clicking the button in the bottom right corner of the main window.
 
 You have also the possibility to save your layout area disposition. Once you have organized your display area, press the *Save* button of the *Layout Area Display*. You will be able to load it for further simulations with the *Load* button.
 
