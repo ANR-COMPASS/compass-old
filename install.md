@@ -3,7 +3,9 @@ layout: default
 ---
 # Requirements
 
-Linux computer with CUDA 9.0
+- Linux distribution
+- CUDA toolkit version 9.0
+- Nvidia GPU card (Kepler minimum)
 
 # Installation of Anaconda/Miniconda
 
