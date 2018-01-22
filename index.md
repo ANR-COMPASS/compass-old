@@ -15,6 +15,8 @@ git clone https://github.com/ANR-COMPASS/shesha.git
 Follow the [installation instructions](install.html) to get all the dependencies.
 The user manual is available here (soon)
 
+**Please, check the News section to get informed of what's new on COMPASS and of important update.**
+
 # Performance
 COMPASS computing performance is scalable according to the Nvidia GPU card used. A speed up of 9 has been reached with the last Nvidia V100 GPU compared to the project start's state of the art GPU, without changing a single line of code. 
 
