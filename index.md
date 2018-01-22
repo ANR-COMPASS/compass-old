@@ -13,7 +13,7 @@ COMPASS is available on GitHub for Linux platform only, equiped with a Nvidia GP
 git clone https://github.com/ANR-COMPASS/shesha.git
 ```
 Follow the [installation instructions](install.html) to get all the dependencies.
-The user manual is available here (soon)
+The [user manual](manual.html) is available.
 
 **Please, check the News section to get informed of what's new on COMPASS and of important update.**
 
