@@ -464,7 +464,20 @@ P = (IFt IF)^(-1) IFt
 and filtered from piston mode.
 
 #### Generic controller
-Coming soon...
+The generic controller can be used to perform simulation with flexible command laws. With this controller, COMPASS doesn't compute any command matrix : you have to provide it, as you have to provide a decay factor and a matrix that will define the command law. Two modes can be used: "integrator" (default value) and "2matrices".
+
+Indeed, with this controller, the command c is computed as:
+
+```c[k] = decayFactor * E.dot(c[k-1]) + g*CMAT.dot(s[k])```
+with:
+- decayFactor a float value
+- E a matrix that you have to provide
+- g is the loop gain
+- CMAT the command matrix you have to provide
+- s[k] the slopes vector at iteration k
+
+If the mode is set at "integrator", matrix E is automatically set as identity.
+Use the command ```sim.rtc.set_commandlaw(0,b"2matrices")``` to switch to the "2matrices" mode.  
 
 #### Voltage computation
 The loop delay d is then taken into account and also an eventual perturbation voltage p set by the user. Finally, the voltage vector v that will be apply at iteration k on the DM is computed as:
