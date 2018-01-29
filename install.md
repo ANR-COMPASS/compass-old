@@ -15,14 +15,15 @@ Then, you have to install Anaconda 3 or Miniconda 3 (python 3 is required).
 We recommend Miniconda instead of Anaconda as it is much lighter, but it's up to you.
 
 ```bash
+export CONDA_ROOT=$HOME/miniconda3
 wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-bash Miniconda3-latest-Linux-x86_64.sh -b
+bash Miniconda3-latest-Linux-x86_64.sh -b -p $CONDA_ROOT
 ```
 
 Don't forget to add your Miniconda or Anaconda directory to your PATH:
 
 ```bash
-export PATH=/path_to_dir/miniconda3/bin:$PATH
+export PATH=$CONDA_ROOT/bin:$PATH
 ```
 
 # Installation of COMPASS via conda
@@ -35,8 +36,8 @@ conda install -c compass compass -y
 Note: conda main channel is compiled with CUDA 9.1, for previous version please use:
 
 ```bash
-conda install -c compass/label/cuda90 compass
-conda install -c compass/label/cuda80 compass 
+conda install -c compass/label/cuda90 compass -y
+conda install -c compass/label/cuda80 compass -y
 ```
 
 This command line will also install dependencies in your conda environment. 
