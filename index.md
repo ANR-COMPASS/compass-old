@@ -8,10 +8,8 @@ both test specific components of AO of the E-ELT (such as wavefront analysis
 device with a pyramid or elongated Laser star), and various systems
 configurations such as multi-conjugate AO.
 # Get started
-COMPASS is available on GitHub for Linux platform only, equiped with a Nvidia GPU card.
-```markdown
-git clone https://github.com/ANR-COMPASS/shesha.git
-```
+COMPASS is available on [GitHub](https://github.com/ANR-COMPASS/shesha.git) for Linux platform only, equiped with a Nvidia GPU card.
+
 Follow the [installation instructions](install.html) to get all the dependencies.
 The [user manual](manual.html) is available.
 
