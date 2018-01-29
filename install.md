@@ -1,11 +1,11 @@
 ---
 layout: default
 ---
+
 # Requirements
 
 - Linux distribution
-- CUDA toolkit version 9.1
-- Nvidia GPU card (Kepler minimum for CUDA > 9.0, Fermi needs to use CUDA 8.0)
+- Nvidia GPU card with CUDA toolkit (Kepler at least for CUDA >= 9.0, Fermi needs to use CUDA 8.0)
 
 # Installation of Anaconda/Miniconda
 
