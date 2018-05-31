@@ -65,11 +65,10 @@ A pyQtgraph based graphical interface is available
 ### Script
 Object oriented programmation of COMPASS makes scripts of simulation light and easy to write.
 ```python
-from docopt import docopt
-import shesha_sim
+from shesha.sim.simulator import Simulator
 arguments = docopt(__doc__)
-param_file = arguments["<parameters_filename>"]
-sim = shesha_sim.Simulator(param_file)
+param_file = "<parameters_filename>"
+sim = Simulator(param_file)
 sim.init_sim()
 sim.loop(sim.config.p_loop.niter)
 ```

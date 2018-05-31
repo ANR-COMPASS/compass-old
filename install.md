@@ -65,14 +65,14 @@ You can try it with one of our paramaters file:
 
 ```bash
 cd $SHESHA_ROOT
-ipython -i test/closed_loop.py data/par/par4bench/scao_sh_16x16_8pix.py
+ipython -i shesha/scripts/closed_loop.py data/par/par4bench/scao_sh_16x16_8pix.py
 ```
 
 And if you want to launch the GUI:
 
 ```bash
 cd $SHESHA_ROOT
-ipython -i widgets/widget_ao.py
+ipython -i shesha/widgets/widget_ao.py
 ```
 
 Browse through the [manual](manual.html) to understand how to use COMPASS.

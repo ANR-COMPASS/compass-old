@@ -13,7 +13,7 @@ This is the user manual for COMPASS. We will try to be as exhaustive as possible
 To launch a basic simulation with COMPASS, you can use our script with a parameter file as an argument :
 ```bash
 cd $SHESHA_ROOT
-ipython -i test/closed_loop.py path_to_your_parfile/parfile.py
+ipython -i shesha/scripts/closed_loop.py path_to_your_parfile/parfile.py
 ```
 Some basic parameter files are provided in the directory ```$SHESHA_ROOT/data/par/par4bench``` and an example is provided [here](#2-parameter-file)
 
@@ -38,13 +38,13 @@ After an initialization phase, the script will prompt in the terminal the short 
 ### 2. Parameter file
 For COMPASS,  a parameter file is a python file where the parameter classes are instantiated and setted to be imported by the simulation script. All the parameter classes are described in details [here](#2-shesha_config-parameter-classes). 
 To write your own paramater file, remember those important points :
-- Starts by importing the ```shesha_config``` module: it contains all the parameter classes
+- Starts by importing the ```shesha.config``` module: it contains all the parameter classes
 - Instantiates the paramater classes you need for your simulation. **Note that some of those classes are required to perform a simulation : Param_loop, Param_geom, Param_tel and Param_atmos.** You also have to set a list of Param_wfs called ```p_wfss```, a list of Param_dm called ```p_dms```, a list of Param_centroider called ```p_centroiders``` and a list of Param_controller called ```p_controllers```.
 - Set the classes parameters using the setter functions. Those functions are usually named as ```set_<parameter name>```. 
 
 An example of parameter file follows and others can be found in ```$SHESHA_ROOT/data/par/par4bench``` directory
 ```python
-import shesha_config as conf
+import shesha.config as conf
 
 simul_name = "scao_sh_40m_80_8pix"
 
@@ -146,16 +146,16 @@ Thanks to the architecture of COMPASS, writing a script is easy.
 
 Let's take a look at our ```closed_loop.py``` script :
 ```python
-import shesha_sim
+from shesha.sim.simulator import Simulator
 from docopt import docopt
 arguments = docopt(__doc__)
 param_file = arguments["<parameters_filename>"]
-sim = shesha_sim.Simulator(param_file)
+sim = Simulator(param_file)
 sim.init_sim()
 sim.loop(sim.config.p_loop.niter)
 ```
 Let's go step-by-step :
-- The first line imports the ```shesha_sim``` module: it contains the Simulator class used to perform the simulation. This class is described properly [here](#3-shesha_sim-simulator-class).
+- The first line imports the ```shesha.sim.simulator``` module: it contains the Simulator class used to perform the simulation. This class is described properly [here](#3-shesha_sim-simulator-class).
 - The next lines : 
 ```python
 from docopt import docopt
@@ -163,7 +163,7 @@ arguments = docopt(__doc__)
 param_file = arguments["<parameters_filename>"]
 ```
 are used to get the parameter file name. ```docopt``` module is a command line arguments parser for python that can also set proper usage pattern and options for your script. For more information, visit [docopt.org](http://docopt.org/)
-- ```sim = shesha_sim.Simulator(param_file)``` instantiates the Simulator class and loads the parameters define in the parameter file
+- ```sim = Simulator(param_file)``` instantiates the Simulator class and loads the parameters define in the parameter file
 - ```sim.init_sim()``` initializes the simulation.
 - ```sim.loop(sim.config.p_loop.niter)``` runs the simulation for ```niter``` iterations
 
@@ -510,7 +510,7 @@ On top of this standard stack, a programming interface (API) is available in pyt
 
 **Only the shesha package source code is distributed on GitHub. The deeper layers are provided as binaries via conda environment. This configuration already gives to users the possibility to change the behaviour of COMPASS (via hacking/contributing to the shesha package). Users who want to contribute to the core layers for their applications are invited to contact the COMPASS team via the GitHub project.** 
 
-### 2. shesha_config: parameter classes
+### 2. shesha.config: parameter classes
 We describe here all the parameters used in COMPASS and all the classes attributes that could be retrieved by the user during or after the simulation. The following tables give, for each class, the attribute name, a boolean that says if this attribute is settable in the parameters file, its default value and its unit. <span style="color:red"> Parameters displayed in red </span> need to be set by the user in the parameter file if its associated class is instantiated.
 
 #### Param_loop
@@ -740,7 +740,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | *_imat*                                          | array  | none  | no       |         | Interaction matrix                                                         |
 | *_cmat*                                          | array  | none  | no       |         | Command matrix                                                             |
 
-### 3. shesha_sim: Simulator class
+### 3. shesha.sim.simulator: Simulator class
 This module defines the Simulator class that acts as a layer of abstraction for simulation scripts. The attributes of this class are the various objects defined during the initialization phase : 
 
 | Attribute name     | Type         | Description                             |
@@ -764,15 +764,15 @@ Then, those objects can be manipulated through this class. The AO loop process i
 The Simulator class can be instantiated without argument:
 
 ```python
-import shesha_sim
-sim = shesha_sim.Simulator()
+from shesha.sim.simulator import Simulator
+sim = Simulator()
 ```
 
 or with the path to a parameter file : 
 
 ```python
-import shesha_sim
-sim = shesha_sim.Simulator("/path_to_file/param_file.py")
+from shesha.sim.simulator import Simulator
+sim = Simulator("/path_to_file/param_file.py")
 ```
  If the path is defined, the file is directly loaded during the instantiation. In the other case, the user has to manually load the file thanks to the function ```load_from_file```: 
  
@@ -807,8 +807,8 @@ Details on the Simulator class functions can be found in [the shesha documentati
 #### Database management
 The initialization step can be accelerated by re-using previous results from older simulations runs, as phase screens or interaction matrix. To use this feature, you have to instantiate the Simulator with ```use_DB=True```:
 ```python
-import shesha_sim
-sim = shesha_sim.Simulator("/path_to_file/param_file.py", use_DB=True)
+from shesha.sim.simulator import Simulator
+sim = Simulator("/path_to_file/param_file.py", use_DB=True)
 ```
 At first use, it will create ```$SHESHA_ROOT/data/matricesDataBase.h5``` file where we store all the arrays used to create phase screens, DMs and interaction matrix. The parameters of the simulation are also saved. Then, each time you run a simulation, COMPASS check in this file if some of those arrays can be re-used according to the parameters of your simulation. If it is possible, it will just load those arrays, leading to an acceleration of the initialization phase. In the other case, it will compute normally those arrays and store them in the database.
 
