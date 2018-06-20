@@ -55,7 +55,7 @@ You will need to set some environment variables:
 
 ```bash
 export SHESHA_ROOT=$HOME/shesha
-export PYTHONPATH=$SHESHA_ROOT/src:$PYTHONPATH
+export PYTHONPATH=$SHESHA_ROOT:$PYTHONPATH
 export PYTHONDONTWRITEBYTECODE=1
 ```
 
