@@ -3,13 +3,17 @@ layout: default
 ---
 
 # Refereed publications using COMPASS
-- [*Ltaief, H. et al*, "Adaptive Optics Simulation for the World’s Largest Telescope on Multicore Architectures with Multiple GPUs", ACM PASC 2016](https://dl.acm.org/citation.cfm?id=2929920)
-- [*Clénet, Y. et al*, "Anisoplanatism effect on the E-ELT SCAO point spread function. A preserved coherent core across the field", Astronomy & Astrophysics, Volume 583, id.A102, 10 pp. (2015)](https://www.aanda.org/articles/aa/abs/2015/11/aa25469-14/aa25469-14.html)
-- [*Charara, A. et al*, "Pipelining computational stages of the tomographic reconstructor for multi-object adaptive optics on a multi-gpu system", High Performance Computing, Networking, Storage and Analysis, SC14 : International Conference for, pages 262–273, Nov (2014)](http://ieeexplore.ieee.org/document/7013009/)
+- [*Ferreira, F. et al.*, "Numerical estimation of wavefront error breakdown in adaptive optics", A&A 2018](https://doi.org/10.1051/0004-6361/201832579)
+- *Ferreira, F. et al*, "COMPASS: an efficient GPU-based simulation software for adaptive optics systems", HPCS 2018, To be published
+- [*Ltaief, H. et al.*, "Adaptive Optics Simulation for the World’s Largest Telescope on Multicore Architectures with Multiple GPUs", ACM PASC 2016](https://dl.acm.org/citation.cfm?id=2929920)
+- [*Clénet, Y. et al.*, "Anisoplanatism effect on the E-ELT SCAO point spread function. A preserved coherent core across the field", Astronomy & Astrophysics, Volume 583, id.A102, 10 pp. (2015)](https://www.aanda.org/articles/aa/abs/2015/11/aa25469-14/aa25469-14.html)
+- [*Charara, A. et al.*, "Pipelining computational stages of the tomographic reconstructor for multi-object adaptive optics on a multi-gpu system", High Performance Computing, Networking, Storage and Analysis, SC14 : International Conference for, pages 262–273, Nov (2014)](http://ieeexplore.ieee.org/document/7013009/)
 # COMPASS in international conferences
-- *Ferreira, F. et al.*, "ROKET: erROr breaKdown Estimation Tool for adaptive optics systems", AO4ELT5, 2017, To be published
-- *Vidal, F. et al.*, "MICADO SCAO numerical simulations", AO4ELT5, 2017, To be published
-- *Deo, V. et al.*,"Modal Control Gains Optimization for the Pyramid Wavefront Sensor:  Numerical Simulations and Optical Bench Validation", AO4ELT5, 2017, To be published
+- [*Deo, V. et al.*,"A modal approach to optical gain compensation for the pyramid wavefront sensor", SPIE 2018](https://doi.org/10.1117/12.2311631)
+- [*Ferreira, F. et al.*, "Real-time end-to-end AO simulations at ELT scale on multiple GPUs with the COMPASS platform", SPIE 2018](https://doi.org/10.1117/12.2312593)
+- [*Ferreira, F. et al.*, "AO error breakdown: anisoplanatism and bandwidth error correlation with ROKET", AO4ELT5 2017](http://www.iac.es/congreso/AO4ELT5/pages/proceeding.php?id=55)
+- [*Vidal, F. et al.*, "End-to-end simulations for the MICADO-MAORY SCAO mode", AO4ELT5 2017](http://www.iac.es/congreso/AO4ELT5/pages/proceeding.php?id=43)
+- [*Deo, V. et al.*,"Enlarging the Control Space of the Pyramid Wavefront Sensor: Numerical Simulations and Bench Validation", AO4ELT5 2017](http://www.iac.es/congreso/AO4ELT5/pages/proceeding.php?id=61)
 - [*Ferreira, F. et al.*, "Deriving comprehensive error breakdown for wide field adaptive optics systems using end-to-end simulations", SPIE, 2016](https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9909/1/Deriving-comprehensive-error-breakdown-for-wide-field-adaptive-optics-systems/10.1117/12.2231573.short)
 - [*Clénet, Y. et al.*, "Joint MICADO-MAORY SCAO mode: specifications, prototyping, simulations and preliminary design
 ", SPIE, 2016](https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9909/1/Joint-MICADO-MAORY-SCAO-mode--specifications-prototyping-simulations-and/10.1117/12.2231192.short)

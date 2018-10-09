@@ -36,10 +36,10 @@ After an initialization phase, the script will prompt in the terminal the short 
 ```
 
 ### 2. Parameter file
-For COMPASS,  a parameter file is a python file where the parameter classes are instantiated and setted to be imported by the simulation script. All the parameter classes are described in details [here](#2-shesha_config-parameter-classes). 
-To write your own paramater file, remember those important points :
+For COMPASS,  a parameter file is a python file where the parameter classes are instantiated and set to be imported by the simulation script. All the parameter classes are described in details [here](#4-sheshaconfig-parameter-classes). 
+To write your own parameter file, remember those important points :
 - Starts by importing the ```shesha.config``` module: it contains all the parameter classes
-- Instantiates the paramater classes you need for your simulation. **Note that some of those classes are required to perform a simulation : Param_loop, Param_geom, Param_tel and Param_atmos.** You also have to set a list of Param_wfs called ```p_wfss```, a list of Param_dm called ```p_dms```, a list of Param_centroider called ```p_centroiders``` and a list of Param_controller called ```p_controllers```.
+- Instantiates the paramater classes you need for your simulation. **Note that some of those classes are required to perform a simulation : Param_loop, Param_geom, Param_tel and Param_atmos.** You also have to set a list of Param_target called ```p_targets```, a list of Param_wfs called ```p_wfss```, a list of Param_dm called ```p_dms```, a list of Param_centroider called ```p_centroiders``` and a list of Param_controller called ```p_controllers```.
 - Set the classes parameters using the setter functions. Those functions are usually named as ```set_<parameter name>```. 
 
 An example of parameter file follows and others can be found in ```$SHESHA_ROOT/data/par/par4bench``` directory
@@ -77,13 +77,12 @@ p_atmos.set_winddir([45])
 p_atmos.set_L0([1.e5])
 
 # target
-p_target = conf.Param_target()
+p_targets = [conf.Param_target()]
 
-p_target.set_ntargets(1)
-p_target.set_xpos([0])
-p_target.set_ypos([0.])
-p_target.set_Lambda([1.65])
-p_target.set_mag([10])
+p_targets[0].set_xpos(0)
+p_targets[0].set_ypos(0)
+p_targets[0].set_Lambda(1.65)
+p_targets[0].set_mag(10)
 
 # wfs
 p_wfs0 = conf.Param_wfs()
@@ -146,16 +145,16 @@ Thanks to the architecture of COMPASS, writing a script is easy.
 
 Let's take a look at our ```closed_loop.py``` script :
 ```python
-from shesha.sim.simulator import Simulator
+from shesha.supervisor.compassSupervisor import CompassSupervisor as Supervisor
 from docopt import docopt
 arguments = docopt(__doc__)
 param_file = arguments["<parameters_filename>"]
-sim = Simulator(param_file)
-sim.init_sim()
-sim.loop(sim.config.p_loop.niter)
+supervisor = Supervisor(param_file)
+supervisor.initConfig()
+supervisor.loop(supervisor.config.p_loop.niter)
 ```
 Let's go step-by-step :
-- The first line imports the ```shesha.sim.simulator``` module: it contains the Simulator class used to perform the simulation. This class is described properly [here](#3-shesha_sim-simulator-class).
+- The first line imports the ```shesha.supervisor.compassSupervisor``` module: it contains the Supervisor class used to handle the simulation. This class is described properly [here](#2-sheshasupervisor--supervisor-class).
 - The next lines : 
 ```python
 from docopt import docopt
@@ -163,39 +162,29 @@ arguments = docopt(__doc__)
 param_file = arguments["<parameters_filename>"]
 ```
 are used to get the parameter file name. ```docopt``` module is a command line arguments parser for python that can also set proper usage pattern and options for your script. For more information, visit [docopt.org](http://docopt.org/)
-- ```sim = Simulator(param_file)``` instantiates the Simulator class and loads the parameters define in the parameter file
-- ```sim.init_sim()``` initializes the simulation.
-- ```sim.loop(sim.config.p_loop.niter)``` runs the simulation for ```niter``` iterations
+- ```supervisor = Supervisor(param_file)``` instantiates the Supervisor class and loads the parameters defined in the parameter file
+- ```supervisor.initConfig()``` initializes the simulation.
+- ```supervisor.loop(supervisor.config.p_loop.niter)``` runs the simulation for ```niter``` iterations
 
-### 4. Interactions
+### 4. Interactions through the Supervisor
 If you had launched your script with python or ipython in interaction mode (```-i``` option), you will have access to the prompt after the iterations loop. At this point, you can interact with your simulation to display images (PSF, command matrix...) or to access at any internal quantity for debug. You can also modify your simulation and launch new iterations.
 
-Remember that your Simulator instance ```sim``` has created objects and you can access to them:
-- ```sim.config``` contains all the simulation parameters imported from your parameter file
-- ```sim.tel``` is the telescope object
-- ```sim.atm``` is the atmosphere object
-- ```sim.wfs``` is the wavefront sensor object. It could contain several WFS depending on your parameter file
-- ```sim.tar``` is the target object
-- ```sim.dms``` is the DM object. It could contain several DM depending on your parameter file
-- ```sim.rtc``` is the RTC object. It contains the centroiders and the controller that you have defined in the parameter file
+The Supervisor class has been created to offer an easy way to interact with the simulation through some easy-to-understand functions.
 
-All those objects have getter and setter methods which you can use to get information on what is going on your simulation or to set new parameters.
+Some of the most useful functions are listed below:
 
-Some of the most useful methods are listed below:
+| Method                              | Description                                                                |
+| :---------------------------------- | :------------------------------------------------------------------------- |
+| **supervisor.getTarImage(0, "le")** | Return the long exposure PSF. Use ```"se"``` to get the short exposure one |
+| **supervisor.getTarPhase(0)**       | Return the residual phase                                                  |
+| **supervisor.getWfsImage(0)**       | Return the WFS image                                                       |
+| **supervisor.getDmShape(0)**        | Return the DM shape                                                        |
+| **supervisor.getCentroids(0)**      | Return the lastest centroids (X measurements first, then Y)                |
+| **supervisor.getCom(0)**            | Return the lastest DM commands                                             |
+| **supervisor.getImat(0)**           | Return the interaction matrix                                              |
+| **supervsor.getCmat(0)**            | Return the command matrix                                                  |
 
-| Method                         | Description                                                                 |
-| :----------------------------- | :-------------------------------------------------------------------------- |
-| **sim.tar.get_image(0,b"le")** | Return the long exposure PSF. Use ```b"se"``` to get the short exposure one |
-| **sim.tar.get_phase(0)**       | Return the residual phase                                                   |
-| **sim.wfs.get_binimg(0)**      | Return the SH WFS spots image                                               |
-| **sim.wfs.get_pyrimg(0)**      | Return the pyramid WFS image                                                |
-| **sim.dms.get_dm(b"pzt",0)**   | Return the DM shape                                                         |
-| **sim.rtc.get_centroids(0)**   | Return the lastest centroids (X measurements first, then Y)                 |
-| **sim.rtc.get_com(0)**         | Return the lastest DM commands                                              |
-| **sim.rtc.get_imat(0)**        | Return the interaction matrix                                               |
-| **sim.rtc.get_cmat(0)**        | Return the command matrix                                                   |
-
-You can find all the methods description and usage in the [shesha package documentation](http://shesha.readthedocs.io/), autogenerated from the source code documentation using Sphinx. You can also use the ```help``` command of python to get information about a method.
+You can find all the functions description and usage in the [shesha package documentation](http://shesha.readthedocs.io/), autogenerated from the source code documentation using Sphinx. You can also use the ```help``` command of python to get information about a function.
 
 ### 5. Using the GUI
 
@@ -220,22 +209,8 @@ By default, nothing is displayed when you launched the simulation. You can choos
 
 You have also the possibility to save your layout area disposition. Once you have organized your display area, press the *Save* button of the *Layout Area Display*. You will be able to load it for further simulations with the *Load* button.
 
-#### Expert mode
-An additional panel is available via the option ```--expert``` that allows to control the simulation on the fly.
-To use it, launch the GUI with the option : 
-```
-ipython -i $SHESHA_ROOT/widgets/widget_ao.py -- --expert
-```
-or : 
-```
-python -i $SHESHA_ROOT/widgets/widget_ao.py --expert
-```
-if you don't use ipython.
-![expert](images/expert_panel.png){:width="600px"}
-This panel displays the simulation parameters currently used. Those parameters can be changed manually in the GUI before the initialization : enter the new parameter value and press the corresponding *Set* button. All the *Update* button can be used to change parameters on the fly, without restarting the simulation. For example, it is possible to change the loop gain at any time.
-
 #### Interactions in the terminal
-The terminal is also available when you are using the GUI, as for a classical simulation. All the commands listed in the section [Interactions](#4-interactions) (and all the other) remain valids, but you have to add ```wao.``` before each command. For example, ```sim.tar.get_image(0,b'le')``` becomes ```wao.sim.tar.get_image(0,b'le')```
+The terminal is also available when you are using the GUI, as for a classical simulation. All the commands listed in the section [Interactions](#4-interactions) (and all the other) remain valids, but you have to add ```wao.``` before each command. For example, ```supervisor.getTarImage(0,"le")``` becomes ```wao.supervisor.getTarImage(0,"le")```
 
 ## 2. Features implementation
 
@@ -357,6 +332,7 @@ Normalize
 Add noise
 ```
 
+With COMPASS 3.0, it is now possible to run simulate N faces pyramid. Set in the parameter file ```p_wfss[0].set_nPupils(3)``` to use a 3-faces pyramid for example. Note that if N is not equal to 4, the only centroider available is ["maskedpix"](#masked-pixels).
 ### "Geometric" WFS
 COMPASS also features a so-called “geometric model” emulating an ideal Shack-Hartmann wavefront sensor. This algorithm directly computes the average phase gradient at each subaperture, based on the phase itself, with no noise. This estimation of the average slope of the wavefront is considered as an “ideal” measurement, with perfect linearity over an infinite range and that does not suffer from any kind of sampling effect by a detector. This geometric model is embedded in all the WFS in COMPASS. Use the command ```sim.rtc.do_centroids_geom(0)``` to compute it.
 
@@ -423,6 +399,9 @@ A modified version of this approach called “global” is also implemented, in 
 which is also expressed in arcsec using the modulation amplitude.
 
 On top of these two approaches, the user can also select to retrieve the actual phase gradient by using the sine function as described in [Verinaud 2004](http://www.sciencedirect.com/science/article/pii/S0030401804000628?via%3Dihub).
+
+#### Masked pixels
+This centroider has to be used for pyramid WFS with more or less than 4 faces. It basically returns all the valid pixels of the WFS images. Then, the commands are computed directly on the pixels intensities.
 
 ### 9. Controllers
 
@@ -510,7 +489,96 @@ On top of this standard stack, a programming interface (API) is available in pyt
 
 **Only the shesha package source code is distributed on GitHub. The deeper layers are provided as binaries via conda environment. This configuration already gives to users the possibility to change the behaviour of COMPASS (via hacking/contributing to the shesha package). Users who want to contribute to the core layers for their applications are invited to contact the COMPASS team via the GitHub project.** 
 
-### 2. shesha.config: parameter classes
+COMPASS versions > 3.0 use [pyBind11](https://pybind11.readthedocs.io/en/master/) to bind the Pyhon user interface with the C++ core libraries.
+It allows a complete read-access of the instantiated GPU objects and arrays, very usefull for debug if you are a developer. On the other hand, it highly depends on the structures defined by those C++ classes : the konwledge of the core internal structures of COMPASS is then required to use those capabilities properly.
+However, unless you are a developer for COMPASS, it is generally useless to get access to all those informations. Hence, COMPASS embeds abstraction layers that allow generic user to interact easily with the simulation.
+
+### 2. shesha.supervisor : COMPASS Supervisor class
+This module defines the Supervisor classes which act as an user interface abstraction layer. The goal is to define generic functions that could be useful for simulations as well as for bench prototyping. Hence, a Supervisor inheriths from AbstractSupervisor which defines some functions that has to be implemented in a Supervisor class.
+
+The COMPASS Supervisor is the supervisor dedicated to COMPASS simulations. It is composed by two main attributes :
+- **config** : module containing all the parameters set by the parameters file
+- **_sim** : Simulator instance which is driving the simulation. This attribute is hidden because it is only useful for developer or expert user. However, as the COMPASS simulation completely relies on this class, the next section will give you an overview of it.
+
+Then, the COMPASS Supervisor provides a set of useful functions to interact and drive the simulation.  See [the shesha documentation](http://shesha.readthedocs.io/en/master/shesha_supervisor.html) to get a description of those functions.
+
+### 3. shesha.sim.simulator: Simulator class
+This module defines the Simulator class. The attributes of this class are the various objects defined during the initialization phase : 
+
+| Attribute name     | Type         | Description                             |
+| :----------------- | :----------- | :-------------------------------------- |
+| **atm**            | Atmos        | Atmosphere GPU object                   |
+| **tel**            | Telescope    | Telescope GPU object                    |
+| **tar**            | Target       | Target GPU object                       |
+| **rtc**            | Rtc          | RTC GPU object                          |
+| **wfs**            | Sensors      | Sensors GPU object                      |
+| **dms**            | Dms          | DMs GPU object                          |
+| **config**         | ModuleType   | Parameters imported from your paramfile |
+| **c**              | naga_context | GPU context                             |
+| **is_init**        | bool         | Flag for completed initialization       |
+| **loaded**         | bool         | Flag for loaded parameters              |
+| **iter**           | int          | Number of iterations performed          |
+| **use_DB**         | bool         | Flag for using the database system      |
+| **matricesToLoad** | dict         | Dictionary of teh database              |
+
+Then, those objects can be manipulated through this class. The AO loop process is also embedded in a class method, making user script light and easy to write.
+
+The Simulator class is instantiated through the Supervisor class, but it can also be instantiated independently :
+
+```python
+from shesha.sim.simulator import Simulator
+sim = Simulator()
+```
+
+or with the path to a parameter file : 
+
+```python
+from shesha.sim.simulator import Simulator
+sim = Simulator("/path_to_file/param_file.py")
+```
+ If the path is defined, the file is directly loaded during the instantiation. In the other case, the user has to manually load the file thanks to the function ```load_from_file```: 
+ 
+ ```python
+ sim.load_from_file("/path_to_file/param_file.py")
+ ```
+
+ Then, the simulation is initialized through a call to the function ```init_sim```:
+ 
+ ```python
+ sim.init_sim()
+ ```
+
+The initialization process is described below.
+![init](images/init-process.png){:width="840px"}
+Each step of this initialization process depends on the parameters file. For example, if no DM parameters are defined in the parameter file, then no DM will be initialized and the simulation will run without any DM.
+
+After this initialization phase, you can run the AO loop with function ```loop``` that takes the number of iterations as argument:
+
+```
+sim.loop(sim.config.p_loop.niter)
+```
+![loop](images/loop-process.png){:width="480px"}
+
+Note that ```sim.config.p_loop.niter``` is used to retieve the number of iterations specified in the parameter file : you can replace it by any integer.
+
+The AO loop process is also depicted. The Simulator class wraps operations of the AO loop into specific functions which are called at each iteration. Those functions are the one described in the adjacent picture. 
+
+Note that, due to this process order, there is an inherent 1-frame delay. So if the delay parameter is set to 1 in the parameter file, the simulated delay will be a 2-frames delay.
+Note that the PSF is not computed at each iteration. By default, it will be computed each 100 iterations by the command ```compTarImage(0)``` in the ```loop``` function. If this behaviour doesn't fulfill your requirements, please refer to the section [Scripting with COMPASS](#4-scripting-with-compass).
+
+Details on the Simulator class functions can be found in [the shesha documentation](http://shesha.readthedocs.io/en/master/shesha_sim.html).
+
+#### Database management
+The initialization step can be accelerated by re-using previous results from older simulations runs, as phase screens or interaction matrix. To use this feature, you have to instantiate the Simulator with ```use_DB=True```:
+```python
+from shesha.sim.simulator import Simulator
+sim = Simulator("/path_to_file/param_file.py", use_DB=True)
+```
+At first use, it will create ```$SHESHA_ROOT/data/matricesDataBase.h5``` file where we store all the arrays used to create phase screens, DMs and interaction matrix. The parameters of the simulation are also saved. Then, each time you run a simulation, COMPASS check in this file if some of those arrays can be re-used according to the parameters of your simulation. If it is possible, it will just load those arrays, leading to an acceleration of the initialization phase. In the other case, it will compute normally those arrays and store them in the database.
+
+**Note :** *We have already encounter some stability problems of the database system. If it occurs, we suggest to remove the ```$SHESHA_ROOT/data/matricesDataBase.h5``` file and all the ```.h5``` files created by the database. This can be done by using the shell script ```$SHESHA_ROOT/cleanDB.sh```.*
+
+### 4. shesha.config: parameter classes
 We describe here all the parameters used in COMPASS and all the classes attributes that could be retrieved by the user during or after the simulation. The following tables give, for each class, the attribute name, a boolean that says if this attribute is settable in the parameters file, its default value and its unit. <span style="color:red"> Parameters displayed in red </span> need to be set by the user in the parameter file if its associated class is instantiated.
 
 #### Param_loop
@@ -574,15 +642,14 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 
 #### Param_target
 
-| Attribute name                                | Type  | Units   | Settable | Default | Comments                              |
-| :-------------------------------------------- | :---- | :------ | :------- | :------ | :------------------------------------ |
-| <span style="color:red"> **ntargets** </span> | int   | none    | required |         | Number of targets                     |
-| <span style="color:red"> **Lambda** </span>   | list  | microns | required |         | Wavelength for each target            |
-| <span style="color:red"> **xpos** </span>     | list  | arcsec  | required |         | X position of each target in the FoV  |
-| <span style="color:red"> **ypos** </span>     | list  | arcsec  | required |         | Y position of each target in the FoV  |
-| <span style="color:red"> **mag** </span>      | list  |         | required |         | Magnitude of each target              |
-| **zerop**                                     | float | degree  | yes      | 1       | Flux for magnitude 0                  |
-| **dms_seens**                                 | list  | none    | yes      | all DMs | List of DM indices seen by the target |
+| Attribute name                              | Type  | Units   | Settable | Default | Comments                              |
+| :------------------------------------------ | :---- | :------ | :------- | :------ | :------------------------------------ |
+| <span style="color:red"> **Lambda** </span> | list  | microns | required |         | Wavelength for each target            |
+| <span style="color:red"> **xpos** </span>   | list  | arcsec  | required |         | X position of each target in the FoV  |
+| <span style="color:red"> **ypos** </span>   | list  | arcsec  | required |         | Y position of each target in the FoV  |
+| <span style="color:red"> **mag** </span>    | list  |         | required |         | Magnitude of each target              |
+| **zerop**                                   | float | degree  | yes      | 1       | Flux for magnitude 0                  |
+| **dms_seens**                               | list  | none    | yes      | all DMs | List of DM indices seen by the target |
 
 #### Param_wfs
 
@@ -619,6 +686,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | **dx**                                             | float  | pixels            | yes      | 0       | X axis misalignment                                                                              |
 | **dy**                                             | float  | pixels            | yes      | 0       | Y axis misalignment                                                                              |
 | **pyr_pos**                                        | array  |                   | yes      |         | positions for modulation points. Overwrite pyr_ampl and pyr_npts                                 |
+| **nPupils**                                        | int    |                   | yes      | 4       | Number of faces of the Pyramid WFS                                                               |
 | **pyr_loc**                                        | string |                   | yes      | "after" | Location of the modulation, "before" or "after" the field stop                                   |
 | **pyr_pup_sep**                                    | int    |                   | yes      | nxsub   | Pyramid pupils separation                                                                        |
 | *_pdiam*                                           | int    | pixels            | no       |         | Subap. diameter                                                                                  |
@@ -706,7 +774,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 
 | Attribute name                            | Type   | Units  | Settable | Default | Comments                                                                                                       |
 | :---------------------------------------- | :----- | :----- | :------- | :------ | :------------------------------------------------------------------------------------------------------------- |
-| <span style="color:red"> **type** </span> | string | none   | required |         | Centroider type: "cog", "tcog", "wcog", "bpcog", "corr" or "pyr"                                               |
+| <span style="color:red"> **type** </span> | string | none   | required |         | Centroider type: "cog", "tcog", "wcog", "bpcog", "corr", "pyr" or "maskedpix"                                  |
 | <span style="color:red"> **nwfs** </span> | int    | none   | required |         | WFS index handled by this centroider                                                                           |
 | <span style="color:red"> **nmax** </span> | int    | none   | required |         | Number of brightest pixels ("bpcog" only)                                                                      |
 | *weights*                                 | array  | none   | yes      |         | Weights applied for a "wcog"                                                                                   |
@@ -740,84 +808,11 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | *_imat*                                          | array  | none  | no       |         | Interaction matrix                                                         |
 | *_cmat*                                          | array  | none  | no       |         | Command matrix                                                             |
 
-### 3. shesha.sim.simulator: Simulator class
-This module defines the Simulator class that acts as a layer of abstraction for simulation scripts. The attributes of this class are the various objects defined during the initialization phase : 
-
-| Attribute name     | Type         | Description                             |
-| :----------------- | :----------- | :-------------------------------------- |
-| **atm**            | Atmos        | Atmosphere GPU object                   |
-| **tel**            | Telescope    | Telescope GPU object                    |
-| **tar**            | Target       | Target GPU object                       |
-| **rtc**            | Rtc          | RTC GPU object                          |
-| **wfs**            | Sensors      | Sensors GPU object                      |
-| **dms**            | Dms          | DMs GPU object                          |
-| **config**         | ModuleType   | Parameters imported from your paramfile |
-| **c**              | naga_context | GPU context                             |
-| **is_init**        | bool         | Flag for completed initialization       |
-| **loaded**         | bool         | Flag for loaded parameters              |
-| **iter**           | int          | Number of iterations performed          |
-| **use_DB**         | bool         | Flag for using the database system      |
-| **matricesToLoad** | dict         | Dictionary of teh database              |
-
-Then, those objects can be manipulated through this class. The AO loop process is also embedded in a class method, making user script light and easy to write.
-
-The Simulator class can be instantiated without argument:
-
-```python
-from shesha.sim.simulator import Simulator
-sim = Simulator()
-```
-
-or with the path to a parameter file : 
-
-```python
-from shesha.sim.simulator import Simulator
-sim = Simulator("/path_to_file/param_file.py")
-```
- If the path is defined, the file is directly loaded during the instantiation. In the other case, the user has to manually load the file thanks to the function ```load_from_file```: 
- 
- ```python
- sim.load_from_file("/path_to_file/param_file.py")
- ```
-
- Then, the simulation is initialized through a call to the function ```init_sim```:
- 
- ```python
- sim.init_sim()
- ```
-
-The initialization process is described below.
-![init](images/init-process.png){:width="840px"}
-Each step of this initialization process depends on the parameters file. For example, if no DM parameters are defined in the parameter file, then no DM will be initialized and the simulation will run without any DM.
-
-After this initialization phase, you can run the AO loop with function ```loop``` that takes the number of iterations as argument:
-
-```
-sim.loop(sim.config.p_loop.niter)
-```
-![loop](images/loop-process.png){:width="480px"}
-
-Note that ```sim.config.p_loop.niter``` is used to retieve the number of iterations specified in the parameter file : you can replace it by any integer.
-
-The AO loop process is also depicted. Note that, due to this process order, there is an inherent 1-frame delay. So if the delay parameter is set to 1 in the parameter file, the simulated delay will be a 2-frames delay.
-Note that the PSF is not computed at each iteration. By default, it will be computed each 100 iterations by the command ```tar.comp_image(0)``` in the ```loop``` function. If this behaviour doesn't fulfill your requirements, please refer to the section [Scripting with COMPASS](#4-scripting-with-compass).
-
-Details on the Simulator class functions can be found in [the shesha documentation](http://shesha.readthedocs.io/en/master/shesha_sim.html).
-
-#### Database management
-The initialization step can be accelerated by re-using previous results from older simulations runs, as phase screens or interaction matrix. To use this feature, you have to instantiate the Simulator with ```use_DB=True```:
-```python
-from shesha.sim.simulator import Simulator
-sim = Simulator("/path_to_file/param_file.py", use_DB=True)
-```
-At first use, it will create ```$SHESHA_ROOT/data/matricesDataBase.h5``` file where we store all the arrays used to create phase screens, DMs and interaction matrix. The parameters of the simulation are also saved. Then, each time you run a simulation, COMPASS check in this file if some of those arrays can be re-used according to the parameters of your simulation. If it is possible, it will just load those arrays, leading to an acceleration of the initialization phase. In the other case, it will compute normally those arrays and store them in the database.
-
-**Note :** *We have already encounter some stability problems of the database system. If it occurs, we suggest to remove the ```$SHESHA_ROOT/data/matricesDataBase.h5``` file and all the ```.h5``` files created by the database. This can be done by using the shell script ```$SHESHA_ROOT/cleanDB.sh```.*
-
 ## 4. Scripting with COMPASS
-This section aims to provide some tips for writing your own script. We higly recommend to create your own class that inherits from the Simulator class for obvious convenience reasons. Once you have created your own class, just write a python script that will use it properly.
+This section aims to provide some tips for writing your own script. We higly recommend to create your own class that inherits from the Simulator class for obvious convenience reasons. Once you have created your own class, just write a python script that will use it properly, eventually inside a custom Supervisor class for easier usage.
+
 ### 1. Inheritance
-You don't know anything about inheritance with python, you can find information in the [Python documentation](https://docs.python.org/3/tutorial/classes.html#inheritance).
+If you don't know anything about inheritance with python, you can find information in the [Python documentation](https://docs.python.org/3/tutorial/classes.html#inheritance).
 
 We recommend to not overwrite the ```init_sim```, ```load_from_file``` and ```force_context``` functions in your class, unless you really know what you are doing. The interesting function the overwrite are ```next``` and eventually ```loop```.
 
@@ -887,6 +882,76 @@ do
 done
 ```
 
+## 5. Advanced features : GUARDIANS package
+
+### 1. GUARDIANS package content
+![guardians](images/guardians.png){:width="400px"}
+GUARDIANS is a Python package distributed with COMPASS which provides tools dedicated to the numerical estimation and modeling of the AO error breakdown.
+This package contains 3 main modules :
+- ROKET, which provides a complete error breakdown estimation as an additional output of a COMPASS simulation
+- GAMORA, which allows fast PSF reconstruction using the so-called [Vii algorithm](https://doi.org/10.1051/0004-6361:20065135) and GPU acceleration
+- GROOT, which provides a new approach for AO error modeling based on covariance matrix computation
+
+Those modules come with two additionnal tools :
+- DRAX, which provides a set of functions dedicated to ROKET output exploitation
+- STARLORD, which contains CPU version of the algorithms for phase structure functions used by GROOT
+
+### 2. ROKET : error breakdown estimation tool
+ROKET is the error breakdown estimation tool developed within COMPASS. It provides as an output of a COMPASS simulation a HDF5 file containing temporal buffers of the following AO errors : 
+- Anisoplanatism error
+- Bandwidth error
+- Noise error
+- Aliasing error
+- WFS deviations error
+- Filtered modes error
+- Fitting error
+
+Those estimations are directly made on the DM actuators space, except for the fitting error which is directly given as a PSF.
+For now, ROKET only works on SCAO system.
+
+To use it, you just has to set a dedicated flag on your COMPASS parameter file :
+```python
+p_wfs0 = conf.Param_wfs(roket=True)
+```
+Then, just use the dedicated script to run the simulation :
+```bash
+cd $SHESHA_ROOT/shesha/guardians/scripts
+ipython script_roket.py <your_parameter_file> -- -s <savefile_name>
+```
+The HDF5 file will be saved in the directory set by the environment variable $DATA_GUARDIAN. It contains all the temporal buffers along with critical components used for the estimation, such as the modal basis, the DM influence functions, etc... 
+Please, use the functions provided by DRAX to expoit this file easily.
+
+Obviously, using this feature will considerably slow down the simulation framerate because of the additionnal operations needed to get the error breakdown at each iteration.
+
+A formal description of ROKET equations is written in this [A&A article](https://doi.org/10.1051/0004-6361/201832579).
+
+### 3. DRAX : ROKET exploitation tool
+DRAX defines a set a functions usefull for the ROKET output file exploitation. You will be able to find those functions in the [shesha documentation](https://shesha.readthedocs.io/en/master/guardians.html).
+
+Here a few examples of functions provided by DRAX : 
+
+| Method                      | Description                                                           |
+| :-------------------------- | :-------------------------------------------------------------------- |
+| **drax.get_breakdown**      | Return the error breakdown distribution in nm rms from the ROKET file |
+| **drax.get_covmat_contrib** | Return the total covariance matrix of the specified contributors      |
+| **drax.get_err**            | Return the sum of all error contributors in the DM actuators space    |
+| **drax.get_P**              | Return the Volts to Modes matrix                                      |
+| **drax.get_Btt**            | Return the Modes to Volts matrix                                      |
+
+### 4. GAMORA : PSF reconstruction
+GAMORA is a GPU accelerated module for PSF reconstruction. It is based on the [Vii algorithm](https://doi.org/10.1051/0004-6361:20065135) and it was initially developed to reconstruct PSF from ROKET buffers.
+
+### 5. GROOT : error breakdown modeling
+GROOT is a new approach for error breakdown modeling based on the computation of modified phase structure functions to get the residual error covariance matrix directly expressed in the DM actuators space. [Details are given in the second part of this article.](https://doi.org/10.1051/0004-6361/201832579).
+
+The module includes GPU and CPU version of the developed algorithms. It includes :
+- Anisoplanatism error model
+- Bandwidth error model
+- Anisoplanatism and bandwidth error covariance model
+- Aliasing model
+- Fitting model
+
+For now, the functions that compute those models take as an input a ROKET file as it contains all the simulation parameters needed by the models. However, it would be easy to make it independent from ROKET by modifying the signature functions to make it able to take external parameters. 
 
 
 
