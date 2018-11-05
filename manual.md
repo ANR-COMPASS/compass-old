@@ -569,14 +569,19 @@ Note that the PSF is not computed at each iteration. By default, it will be comp
 Details on the Simulator class functions can be found in [the shesha documentation](http://shesha.readthedocs.io/en/master/shesha_sim.html).
 
 #### Database management
-The initialization step can be accelerated by re-using previous results from older simulations runs, as phase screens or interaction matrix. To use this feature, you have to instantiate the Simulator with ```use_DB=True```:
+The initialization step can be accelerated by re-using previous results from older simulations runs, as phase screens or interaction matrix. To use this feature, you have to instantiate the Supervisor with ```use_DB=True```:
 ```python
-from shesha.sim.simulator import Simulator
-sim = Simulator("/path_to_file/param_file.py", use_DB=True)
+from shesha.supervisor.compassSupervisor import CompassSupervisor as Supervisor
+supervisor = Supervisor(param_file, use_DB=use_DB)
 ```
-At first use, it will create ```$SHESHA_ROOT/data/matricesDataBase.h5``` file where we store all the arrays used to create phase screens, DMs and interaction matrix. The parameters of the simulation are also saved. Then, each time you run a simulation, COMPASS check in this file if some of those arrays can be re-used according to the parameters of your simulation. If it is possible, it will just load those arrays, leading to an acceleration of the initialization phase. In the other case, it will compute normally those arrays and store them in the database.
+You can also directly use this feature with the script ```closed_loop.py``` with a special flag:
+```bash
+cd $SHESHA_ROOT
+ipython -i shesha/scripts/closed_loop.py path_to_your_parfile/parfile.py -- --DB
+```
+At first use, it will create ```$SHESHA_ROOT/data/dataBase/matricesDataBase.h5``` file where we store all the arrays used to create phase screens, DMs and interaction matrix. The parameters of the simulation are also saved. Then, each time you run a simulation, COMPASS check in this file if some of those arrays can be re-used according to the parameters of your simulation. If it is possible, it will just load those arrays, leading to an acceleration of the initialization phase. In the other case, it will compute normally those arrays and store them in the database.
 
-**Note :** *We have already encounter some stability problems of the database system. If it occurs, we suggest to remove the ```$SHESHA_ROOT/data/matricesDataBase.h5``` file and all the ```.h5``` files created by the database. This can be done by using the shell script ```$SHESHA_ROOT/cleanDB.sh```.*
+**Note :** *We have already encounter some stability problems of the database system. If it occurs, we suggest to remove the ```$SHESHA_ROOT/data/dataBase/matricesDataBase.h5``` file and all the ```.h5``` files created by the database. This can be done by using the shell script ```$SHESHA_ROOT/cleanDB.sh```.*
 
 ### 4. shesha.config: parameter classes
 We describe here all the parameters used in COMPASS and all the classes attributes that could be retrieved by the user during or after the simulation. The following tables give, for each class, the attribute name, a boolean that says if this attribute is settable in the parameters file, its default value and its unit. <span style="color:red"> Parameters displayed in red </span> need to be set by the user in the parameter file if its associated class is instantiated.
