@@ -5,7 +5,7 @@ layout: default
 # Requirements
 
 - Linux distribution
-- Nvidia GPU card with CUDA toolkit >= 9.2 (Older versions could be available on request)
+- Nvidia GPU card with CUDA toolkit >= 10.0 (Older versions could be available on request)
 
 # Installation of Anaconda/Miniconda
 
@@ -33,10 +33,10 @@ Once Miniconda is installed, installing the COMPASS binaries is easy :
 conda install -c compass compass -y
 ```
 
-Note: conda main channel is compiled with CUDA 10.0, for previous version please use:
+Note: conda main channel is compiled with CUDA 10.1, for previous version please use:
 
 ```bash
-conda install -c compass/label/cuda92 compass -y
+conda install -c compass/label/cuda100 compass -y
 ```
 
 This command line will also install dependencies in your conda environment. 
@@ -61,7 +61,7 @@ export PYTHONDONTWRITEBYTECODE=1
 
 Once the installation is complete, verify that everything is working fine :
 ```bash
-cd $SHESHA_ROOT/shesha/tests
+cd $SHESHA_ROOT/tests
 ./checkCompass.sh
 ```
 This test will basically launch fast simulation test cases and it will print if those cases have been correctly initialised.
