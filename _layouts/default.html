@@ -40,7 +40,10 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        {{ content }}
+              {% if page.toc != false %}
+              {% include toc.html html=content h_min=2  h_max=3 sanitize=true class="table-of-contents" %}
+              {% endif %}
+              {{ content }}
       </section>
     </div>
 

@@ -1,5 +1,6 @@
 ---
 layout: default
+toc: false
 ---
 
 # Refereed publications using COMPASS

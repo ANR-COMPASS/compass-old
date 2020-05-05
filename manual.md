@@ -1,13 +1,11 @@
 ---
 layout: default
+toc: true
 ---
 
 # User manual
 
 This is the user manual for COMPASS. We will try to be as exhaustive as possible, but if you don't get the answer you are looking for, [contact us on the GitHub project](https://github.com/anr-compass/shesha).
-
-* blabla
-{:toc}
 
 ## 1. Quick start
 
