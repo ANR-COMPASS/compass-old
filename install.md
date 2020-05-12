@@ -3,12 +3,14 @@ layout: default
 toc: false
 ---
 
-# Requirements
+# Installation
+
+## Requirements
 
 - Linux distribution
 - Nvidia GPU card with CUDA toolkit >= 10.0 (Older versions could be available on request)
 
-# Installation of Anaconda/Miniconda
+## Installation of Anaconda/Miniconda
 
 COMPASS binaries, which contain the optimized GPU code, can be installed via Anaconda.
 Then, you have to install Anaconda 3 or Miniconda 3 (python 3 is required).
@@ -27,7 +29,7 @@ Don't forget to add your Miniconda or Anaconda directory to your PATH:
 export PATH=$CONDA_ROOT/bin:$PATH
 ```
 
-# Installation of COMPASS via conda
+## Installation of COMPASS via conda
 Once Miniconda is installed, installing the COMPASS binaries is easy :
 
 ```bash
@@ -43,7 +45,7 @@ conda install -c compass/label/cuda100 compass -y
 
 This command line will also install dependencies in your conda environment. 
 
-# Installation of SHESHA package for COMPASS
+## Installation of SHESHA package for COMPASS
 
 Finally, you can get the Shesha package of COMPASS. This python package is the user level of COMPASS. It also contains all the initialization functions.
 
@@ -59,7 +61,7 @@ export PYTHONPATH=$SHESHA_ROOT:$PYTHONPATH
 export PYTHONDONTWRITEBYTECODE=1
 ```
 
-# Test your installation
+## Test your installation
 
 Once the installation is complete, verify that everything is working fine :
 ```bash
@@ -68,7 +70,7 @@ cd $SHESHA_ROOT/tests
 ```
 This test will basically launch fast simulation test cases and it will print if those cases have been correctly initialised.
 
-# Run the simulation
+## Run the simulation
 
 You are ready !
 You can try it with one of our paramaters file:

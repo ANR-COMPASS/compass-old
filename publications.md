@@ -4,6 +4,7 @@ toc: false
 ---
 
 # Refereed publications using COMPASS
+
 - [*Ferreira, F. et al.*, "Numerical estimation of wavefront error breakdown in adaptive optics", A&A 2018](https://doi.org/10.1051/0004-6361/201832579)
 - *Ferreira, F. et al*, "COMPASS: an efficient GPU-based simulation software for adaptive optics systems", HPCS 2018, To be published
 - [*Ltaief, H. et al.*, "Adaptive Optics Simulation for the World’s Largest Telescope on Multicore Architectures with Multiple GPUs", ACM PASC 2016](https://dl.acm.org/citation.cfm?id=2929920)
