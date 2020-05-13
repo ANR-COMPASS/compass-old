@@ -17,6 +17,22 @@ header:
 
   - titles:
       # @start locale config
+      en      : &EN       News
+      en-GB   : *EN
+      en-US   : *EN
+      en-CA   : *EN
+      en-AU   : *EN
+      fr      : &FR       Nouveautés
+      fr-BE   : *FR
+      fr-CA   : *FR
+      fr-CH   : *FR
+      fr-FR   : *FR
+      fr-LU   : *FR
+      # @end locale config
+    url: /news.html
+
+  - titles:
+      # @start locale config
       en      : &EN       Install
       en-GB   : *EN
       en-US   : *EN
@@ -46,6 +62,22 @@ header:
       fr-LU   : *FR
       # @end locale config
     url: /manual.html
+
+  - titles:
+      # @start locale config
+      en      : &EN       Tutorials
+      en-GB   : *EN
+      en-US   : *EN
+      en-CA   : *EN
+      en-AU   : *EN
+      fr      : &FR       Tutorials
+      fr-BE   : *FR
+      fr-CA   : *FR
+      fr-CH   : *FR
+      fr-FR   : *FR
+      fr-LU   : *FR
+      # @end locale config
+    url: /tutorials.html
 
   - titles:
       # @start locale config
