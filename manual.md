@@ -211,7 +211,7 @@ To launch the GUI :
 ipython -i $SHESHA_ROOT/widgets/widget_ao.py
 ```
 
-![gui](https://anr-compass.github.io/compass/images/compass_gui_annotated.png){:width="600px"}
+![gui](images/compass_gui_annotated.png){:width="600px"}
 
 To start your simulation, follows those steps:
 
@@ -222,7 +222,7 @@ To start your simulation, follows those steps:
 
 #### Display management
 
-![display](https://anr-compass.github.io/compass/images/gui_display.png){:width="600px"}
+![display](images/gui_display.png){:width="600px"}
 
 By default, nothing is displayed when you launched the simulation. You can choose what to display by cheking the corresponding boxes in the drop down menus. Then, you can rearrange the displays as you wish by drag and drop. You can also detach the display area from the main window by clicking the button in the bottom right corner of the main window.
 
@@ -293,7 +293,7 @@ The quantum pixel size in arcsec is given by:
 
 ### 3. Telescope
 
-<span class="inner">![ELTab](https://anr-compass.github.io/compass/images/ELT-ab.png){:height="300px"}</span>
+<span class="inner">![ELTab](images/ELT-ab.png){:height="300px"}</span>
 
 COMPASS includes the ability to use customizable telescope pupil: the diameter and the eventual central obstruction are parameters of the simulation. ELT and VLT pupils have been also implemented, including spiders, hexagonal segments, and missing segments. Phase aberration due to misalignment of the pupil segments are also configurable by specifying the amount of piston and tip-tilt errors. Reflectivity error between each segment can also be taken into account.
 
@@ -301,9 +301,11 @@ COMPASS includes the ability to use customizable telescope pupil: the diameter a
 
 Turbulence is generated on-the-fly during the iterations of the simulation by [the extrusion of Kolmogorov or Von Karman type phase screens](https://www.osapublishing.org/oe/abstract.cfm?id=87803). It is possible to simulate several independent turbulent layers at any set of user-defined altitudes. Each layer has its own arbitrary Fried parameter r0, outer scale values L0, wind speed and direction. The assumption is that the overall turbulence will result from the addition of the phase of these discrete, statistically independent layers, through an appropriate ray-tracing algorithm through each of them taking into account the direction of observation of each WFS and target object. Those phase screens are expressed in terms of optical path difference, in microns.
 
-### 5. Shack-Hartmann WFS
+### 5. Wave-front sensor
 
-<span class="inner">![SH-proc](https://anr-compass.github.io/compass/images/SH-proc.png){:width="500px"}</span>
+#### Shack-Hartmann WFS
+
+<span class="inner">![SH-proc](images/SH-proc.png){:width="500px"}</span>
 
 COMPASS includes a Shack-Hartmann wave-front sensor model based on Fast Fourier Transforms (FFT) of the portion of the complex amplitude of the wave-front seen by each subaperture. This wave-front is computed by raytracing the turbulent layer and/or the DM shape in the guide star (GS) direction. The number of subapertures, the number of pixels per subaperture and the pixel size are specified by the user.
 
@@ -326,7 +328,7 @@ This model is called “diffractive”, as it results from a computation of Frau
 
 #### Laser guide stars
 
-<span class="inner">![LGS-spot](https://anr-compass.github.io/compass/images/LGS-proc.png){:width="500px"}</span>
+<span class="inner">![LGS-spot](images/LGS-proc.png){:width="500px"}</span>
 
 Laser Guide Stars can be included in the simulation. It takes into account the sodium profile to compute elongation on each sub-aperture, and also the cone effect.  Elongation is computed by convolving the high resolution image on each subaperture by a high resolution elongated spot model. This spot model is computed in respect with the sodium profile that could be analytical (Gaussian) or experimental (read from a file), and with each sub-apertures positions in relation to the laser launch position.
 
@@ -334,9 +336,9 @@ The cone effect, due to the finite height of the sodium layer where the LGS is p
 
 Note that there isn't tip-tilt indetermination for LGS in COMPASS.
 
-### 6. Pyramid WFS
+#### Pyramid WFS
 
-<span class="inner">![pyr-func](https://anr-compass.github.io/compass/images/pyr-func.png){:width="300px"}</span>
+<span class="inner">![pyr-func](images/pyr-func.png){:width="300px"}</span>
 
 COMPASS features a pyramid wavefront sensor model based on the concept described in [Ragazzoni 1996](http://www.tandfonline.com/doi/abs/10.1080/09500349608232742). The PSF on the tip of the pyramid is obtained as the square modulus of the EM field in the pyramid plane. The latter is computed at high resolution as the Fourier transform of the EM field in the pupil plane for which the amplitude is given by the pupil intensity distribution and the phase is obtained as a combination of the actual residual phase from atmospheric disturbance (evaluated by raytracing through the turbulence and compensation from the DM) and the phase introduced by modulation.
 The phase term introduced by the pyramid itself is added to this EM field and another Fourier Transform accounting for the relay lens, provides the EM field on the plane of the camera.
@@ -345,7 +347,7 @@ Concerning the modulation, the corresponding Tip-Tilt term is introduced followi
 
 Proper undersampling to the users parameters and flux normalization are then performed. Photon and detector noise can then be added if specified.
 
-<span class="inner">![pyrimg](https://anr-compass.github.io/compass/images/pyrimg.png){:width="400px"}![pyrhr](https://anr-compass.github.io/compass/images/High-res-pyr.png){:width="400px"}</span>
+<span class="inner">![pyrimg](images/pyrimg.png){:width="400px"}![pyrhr](images/High-res-pyr.png){:width="400px"}</span>
 
 Here a pseudo-code of the algorithm :
 
@@ -368,13 +370,13 @@ Add noise
 
 With COMPASS 3.0, it is now possible to run simulate N faces pyramid. Set in the parameter file `p_wfss[0].set_nPupils(3)` to use a 3-faces pyramid for example. Note that if N is not equal to 4, the only centroider available is ["maskedpix"](#masked-pixels).
 
-### "Geometric" WFS
+#### "Geometric" WFS
 
 COMPASS also features a so-called “geometric model” emulating an ideal Shack-Hartmann wavefront sensor. This algorithm directly computes the average phase gradient at each subaperture, based on the phase itself, with no noise. This estimation of the average slope of the wavefront is considered as an “ideal” measurement, with perfect linearity over an infinite range and that does not suffer from any kind of sampling effect by a detector. This geometric model is embedded in all the WFS in COMPASS. Use the command `sim.rtc.do_centroids_geom(0)` to compute it.
 
 Finally, a last level of abstraction is reached with the third type of wave surface analyzer, which is purely theoretical: it is a direct projection of the phase onto the DM influence functions, resulting in a set of DM voltages that best fit the wavefront in a least-square sense. It is fully linear and is free from any WFS effect or reconstruction effect, it is in particular free from aliasing. We call this method “DM projection”, it behaves as a theoretical, perfect WFS. To use it, set your controller type to "geo" : `p_controllers[0].type = "geo"`
 
-### 7. Deformable mirrors
+### 6. Deformable mirrors
 
 COMPASS models the DM as a weighted sum of local influence functions. Several types of built-in influence functions are available, all of them close to a bell-shaped function. They have different analytical expressions, that fit different types of DMs. Each influence function is defined on a local support, chosen to be small with respect to the simulated pupil.
 
@@ -388,8 +390,22 @@ COMPASS can handle any number of DMs, each of them conjugated at any arbitrary a
 
 #### Custom DM
 
-It is also possible to use your own influence function. To do so, you have to provide a HDF5 file where you have saved your influence function and other informations on your DM in a [pandas DataFrame](https://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html) named `"resAll"`. The simulation will then automatically resize and interpolate properly your influence functions. The needed informations in the dataFrame are listed below:
+It is also possible to use your own influence function. To do so, you have to provide a FITS file where you have saved your influence function and other informations on your DM 
+The simulation will then automatically resize and interpolate properly your influence functions. The needed informations in the dataFrame are listed below:
 
+| Name         | Type                               | Unit                   | Description                                                                                                                                                                      |
+| :----------- | :--------------------------------- | :--------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| xC           | float                              | pixels                 | DM center along X                                                                                                                                                                |
+| yC           | float                              | pixels                 | DM center along Y                                                                                                                                                                |
+| pitchPix     | float                              | pixels                 | actuators pitch, not required                                                                                                                                                    |
+| pitchMeters  | float                              | meters                 | actuators pitch                                                                                                                                                                  |
+| hi_i1, hi_j1 | np.array(ndim=2)                   | pixels                 | Coordinates of the influence function maps                                                                                                                                       |
+| influ        | np.array(ndim=3,dtype=np.float32)  |                        | Cube containing your influence functions. Cube size is (influ_size x influ_size x nactus). Influence functions must be ordered as the xpos and ypos vectors                      |
+| xpos, ypos   | np.array(ndim=2, dtype=np.float32) | pixels                 | actuators coordinates                                                                                                                                                            |
+| pixsize      | float                              | meters                 | The size of the pixel in the fits support                                                                                                                                        |
+| pupm         | float                              | meters                 | Size of the DM pupil                                                                                                                                                             |
+
+<!--
 | Name        | Type                               | Unit                   | Description                                                                                                                                                                       |
 | :---------- | :--------------------------------- | :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | xpos        | np.array(ndim=1, dtype=np.float32) | meters                 | X positions of the actuators                                                                                                                                                      |
@@ -401,8 +417,9 @@ It is also possible to use your own influence function. To do so, you have to pr
 | influ       | np.array(ndim=3,dtype=np.float32)  | Normalized deformation | Cube containing your influence functions. Cube size is (influ_size x influ_size x nactus). Influence functions must be ordered as the xpos and ypos vectors, and mormalized to 1. |
 
 The names given here are arbitrary : you have to provide the actual names of those fields in the parameter file.
+-->
 
-### 8. Centroiders
+### 7. Centroiders
 
 #### Schack-Hartmann WFS centroides
 
@@ -463,7 +480,7 @@ On top of these two approaches, the user can also select to retrieve the actual 
 
 This centroider has to be used for pyramid WFS with more or less than 4 faces. It basically returns all the valid pixels of the WFS images. Then, the commands are computed directly on the pixels intensities.
 
-### 9. Controllers
+### 8. Controllers
 
 #### Least-square approach
 
@@ -536,9 +553,9 @@ with:
 - (a = 1-b ; b = floor(d) ; e = 0) if 0 <= d <= 1
 - (a = 0 ; b = 1-e ; e= floor(d) - 1) if 1 < d <= 2
 
-### 10. Image formation
+### 9. Image formation
 
-<span class="inner">![PSF-spiders](https://anr-compass.github.io/compass/images/PSF-spiders.png){:width="300px"}</span>
+<span class="inner">![PSF-spiders](images/PSF-spiders.png){:width="300px"}</span>
 
 The output of a classical COMPASS simulation is the PSF of the simulated system. It is computed as the Fourier transform of the complex field amplitude obtained after a ray-tracing through the turbulent layer screens and the DM shape screen. The wavelength of this PSF is a user parameter; the phase is scaled accordingly. The size of the support for achieving the FFT is chosen among the integer powers of 2 immediately greater than twice the pupil size, in order to provide the user with an adequate sampling of the PSF (in general slightly finer than Nyquist).
 The PSF intensity is normalized in such a way that its maximum value corresponds to the Strehl ratio. Each loop iteration produces a short-exposure PSF, which is averaged over the iterations to produce the long-exposure PSF. As it results from a Monte-Carlo simulation, the PSF includes the statistical non convergence limitation.
@@ -549,7 +566,7 @@ The user also has the ability to change the pupil just for PSF computation as sh
 
 ### 1. COMPASS architecture
 
-<span class="inner">![archi](https://anr-compass.github.io/compass/images/compass_archi.png){:height="280px"}></span>
+<span class="inner">![archi](images/compass_archi.png){:height="280px"}></span>
 
 The initial objective behind the development of COMPASS was to get a numerical simulation platform able to deliver short exposure PSF (i.e. per WFS frame) with a time-to-solution in the range of the 10th of seconds for an AO system at the E-ELT scale. To reach such performance, the use of GPU as hardware accelerators appeared as the best option.
 
@@ -625,7 +642,7 @@ sim.init_sim()
 ```
 
 The initialization process is described below.
-![init](https://anr-compass.github.io/compass/images/init-process.png){:width="840px"}
+![init](images/init-process.png){:width="840px"}
 Each step of this initialization process depends on the parameters file. For example, if no DM parameters are defined in the parameter file, then no DM will be initialized and the simulation will run without any DM.
 
 After this initialization phase, you can run the AO loop with function `loop` that takes the number of iterations as argument:
@@ -634,7 +651,7 @@ After this initialization phase, you can run the AO loop with function `loop` th
 sim.loop(sim.config.p_loop.niter)
 ```
 
-<span class="inner">![loop](https://anr-compass.github.io/compass/images/loop-process.png){:width="480px"}</span>
+<span class="inner">![loop](images/loop-process.png){:width="480px"}</span>
 
 Note that `sim.config.p_loop.niter` is used to retieve the number of iterations specified in the parameter file : you can replace it by any integer.
 
@@ -777,6 +794,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | **nPupils**                                        | int    |                   | yes      | 4       | Number of faces of the Pyramid WFS                                                               |
 | **pyr_loc**                                        | string |                   | yes      | "after" | Location of the modulation, "before" or "after" the field stop                                   |
 | **pyr_pup_sep**                                    | int    |                   | yes      | nxsub   | Pyramid pupils separation                                                                        |
+| **pyr_compute_focalplane**                         | bool   |                   | yes      | False   | Compute modulated PSF                                                                            |
 | *_pdiam*                                           | int    | pixels            | no       |         | Subap. diameter                                                                                  |
 | *_Nftt*                                            | int    | pixels            | no       |         | Size of FFT support                                                                              |
 | *_Ntot*                                            | int    | pixels            | no       |         | Size of high resolution support                                                                  |
@@ -819,8 +837,8 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | <span style="color:red"> **alt** </span>    | float  | meters                                   | required |           | Conjugation altitude                                                                                          |
 | <span style="color:red"> **thresh** </span> | float  | fraction                                 | required |           | Threshold on response for selection of valid actuators. Expressed in fraction of the maximal response         |
 | **type_pattern**                            | string | none                                     | yes      | "square"  | Actuators position pattern: "square" or "hexa"                                                                |
-| **influType**                               | string | none                                     | yes      | "default" | Influence function to use: "default", "radialSchwartz", "squareSchwartz", "blacknutt", "gaussian" or "bessel" |
-| **file_influ_hdf5**                         | string | none                                     | yes      | None      | HDF5 file name of custom influence functions. Overwrites influType, type_pattern, nact                        |
+| **influType**                               | string | none                                     | yes      | "default" | Influence function to use: "default", "radialSchwartz", "squareSchwartz", "blacknutt", "gaussian", "bessel" or "petal"|
+| **file_influ_hdf5**                         | string | none                                     | yes      | None      | FITS file name of custom influence functions. Overwrites influType, type_pattern, nact                        |
 | **center_name**                             | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the center is stored                                             |
 | **cube_name**                               | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the influence function cube is stored                            |
 | **x_name**                                  | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the actuators X coordinates are stored                           |
@@ -890,6 +908,7 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | **gmin**                                         | float  | none  | yes      | 0       | Minimum gain for modal optimization ("ls" only)                            |
 | **gmax**                                         | float  | none  | yes      | 1       | Maximum gain for modal optimization ("ls" only)                            |
 | **ngain**                                        | int    | none  | yes      | 15      | Number of gains to test between gmin and gmax ("ls" only)                  |
+| **nstates**                                      | int    | none  | yes      | 0       | Number of states in the controller (free variables to store anything)       |
 | *_nvalid*                                        | list   | none  | no       |         | Number of valid subap. per WFS                                             |
 | *_nactu*                                         | int    | none  | no       |         | Number of actuators per DM                                                 |
 | *_imat*                                          | array  | none  | no       |         | Interaction matrix                                                         |
@@ -973,11 +992,89 @@ do
 done
 ```
 
+## 4. Scripting with COMPASS
+
+This section aims to provide some tips for writing your own script. We higly recommend to create your own class that inherits from the Simulator class for obvious convenience reasons. Once you have created your own class, just write a python script that will use it properly, eventually inside a custom Supervisor class for easier usage.
+
+### 1. Inheritance
+
+If you don't know anything about inheritance with python, you can find information in the [Python documentation](https://docs.python.org/3/tutorial/classes.html#inheritance).
+
+We recommend to not overwrite the `init_sim`, `load_from_file` and `force_context` functions in your class, unless you really know what you are doing. The interesting function the overwrite are `next` and eventually `loop`.
+
+The `next` function defines what happen during an iteration. You can basically rewrite this function if you want a specific behaviour for your loop.
+
+The `loop` function basically put the `next` function in a loop and performs some operations like PSF computation regularly.
+
+By overwriting those two functions in your own class, you can reach any wanted behaviour for your simulation.
+
+### 2. Batch processing
+
+Once you have wrote your script and tested it, you will probably want to perform a batch of simulations for parameters space exploration.
+
+To do so, we highly recommend to write your batch script as a shell script that will call your python script. Indeed, we have noticed some unexpected problems by performing a high number of simulation in an unique python session. A bash script allows then to close the python session at the end of a simulation and to opena new one for the next simulation, ensuring then correct results.
+
+We recommend to use [docopt](http://docopt.org/) in your python file to easily parse arguments from the shell in your script. This tip will avoid you to write a parameter file per simulation case. Your python script will also have to include a function that will save the results of each simulations.
+
+**Example: performing simulations for various r0**
+
+- **Step 1**: write your parameter file
+- **Step 2**: write your own class that inherits from Simulator to perform whatever you want during the simulation process
+- **Step3**: write your script using docopt. Here, we want to get r0 as a command line argument. The script should be like:
+
+```python
+"""script for my simulation
+
+Usage:
+  my_script.py <parameters_filename> <save_filename> [options]
+
+with 'parameters_filename' the path to the parameters file
+
+Options:
+  -h --help                   Show this help message and exit
+  --r0 r0                     set the r0
+"""
+
+from docopt import docopt
+from YourFile import YourClass
+
+arguments = docopt(__doc__)
+param_file = arguments["<parameters_filename>"]
+save_file = arguments["<save_filemane>"]
+
+sim = YourClass(param_file) # Instantiates your class and load parameters
+
+if arguments["--r0"]: # Check if r0 has been given as arguments
+    sim.config.p_atmos.set_r0(float(arguments["--r0"])) # Change the r0 before initalization
+
+sim.init_sim()
+sim.loop()
+
+a_save_function(save_file)
+```
+
+- **Step 4**: write a shell script
+
+```bash
+#!/bin/bash
+R0="0.12 0.14 0.16 0.18"
+script="/path_to_your_script/my_script.py"
+savepath="/path_where_to_save"
+OUTPUT="/path/logfile.log"
+
+for r in $R0
+do
+    CMD="python $script $savepath/sim_with_r0_"$r".h5 -- --r0 $r"
+    echo "execute $CMD" >> $OUTPUT
+    $CMD 2>> $OUTPUT >> $OUTPUT
+done
+```
+
 ## 5. Advanced features : GUARDIANS package
 
 ### 1. GUARDIANS package content
 
-<span class="inner">![guardians](https://anr-compass.github.io/compass/images/guardians.png){:width="400px"}</span>
+<span class="inner">![guardians](images/guardians.png){:width="400px"}</span>
 
 GUARDIANS is a Python package distributed with COMPASS which provides tools dedicated to the numerical estimation and modeling of the AO error breakdown.
 This package contains 3 main modules :
