@@ -41,7 +41,7 @@ After an initialization phase, the script will prompt in the terminal the short 
 
 ### 2. Parameter file
 
-For COMPASS, a parameter file is a python file where the parameter classes are instantiated and set to be imported by the simulation script. All the parameter classes are described in details [here](#4-sheshaconfig-parameter-classes).
+For COMPASS, a parameter file is a python file where the parameter classes are instantiated and set to be imported by the simulation script. All the parameter classes are described in details [here](#3-sheshaconfig-parameter-classes).
 To write your own parameter file, remember those important points :
 
 - Starts by importing the `shesha.config` module: it contains all the parameter classes
@@ -154,18 +154,22 @@ Thanks to the architecture of COMPASS, writing a script is easy.
 Let's take a look at our `closed_loop.py` script :
 
 ```python
-from shesha.supervisor.compassSupervisor import CompassSupervisor as Supervisor
+from shesha.supervisor.compassSupervisor import CompassSupervisor
+from shesha.util.utilities import load_config_from_file
 from docopt import docopt
 arguments = docopt(__doc__)
+
 param_file = arguments["<parameters_filename>"]
-supervisor = Supervisor(param_file)
-supervisor.initConfig()
+config = load_config_from_file(param_file)
+
+supervisor = CompassSupervisor(config)
+
 supervisor.loop(supervisor.config.p_loop.niter)
 ```
 
 Let's go step-by-step :
 
-- The first line imports the `shesha.supervisor.compassSupervisor` module: it contains the Supervisor class used to handle the simulation. This class is described properly [here](#2-sheshasupervisor--supervisor-class).
+- The first two lines import the `shesha.supervisor.compassSupervisor` module, it contains the Supervisor class used to handle the simulation. This class is described properly [here](#2-sheshasupervisor--supervisor-class), and an utility function that will returns a configuration module from the given parameter file.
 - The next lines :
 
 ```python
@@ -176,30 +180,31 @@ param_file = arguments["<parameters_filename>"]
 
 are used to get the parameter file name. `docopt` module is a command line arguments parser for python that can also set proper usage pattern and options for your script. For more information, visit [docopt.org](http://docopt.org/)
 
-- `supervisor = Supervisor(param_file)` instantiates the Supervisor class and loads the parameters defined in the parameter file
-- `supervisor.initConfig()` initializes the simulation.
+- `supervisor = Supervisor(config)` instantiates the Supervisor class
 - `supervisor.loop(supervisor.config.p_loop.niter)` runs the simulation for `niter` iterations
 
 ### 4. Interactions through the Supervisor
 
 If you had launched your script with python or ipython in interaction mode (`-i` option), you will have access to the prompt after the iterations loop. At this point, you can interact with your simulation to display images (PSF, command matrix...) or to access at any internal quantity for debug. You can also modify your simulation and launch new iterations.
 
-The Supervisor class has been created to offer an easy way to interact with the simulation through some easy-to-understand functions.
+The Supervisor class has been created for modularity. It is composed of several components (atmos, wfs, rtc, dms, etc...) that offer interfaces (setter/getter) with the corresponding GPU objects.
 
 Some of the most useful functions are listed below:
 
 | Method                              | Description                                                            |
 | :---------------------------------- | :--------------------------------------------------------------------- |
-| **supervisor.getTarImage(0, "le")** | Return the long exposure PSF. Use `"se"` to get the short exposure one |
-| **supervisor.getTarPhase(0)**       | Return the residual phase                                              |
-| **supervisor.getWfsImage(0)**       | Return the WFS image                                                   |
-| **supervisor.getDmShape(0)**        | Return the DM shape                                                    |
-| **supervisor.getCentroids(0)**      | Return the lastest centroids (X measurements first, then Y)            |
-| **supervisor.getCom(0)**            | Return the lastest DM commands                                         |
-| **supervisor.getImat(0)**           | Return the interaction matrix                                          |
-| **supervsor.getCmat(0)**            | Return the command matrix                                              |
+| **supervisor.target.get_tar_image(0, expo_type="le")** | Return the long exposure PSF. Use `"se"` to get the short exposure one |
+| **supervisor.target.get_tar_phase(0)**       | Return the residual phase                                              |
+| **supervisor.wfs.get_wfs_image(0)**       | Return the WFS image                                                   |
+| **supervisor.dms.get_dm_shape(0)**        | Return the DM shape                                                    |
+| **supervisor.rtc.get_slopes(0)**      | Return the lastest slopes (X measurements first, then Y)            |
+| **supervisor.rtc.get_voltages(0)**            | Return the lastest DM commands                                         |
+| **supervisor.rtc.get_interaction_matrix(0)**           | Return the interaction matrix                                          |
+| **supervsor.rtc.get_command_matrix(0)**            | Return the command matrix                                              |
 
-You can find all the functions description and usage in the [shesha package documentation](http://shesha.readthedocs.io/), autogenerated from the source code documentation using Sphinx. You can also use the `help` command of python to get information about a function.
+The Supervisor class will be described with more details in a [following section](#2-sheshasupervisor--supervisor-class).
+
+You can find a full description of this class (and all the others) in the [compass code documentation](https://lesia.obspm.fr/compass), autogenerated from the source code documentation using Doxygen. You can also use the `help` command of python to get information about a function.
 
 ### 5. Using the GUI
 
@@ -230,7 +235,7 @@ You have also the possibility to save your layout area disposition. Once you hav
 
 #### Interactions in the terminal
 
-The terminal is also available when you are using the GUI, as for a classical simulation. All the commands listed in the section [Interactions](#4-interactions) (and all the other) remain valids, but you have to add `wao.` before each command. For example, `supervisor.getTarImage(0,"le")` becomes `wao.supervisor.getTarImage(0,"le")`
+The terminal is also available when you are using the GUI, as for a classical simulation. All the commands listed in the section [Interactions](#4-interactions) (and all the other) remain valids, but you have to add `wao.` before each command. For example, `supervisor.target.get_tar_image(0,expo_type="le")` becomes `wao.supervisor.target.get_tar_image(0,expo_type="le")`
 
 ## 2. Features implementation
 
@@ -372,7 +377,7 @@ With COMPASS 3.0, it is now possible to run simulate N faces pyramid. Set in the
 
 #### "Geometric" WFS
 
-COMPASS also features a so-called “geometric model” emulating an ideal Shack-Hartmann wavefront sensor. This algorithm directly computes the average phase gradient at each subaperture, based on the phase itself, with no noise. This estimation of the average slope of the wavefront is considered as an “ideal” measurement, with perfect linearity over an infinite range and that does not suffer from any kind of sampling effect by a detector. This geometric model is embedded in all the WFS in COMPASS. Use the command `sim.rtc.do_centroids_geom(0)` to compute it.
+COMPASS also features a so-called “geometric model” emulating an ideal Shack-Hartmann wavefront sensor. This algorithm directly computes the average phase gradient at each subaperture, based on the phase itself, with no noise. This estimation of the average slope of the wavefront is considered as an “ideal” measurement, with perfect linearity over an infinite range and that does not suffer from any kind of sampling effect by a detector. This geometric model is embedded in all the WFS in COMPASS. Use the command `supervisor.rtc.do_centroids_geom(0)` to compute it.
 
 Finally, a last level of abstraction is reached with the third type of wave surface analyzer, which is purely theoretical: it is a direct projection of the phase onto the DM influence functions, resulting in a set of DM voltages that best fit the wavefront in a least-square sense. It is fully linear and is free from any WFS effect or reconstruction effect, it is in particular free from aliasing. We call this method “DM projection”, it behaves as a theoretical, perfect WFS. To use it, set your controller type to "geo" : `p_controllers[0].type = "geo"`
 
@@ -529,18 +534,18 @@ The generic controller can be used to perform simulation with flexible command l
 
 Indeed, with this controller, the command c is computed as:
 
-`c[k] = decayFactor * E.dot(c[k-1]) + g*CMAT.dot(s[k])`
+`c[k] = decay_factor * E.dot(c[k-1]) + g*CMAT.dot(s[k])`
 
 with:
 
-- decayFactor a float value
+- decay_factor a float value
 - E a matrix that you have to provide
 - g is the loop gain
 - CMAT the command matrix you have to provide
 - s[k] the slopes vector at iteration k
 
 If the mode is set at "integrator", matrix E is automatically set as identity.
-Use the command `sim.rtc.set_commandlaw(0,b"2matrices")` to switch to the "2matrices" mode.
+Use the command `supervisor.rtc.set_2matrices_law(0)` to switch to the "2matrices" mode.
 
 #### Voltage computation
 
@@ -566,7 +571,7 @@ The user also has the ability to change the pupil just for PSF computation as sh
 
 ### 1. COMPASS architecture
 
-<span class="inner">![archi](assets/images/compass_archi.png){:height="280px"}></span>
+<span class="inner">![archi](assets/images/compass-archi.png){:height="280px"}></span>
 
 The initial objective behind the development of COMPASS was to get a numerical simulation platform able to deliver short exposure PSF (i.e. per WFS frame) with a time-to-solution in the range of the 10th of seconds for an AO system at the E-ELT scale. To reach such performance, the use of GPU as hardware accelerators appeared as the best option.
 
@@ -582,107 +587,25 @@ COMPASS versions > 3.0 use [pyBind11](https://pybind11.readthedocs.io/en/master/
 It allows a complete read-access of the instantiated GPU objects and arrays, very usefull for debug if you are a developer. On the other hand, it highly depends on the structures defined by those C++ classes : the konwledge of the core internal structures of COMPASS is then required to use those capabilities properly.
 However, unless you are a developer for COMPASS, it is generally useless to get access to all those informations. Hence, COMPASS embeds abstraction layers that allow generic user to interact easily with the simulation.
 
-### 2. shesha.supervisor : COMPASS Supervisor class
+### 2. shesha.supervisor : Supervisor classes
 
-This module defines the Supervisor classes which act as an user interface abstraction layer. The goal is to define generic functions that could be useful for simulations as well as for bench prototyping. Hence, a Supervisor inheriths from AbstractSupervisor which defines some functions that has to be implemented in a Supervisor class.
+This module defines so called Supervisor classes which act as a simulator engine. A supervisor is composed of *components* instances, which handle each AO subsystems (WFS, DM, RTC, etc...). A supervisor inherits from the *GenericSupervisor* class which declare as abstract methods the initialisation of each components. It allows easy-to-write user-specific supervisor which instantiates components coming from COMPASS, user or even third party library, and interface them together to make a simulation run. Those components classes will be described in the next section. 
 
-The COMPASS Supervisor is the supervisor dedicated to COMPASS simulations. It is composed by two main attributes :
-
-- **config** : module containing all the parameters set by the parameters file
-- **\_sim** : Simulator instance which is driving the simulation. This attribute is hidden because it is only useful for developer or expert user. However, as the COMPASS simulation completely relies on this class, the next section will give you an overview of it.
-
-Then, the COMPASS Supervisor provides a set of useful functions to interact and drive the simulation. See [the shesha documentation](http://shesha.readthedocs.io/en/master/shesha_supervisor.html) to get a description of those functions.
-
-### 3. shesha.sim.simulator: Simulator class
-
-This module defines the Simulator class. The attributes of this class are the various objects defined during the initialization phase :
-
-| Attribute name     | Type         | Description                             |
-| :----------------- | :----------- | :-------------------------------------- |
-| **atm**            | Atmos        | Atmosphere GPU object                   |
-| **tel**            | Telescope    | Telescope GPU object                    |
-| **tar**            | Target       | Target GPU object                       |
-| **rtc**            | Rtc          | RTC GPU object                          |
-| **wfs**            | Sensors      | Sensors GPU object                      |
-| **dms**            | Dms          | DMs GPU object                          |
-| **config**         | ModuleType   | Parameters imported from your paramfile |
-| **c**              | naga_context | GPU context                             |
-| **is_init**        | bool         | Flag for completed initialization       |
-| **loaded**         | bool         | Flag for loaded parameters              |
-| **iter**           | int          | Number of iterations performed          |
-| **use_DB**         | bool         | Flag for using the database system      |
-| **matricesToLoad** | dict         | Dictionary of teh database              |
-
-Then, those objects can be manipulated through this class. The AO loop process is also embedded in a class method, making user script light and easy to write.
-
-The Simulator class is instantiated through the Supervisor class, but it can also be instantiated independently :
-
-```python
-from shesha.sim.simulator import Simulator
-sim = Simulator()
-```
-
-or with the path to a parameter file :
-
-```python
-from shesha.sim.simulator import Simulator
-sim = Simulator("/path_to_file/param_file.py")
-```
-
-If the path is defined, the file is directly loaded during the instantiation. In the other case, the user has to manually load the file thanks to the function `load_from_file`:
-
-```python
-sim.load_from_file("/path_to_file/param_file.py")
-```
-
-Then, the simulation is initialized through a call to the function `init_sim`:
-
-```python
-sim.init_sim()
-```
-
-The initialization process is described below.
-![init](assets/images/init-process.png){:width="840px"}
-Each step of this initialization process depends on the parameters file. For example, if no DM parameters are defined in the parameter file, then no DM will be initialized and the simulation will run without any DM.
-
-After this initialization phase, you can run the AO loop with function `loop` that takes the number of iterations as argument:
-
-```python
-sim.loop(sim.config.p_loop.niter)
-```
-
+The supervisor role is then to handle the AO loop execution by sending the right command to the right component sequentially, in order to perform a single simulation iteration : this sequence is defined by the _supervisor.next()_ method. The _supervisor.loop()_ method then call the _supervisor.next()_ for a given number of iterations, and display some informations regularly, such as Strehl ratio, remaining time, etc... The *CompassSupervisor* that comes natvely with the _shesha_ package performs an iteration as follow : 
 <span class="inner">![loop](assets/images/loop-process.png){:width="480px"}</span>
 
-Note that `sim.config.p_loop.niter` is used to retieve the number of iterations specified in the parameter file : you can replace it by any integer.
 
-The AO loop process is also depicted. The Simulator class wraps operations of the AO loop into specific functions which are called at each iteration. Those functions are the one described in the adjacent picture.
+On top of that, a supervisor can also instantiates some *optimizer* classes that can perform operation on the supervisor component in order to optimize the AO loop. The _shesha_ package comes with two optimizers : _ModalBasis_ for modal basis related computations, and _Calibration_ for interaction matrix calibration for instance.
 
-Note that, due to this process order, there is an inherent 1-frame delay. So if the delay parameter is set to 1 in the parameter file, the simulated delay will be a 2-frames delay.
-Note that the PSF is not computed at each iteration. By default, it will be computed each 100 iterations by the command `compTarImage(0)` in the `loop` function. If this behaviour doesn't fulfill your requirements, please refer to the section [Scripting with COMPASS](#4-scripting-with-compass).
+You will find the complete documentation of : 
+- the CompassSupervisor [here](https://lesia.obspm.fr/compass/rc/classshesha_1_1supervisor_1_1compass_supervisor_1_1_compass_supervisor.html)
+- the components [here](https://lesia.obspm.fr/compass/rc/namespaceshesha_1_1supervisor_1_1components.html)
+- the optimizers [here](https://lesia.obspm.fr/compass/rc/namespaceshesha_1_1supervisor_1_1optimizers.html)
 
-Details on the Simulator class functions can be found in [the shesha documentation](http://shesha.readthedocs.io/en/master/shesha_sim.html).
+To make the writing of new components easier, the further minor versions upgrade of COMPASS will aim to abstract all the components interfaces.
 
-#### Database management
 
-The initialization step can be accelerated by re-using previous results from older simulations runs, as phase screens or interaction matrix. To use this feature, you have to instantiate the Supervisor with `use_DB=True`:
-
-```python
-from shesha.supervisor.compassSupervisor import CompassSupervisor as Supervisor
-supervisor = Supervisor(param_file, use_DB=use_DB)
-```
-
-You can also directly use this feature with the script `closed_loop.py` with a special flag:
-
-```bash
-cd $SHESHA_ROOT
-ipython -i shesha/scripts/closed_loop.py path_to_your_parfile/parfile.py -- --DB
-```
-
-At first use, it will create `$SHESHA_ROOT/data/dataBase/matricesDataBase.h5` file where we store all the arrays used to create phase screens, DMs and interaction matrix. The parameters of the simulation are also saved. Then, each time you run a simulation, COMPASS check in this file if some of those arrays can be re-used according to the parameters of your simulation. If it is possible, it will just load those arrays, leading to an acceleration of the initialization phase. In the other case, it will compute normally those arrays and store them in the database.
-
-**Note :** _We have already encounter some stability problems of the database system. If it occurs, we suggest to remove the `$SHESHA_ROOT/data/dataBase/matricesDataBase.h5` file and all the `.h5` files created by the database. This can be done by using the shell script `$SHESHA_ROOT/cleanDB.sh`._
-
-### 4. shesha.config: parameter classes
+### 3. shesha.config: parameter classes
 
 We describe here all the parameters used in COMPASS and all the classes attributes that could be retrieved by the user during or after the simulation. The following tables give, for each class, the attribute name, a boolean that says if this attribute is settable in the parameters file, its default value and its unit. <span style="color:red"> Parameters displayed in red </span> need to be set by the user in the parameter file if its associated class is instantiated.
 
@@ -837,8 +760,8 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | <span style="color:red"> **alt** </span>    | float  | meters                                   | required |           | Conjugation altitude                                                                                          |
 | <span style="color:red"> **thresh** </span> | float  | fraction                                 | required |           | Threshold on response for selection of valid actuators. Expressed in fraction of the maximal response         |
 | **type_pattern**                            | string | none                                     | yes      | "square"  | Actuators position pattern: "square" or "hexa"                                                                |
-| **influType**                               | string | none                                     | yes      | "default" | Influence function to use: "default", "radialSchwartz", "squareSchwartz", "blacknutt", "gaussian", "bessel" or "petal"|
-| **file_influ_hdf5**                         | string | none                                     | yes      | None      | FITS file name of custom influence functions. Overwrites influType, type_pattern, nact                        |
+| **influ_type**                               | string | none                                     | yes      | "default" | Influence function to use: "default", "radialSchwartz", "squareSchwartz", "blacknutt", "gaussian", "bessel" or "petal"|
+| **file_influ_fits**                         | string | none                                     | yes      | None      | FITS file name of custom influence functions. Overwrites influ_type, type_pattern, nact                        |
 | **center_name**                             | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the center is stored                                             |
 | **cube_name**                               | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the influence function cube is stored                            |
 | **x_name**                                  | string | none                                     | yes      | None      | Column name in the HDF5 pandaDataFrame where the actuators X coordinates are stored                           |
@@ -916,13 +839,12 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 
 ## 4. Scripting with COMPASS
 
-This section aims to provide some tips for writing your own script. We higly recommend to create your own class that inherits from the Simulator class for obvious convenience reasons. Once you have created your own class, just write a python script that will use it properly, eventually inside a custom Supervisor class for easier usage.
-
+This section aims to provide some tips for writing your own script. We higly recommend to create your own class that inherits from the CompassSupervisor or GenericSupervisor class for obvious convenience reasons. If you want to use components that are not using COMPASS modules, you will also have to write it. Once you have created your own class, just write a python script that will use it properly, eventually inside a custom Supervisor class for easier usage.
 ### 1. Inheritance
 
 If you don't know anything about inheritance with python, you can find information in the [Python documentation](https://docs.python.org/3/tutorial/classes.html#inheritance).
 
-We recommend to not overwrite the `init_sim`, `load_from_file` and `force_context` functions in your class, unless you really know what you are doing. The interesting function the overwrite are `next` and eventually `loop`.
+Once you have written your own supervisor that instantiate eventually your own components and optimizers, the interesting functions to overwrite are `next` and eventually `loop`.
 
 The `next` function defines what happen during an iteration. You can basically rewrite this function if you want a specific behaviour for your loop.
 
@@ -941,7 +863,7 @@ We recommend to use [docopt](http://docopt.org/) in your python file to easily p
 **Example: performing simulations for various r0**
 
 - **Step 1**: write your parameter file
-- **Step 2**: write your own class that inherits from Simulator to perform whatever you want during the simulation process
+- **Step 2**: write your own class that inherits from GenericSupervisor to perform whatever you want during the simulation process
 - **Step3**: write your script using docopt. Here, we want to get r0 as a command line argument. The script should be like:
 
 ```python
@@ -958,19 +880,20 @@ Options:
 """
 
 from docopt import docopt
-from YourFile import YourClass
+from shesha.util.utilities import load_config_from_file
+from shesha.supervisor.yourFile import YourSupervisor
 
 arguments = docopt(__doc__)
 param_file = arguments["<parameters_filename>"]
 save_file = arguments["<save_filemane>"]
 
-sim = YourClass(param_file) # Instantiates your class and load parameters
-
+config = load_config_from_file(param_file)
 if arguments["--r0"]: # Check if r0 has been given as arguments
-    sim.config.p_atmos.set_r0(float(arguments["--r0"])) # Change the r0 before initalization
+    config.p_atmos.set_r0(float(arguments["--r0"])) # Change the r0 before initalization
 
-sim.init_sim()
-sim.loop()
+sup = YourSupervisor(config) # Instantiates your class and load parameters
+
+sup.loop()
 
 a_save_function(save_file)
 ```
