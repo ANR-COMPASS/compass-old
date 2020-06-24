@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Release of v2.0"
+title:  "Release of v2.1"
 date:   2018-05-26
 ---
 

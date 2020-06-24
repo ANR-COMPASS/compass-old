@@ -4,12 +4,10 @@ title:  "Release of v4.0"
 date:   2019-01-18
 ---
 
-New release of COMPASS v4.0
-
-* change centroid computation using CUB library
+- change centroid computation using CUB library
 
 for Internal developments:
 
-* rename internal variables
+- rename internal variables
 
 Report bugs and issues on [this page](https://github.com/ANR-COMPASS/shesha/issues)
