@@ -7,6 +7,7 @@
   }
   .main {
     @include flexbox();
+    @include flex-direction(column);
     @include media-breakpoint-down(md) {
       @include flex-direction(column);
     }
@@ -37,6 +38,8 @@
   @include menu(3, 0);
   @include align-items(center);
   @include flex-wrap(nowrap);
+  @include flexbox();
+  @include align-items(flex-start);
   @include flex(1);
   height: map-get($layout, header-height);
   margin-right: map-get($spacers, 3);
@@ -60,14 +63,31 @@
   }
 }
 
-.header__brand {
-  @include flexbox();
-  @include align-items(center);
+.header__logo {
+  display: inherit;
   & > svg {
     width: map-get($base, font-size-h4) * 1.6;
     height: map-get($base, font-size-h4) * 1.6;
     margin-right: map-get($spacers, 3);
-    vertical-align: middle;
+    @include media-breakpoint-down(md) {
+      width: map-get($base, font-size-h4) * 1.2;
+      height: map-get($base, font-size-h4) * 1.2;
+    }
+  }
+  & > a {
+    font-size: map-get($base, font-size-h4-lg);
+    @include media-breakpoint-down(md) {
+      font-size: map-get($base, font-size-h4-small);
+    }
+  }
+}
+
+.header__brand {
+  @include align-items(flex-end);
+  & > svg {
+    width: map-get($base, font-size-h4) * 1.6;
+    height: map-get($base, font-size-h4) * 1.6;
+    margin-right: map-get($spacers, 3);
     @include media-breakpoint-down(md) {
       width: map-get($base, font-size-h4) * 1.2;
       height: map-get($base, font-size-h4) * 1.2;
@@ -75,7 +95,7 @@
   }
   & > a {
     display: inline-block;
-    font-size: map-get($base, font-size-h4);
+    font-size: map-get($base, font-size-h4-lg);
     @include media-breakpoint-down(md) {
       font-size: map-get($base, font-size-h4-small);
     }
@@ -83,7 +103,9 @@
 }
 
 .navigation {
-  @include overflow(auto, "x");
+  @include flexbox();
+  // @include overflow(auto, "x");
+  @include align-items(flex-end);
   & > ul {
     height: map-get($layout, header-height);
     padding-bottom: 0;
@@ -93,7 +115,7 @@
       margin: -4px 0 0 0;
     }
     @include menu(3, 2, nowrap);
-    @include align-items(center);
+    @include align-items(flex-end);
     @include media-breakpoint-down(md) {
       height: auto;
     }

@@ -1,6 +1,6 @@
 $base: (
-  font-family:            ('Lucida Grande', 'Calibri', Helvetica, Arial, sans-serif),
-  font-family-code:       (Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace),
+  font-family:            ('Lucida Grande', 'Calibri', 'Helvetica', 'Arial', 'sans-serif'),
+  font-family-code:       ('Monaco', 'Bitstream Vera Sans Mono', 'Lucida Console', 'Terminal', 'monospace'),
 
   font-size-root:         16px,
   font-size-root-sm:      14px,
@@ -79,12 +79,12 @@ $z-indexes: (
 );
 
 $layout: (
-  header-height:          5rem,
-  header-height-sm:       3rem,
+  header-height:          128pix,
+  header-height-sm:       128pix,
   content-max-width:      950px,
   sidebar-width:          250px,
-  sidebar-header-height:  3rem,
-  aside-width:            220px
+  sidebar-header-height:  100pix,
+  aside-width:            250px
 );
 
 //     sm       md       lg
@@ -145,6 +145,6 @@ $image: (
 );
 
 $menu: (
-  horizontal-spacer: 1,
-  horizontal-item-vertical-spacer: 1
+  horizontal-spacer: 0,
+  horizontal-item-vertical-spacer: 0
 );

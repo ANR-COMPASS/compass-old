@@ -1,1 +1,1 @@
-sudo docker-compose -f ./docker/docker-compose.default.yml up
+docker-compose -f ./docker/docker-compose.default.yml up

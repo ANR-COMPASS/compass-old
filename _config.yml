@@ -36,7 +36,7 @@ timezone: FR # see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones 
 author:
   type      : organization # "person" (default), "organization"
   name      : ANR-COMPASS
-  url       :
+  url       : https://lesia.obspm.fr/
   avatar    : # path or url of avatar image (square)
   bio       : COMPASS, a end-to-end AO simulation tool using GPU acceleration.
   email     :
@@ -49,7 +49,7 @@ author:
   zhihu     : # "user_name" the last part of your profile url, e.g. https://www.zhihu.com/people/user_name
   douban    : # "user_name" the last part of your profile url, e.g. https://www.douban.com/people/user_name
   linkedin  : # "user_name" the last part of your profile url, e.g. https://www.linkedin.com/in/user_name
-  github    : # "user_name" the last part of your profile url, e.g. https://github.com/user_name
+  github    : "ANR-COMPASS"  # "user_name" the last part of your profile url, e.g. https://github.com/user_name
   npm       : # "user_name" the last part of your profile url, e.g. https://www.npmjs.com/~user_name
 
 
@@ -159,7 +159,7 @@ pageview:
 ## => Search
 ##############################
 search:
-  provider: default # "default" (default), false, "google", "custom"
+  provider: false # "default" (default), false, "google", "custom"
 
   ## Google Custom Search Engine
   google:
