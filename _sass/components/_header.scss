@@ -1,6 +1,6 @@
 .header {
   background: $header-background;
-  a {
+  h1, h2, h3, h4 {
     font-weight: map-get($base, font-weight);
     text-decoration: none !important;
     @include link-colors($header-text-color, $main-color-1);
@@ -37,19 +37,30 @@
 .header__title {
   @include menu(3, 0);
   @include align-items(center);
-  @include flex-wrap(nowrap);
   @include flexbox();
-  @include align-items(flex-start);
   @include flex(1);
+  @include flex-wrap(nowrap);
+  @include flex-direction(row);
   height: map-get($layout, header-height);
   margin-right: map-get($spacers, 3);
-  white-space: nowrap;
+  // white-space: nowrap;
   @include media-breakpoint-down(md) {
     height: auto;
     margin-right: 0;
   }
+  & > .header__logo {
+    @include flexbox();
+    @include flex(0);
+    @include media-breakpoint-down(md) {
+      height: map-get($layout, header-height-sm);
+    }
+  }
   & > .header__brand {
+    @include flexbox();
     @include flex(1);
+    @include flex-direction(column);
+    @include flex-wrap(wrap);
+    @include align-items(flex-start);
     @include media-breakpoint-down(md) {
       height: map-get($layout, header-height-sm);
     }
@@ -64,7 +75,6 @@
 }
 
 .header__logo {
-  display: inherit;
   & > svg {
     width: map-get($base, font-size-h4) * 1.6;
     height: map-get($base, font-size-h4) * 1.6;
@@ -72,18 +82,11 @@
     @include media-breakpoint-down(md) {
       width: map-get($base, font-size-h4) * 1.2;
       height: map-get($base, font-size-h4) * 1.2;
-    }
-  }
-  & > a {
-    font-size: map-get($base, font-size-h4-lg);
-    @include media-breakpoint-down(md) {
-      font-size: map-get($base, font-size-h4-small);
     }
   }
 }
 
 .header__brand {
-  @include align-items(flex-end);
   & > svg {
     width: map-get($base, font-size-h4) * 1.6;
     height: map-get($base, font-size-h4) * 1.6;
@@ -93,29 +96,22 @@
       height: map-get($base, font-size-h4) * 1.2;
     }
   }
-  & > a {
-    display: inline-block;
-    font-size: map-get($base, font-size-h4-lg);
-    @include media-breakpoint-down(md) {
-      font-size: map-get($base, font-size-h4-small);
-    }
-  }
 }
 
 .navigation {
-  @include flexbox();
   // @include overflow(auto, "x");
-  @include align-items(flex-end);
   & > ul {
+    @include flexbox();
+    @include flex(1);
+    @include align-items(flex-end);
     height: map-get($layout, header-height);
     padding-bottom: 0;
     margin: 0;
     @include media-breakpoint-down(md) {
       padding-bottom: 4px;
-      margin: -4px 0 0 0;
+      margin: -4px -8px -4px 4px;
     }
-    @include menu(3, 2, nowrap);
-    @include align-items(flex-end);
+    @include menu(3, 2, wrap);
     @include media-breakpoint-down(md) {
       height: auto;
     }

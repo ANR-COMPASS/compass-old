@@ -10,11 +10,13 @@
         <div class="header__logo">
           {%- assign _paths_root = site.paths.root | default: site.data.variables.default.paths.root  -%}
           {%- include snippets/get-nav-url.html path=_paths_root -%}
-          <img src="{{ __return }}/assets/images/compass-logo.png" alt="logo" width="128px" height="128px">
+          <a title="{%- if site.description -%}{{ site.description }}{%- endif -%}" href="{{ __return }}">
+          <img src="{{ __return }}/assets/images/compass-logo.png" alt="logo" width="128px" height="128px"></a>
         </div>
         <div class="header__brand">
           {%- if site.title -%}
-          <a title="{%- if site.description -%}{{ site.description }}{%- endif -%}" href="{{ __return }}">{{ site.title }}{%- if site.description -%} <br> {{ site.description }}{%- endif -%}</a>
+          <h1>{{ site.title }}</h1>
+          {%- if site.description -%}<br><h4>{{ site.description }}</h4>{%- endif -%}
           {%- endif -%}
           {%- if site.data.navigation.header -%}
           <nav class="navigation">
