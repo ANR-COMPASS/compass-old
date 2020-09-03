@@ -1,6 +1,6 @@
 # [TeXt Theme](https://github.com/kitian616/jekyll-TeXt-theme)
 
-[![Build Status](https://travis-ci.org/ANR-COMPASS/compass-new.svg?branch=master)](https://travis-ci.org/ANR-COMPASS/compass-new)
+[![Build Status](https://travis-ci.org/ANR-COMPASS/compass.svg?branch=master)](https://travis-ci.org/ANR-COMPASS/compass)
 
 ## License
 

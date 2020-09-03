@@ -19,7 +19,7 @@ theme: jekyll-text-theme
 text_skin: default # "default" (default), "dark", "forest", "ocean", "chocolate", "orange"
 highlight_theme: tomorrow-night-bright # "default" (default), "tomorrow", "tomorrow-night", "tomorrow-night-eighties", "tomorrow-night-blue", "tomorrow-night-bright"
 url     : https://anr-compass.github.io # the base hostname & protocol for your site e.g. https://www.someone.com
-baseurl : /compass-new # does not include hostname
+baseurl : /compass # does not include hostname
 title   : COMPASS
 description: > # this means to ignore newlines until "Language & timezone"
   End-to-end AO simulation tool using GPU acceleration
@@ -55,7 +55,7 @@ author:
 
 ## => GitHub Repository (if the site is hosted by GitHub)
 ##############################
-repository: ANR-COMPASS/compass-new
+repository: ANR-COMPASS/compass
 repository_tree: master
 
 
