@@ -20,7 +20,7 @@ For the X11, you have to install Xming, tutorial: https://us191.ird.fr/spip.php?
 
 Important points:
 
-- Windows Terminal is pretty cool as an app
+- Windows Terminal is pretty cool application
 - in wsl's .bashrc, add:
 `export DISPLAY = $ (cat /etc/resolv.conf | grep nameserver | awk '{print $ 2}'): 0`
 
