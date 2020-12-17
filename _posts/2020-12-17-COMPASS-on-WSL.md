@@ -5,7 +5,7 @@ tags: 2020, WSL
 
 Just for information, COMPASS can run under WSL.
 
-follow this tutorial: https://docs.nvidia.com/cuda/wsl-user-guide/index.html#installing-wip
+follow this tutorial: [CUDA on WSL :: CUDA Toolkit Documentation](https://docs.nvidia.com/cuda/wsl-user-guide/index.html#installing-wip)
 
 Some important points:
 
@@ -16,12 +16,15 @@ Some important points:
 
 Afterwards, it's quite easy.
 
-For the X11, you have to install Xming, tutorial: https://us191.ird.fr/spip.php?article77
+For the X11, you have to install Xming
 
 Important points:
 
 - Windows Terminal is pretty cool application
 - in wsl's .bashrc, add:
-`export DISPLAY = $ (cat /etc/resolv.conf | grep nameserver | awk '{print $ 2}'): 0`
+```bashrc
+export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
+export LIBGL_ALWAYS_INDIRECT=1
+```
 
-For COMPASS itself: https://anr-compass.github.io/compass/install.html
+For COMPASS itself: [COMPASS installation](https://anr-compass.github.io/compass/install.html)
