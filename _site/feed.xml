@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://jekyllrb.com/" version="4.2.0">Jekyll</generator><link href="https://anr-compass.github.io/compass/feed.xml" rel="self" type="application/atom+xml" /><link href="https://anr-compass.github.io/compass/" rel="alternate" type="text/html" hreflang="en" /><updated>2021-04-10T13:02:26+00:00</updated><id>https://anr-compass.github.io/compass/feed.xml</id><title type="html">COMPASS</title><subtitle>End-to-end AO simulation tool using GPU acceleration
+</subtitle><author><name>ANR-COMPASS</name></author><entry><title type="html">COMPASS on WSL</title><link href="https://anr-compass.github.io/compass/2020/12/17/COMPASS-on-WSL.html" rel="alternate" type="text/html" title="COMPASS on WSL" /><published>2020-12-17T00:00:00+00:00</published><updated>2020-12-17T00:00:00+00:00</updated><id>https://anr-compass.github.io/compass/2020/12/17/COMPASS-on-WSL</id><content type="html" xml:base="https://anr-compass.github.io/compass/2020/12/17/COMPASS-on-WSL.html">&lt;p&gt;Just for information, COMPASS can run under WSL.&lt;/p&gt;
+
+&lt;p&gt;follow this tutorial: &lt;a href=&quot;https://docs.nvidia.com/cuda/wsl-user-guide/index.html#installing-wip&quot;&gt;CUDA on WSL :: CUDA Toolkit Documentation&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Some important points:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;you must register in the Microsoft Windows Insider Program in the dev channel in order to have a build version 20145 or higher&lt;/li&gt;
+  &lt;li&gt;Install the nvidia CUDA on WSL driver&lt;/li&gt;
+  &lt;li&gt;Install the cuda-toolkit-11-1 instead of the cuda-toolkit-11-0&lt;/li&gt;
+  &lt;li&gt;Do not choose the cuda, cuda-11-1, or cuda-drivers meta-packages under WSL 2&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Afterwards, it’s quite easy.&lt;/p&gt;
+
+&lt;p&gt;For the X11, you have to install Xming&lt;/p&gt;
+
+&lt;p&gt;Important points:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Windows Terminal is pretty cool application&lt;/li&gt;
+  &lt;li&gt;in wsl’s .bashrc, add:
+    &lt;pre&gt;&lt;code class=&quot;language-bashrc&quot;&gt;export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2&amp;gt;/dev/null):0
+export LIBGL_ALWAYS_INDIRECT=1
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For COMPASS itself: &lt;a href=&quot;https://anr-compass.github.io/compass/install.html&quot;&gt;COMPASS installation&lt;/a&gt;&lt;/p&gt;</content><author><name>ANR-COMPASS</name></author><category term="2020," /><category term="WSL" /><summary type="html">Just for information, COMPASS can run under WSL. follow this tutorial: CUDA on WSL :: CUDA Toolkit Documentation Some important points: you must register in the Microsoft Windows Insider Program in the dev channel in order to have a build version 20145 or higher Install the nvidia CUDA on WSL driver Install the cuda-toolkit-11-1 instead of the cuda-toolkit-11-0 Do not choose the cuda, cuda-11-1, or cuda-drivers meta-packages under WSL 2 Afterwards, it’s quite easy. For the X11, you have to install Xming Important points: Windows Terminal is pretty cool application in wsl’s .bashrc, add: export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2&amp;gt;/dev/null):0 export LIBGL_ALWAYS_INDIRECT=1 For COMPASS itself: COMPASS installation</summary></entry><entry><title type="html">Release of v5.0.0</title><link href="https://anr-compass.github.io/compass/2020/09/03/Release-of-v5.0.0.html" rel="alternate" type="text/html" title="Release of v5.0.0" /><published>2020-09-03T00:00:00+00:00</published><updated>2020-09-03T00:00:00+00:00</updated><id>https://anr-compass.github.io/compass/2020/09/03/Release-of-v5.0.0</id><content type="html" xml:base="https://anr-compass.github.io/compass/2020/09/03/Release-of-v5.0.0.html">&lt;p&gt;The goal of this release is to improve the code quality.
+This is a major (and disruptive) update, there are changes in most supervisor codes : scripts &lt;strong&gt;need&lt;/strong&gt; to be updated according to these changes.
+This is an on-going work in the rc branch of the COMPASS GitLab.&lt;/p&gt;
+
+&lt;p&gt;This note will try to summarize all the major changes&lt;/p&gt;
+
+&lt;h2 id=&quot;pep-8-naming-convention&quot;&gt;PEP 8 naming convention&lt;/h2&gt;
+
+&lt;p&gt;Basicaly, it can be summurised like this:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;class name = CamelCase&lt;/li&gt;
+  &lt;li&gt;function and variable names = snake_case&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyBeautifulClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;my_favorite_function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;my_variable_with_explicit_name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; snake_case for functions and variable name
+        Explicit names are required : avoid single letter variable for example
+        &quot;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;All names must be explicit, even for temporary variable : avoid single letter variable, acronym, and so on….&lt;/p&gt;
+
+&lt;p&gt;It has been already applied to all supervisor classes.
+For example, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;applyVoltGetSlopes&lt;/code&gt; became &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply_volt_and_get_slopes&lt;/code&gt;
+Then, all the function written in camel case has changed, so the scripts which were using it must be adapted also.&lt;/p&gt;
+
+&lt;p&gt;This convention is also the baseline for the C++ API.&lt;/p&gt;
+
+&lt;p&gt;more info about &lt;a href=&quot;https://www.python.org/dev/peps/pep-0008/&quot;&gt;PEP8&lt;/a&gt; and &lt;a href=&quot;https://google.github.io/styleguide/cppguide.html&quot;&gt;Google C++ Style Guide&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;code-documentation&quot;&gt;Code documentation&lt;/h2&gt;
+
+&lt;p&gt;All the class and method must be documented following a Doxygen compatible format.
+In the class documentation, attributes of the class must be listed and described :&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MyBeautifulClass&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; Brief description of the class
+
+    Detailed description
+
+    Attributes:
+        toto: (dict) : toto description
+
+        tata : (float) : tata description
+    &quot;&quot;&quot;&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;In the method documentation, follow the docstring template below:&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;my_favorite_function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;file_path&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;wfs_index&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                         &lt;span class=&quot;n&quot;&gt;optional_argument&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;bool&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot; Brief description of the function
+
+    Detailed description
+
+    Parameters:
+        file_path : (str) : parameter description
+
+        wfs_index : (int) : parameter description
+
+        optional_argument : (bool, optional) : parameter description. Default value is False
+
+    Return:
+        something : (int) : return description
+    &quot;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://docs.python.org/3/library/typing.html&quot;&gt;typing&lt;/a&gt; python module must be used to also described the variable and return type in function signature, as in the example above.
+Respect the docstring template described above, including attention to alinea, line break between parameters…&lt;/p&gt;
+
+&lt;p&gt;As COMPASS had become quite huge with time, code documentation will be a long term objective which will require contributions from everyone : do not hesitate to reformat, complete or modify docstrings that do not respect the above rules. We are counting on you all…&lt;/p&gt;
+
+&lt;p&gt;For Visual Studio code users, we recommends to use &lt;a href=&quot;https://marketplace.visualstudio.com/items?itemName=cschlosser.doxdocgen&quot;&gt;Doxygen Documentation Generator&lt;/a&gt;. It really useful, it will generate a template based on the function signature.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.doxygen.nl/manual/docblocks.html&quot;&gt;more info&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;supervisor-modifications&quot;&gt;Supervisor modifications&lt;/h2&gt;
+
+&lt;p&gt;Main developments made for this release, on top of applying the above conventions, aims at supervisor code factorization, as all the contributions (which are welcome) made the code more and more heavy. The goal is to change the current supervisor architecture more modular in order to gain in code readability and maintainability.&lt;/p&gt;
+
+&lt;p&gt;This is an on-going work led by Florian. The detailed future architecture is still to be defined.&lt;/p&gt;
+
+&lt;p&gt;You can follow here all the modifications made during this work. It will be updated as frequently as possible :&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;PEP 8 application in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;shesha.supervisor&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;PEP 8 style in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;carma&lt;/code&gt; / &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sutra&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Add CUDA 11 support&lt;/li&gt;
+  &lt;li&gt;Make MAGMA an optional dependency&lt;/li&gt;
+  &lt;li&gt;New supervisor architecture using components and optimizers&lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_centroids&lt;/code&gt; –&amp;gt; becomes &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_slopes&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Old behavior of &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_slopes&lt;/code&gt; was to call &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;compute_slopes&lt;/code&gt;, which compute and return. Directly use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;compute_slopes&lt;/code&gt; instead&lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_all_data_loop&lt;/code&gt; functions from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;abstractSupervisor&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AoSupervisor&lt;/code&gt; : unused&lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;computeImatModal&lt;/code&gt; from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AoSupervisor&lt;/code&gt; : not used and not implemented&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_gain&lt;/code&gt; was able to set mgain also depending on the parameter given. Change the function to be more explicit : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_gain only&lt;/code&gt; set scalar loop gain while &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_modal_gain&lt;/code&gt; set the modal gain vector&lt;/li&gt;
+  &lt;li&gt;Rename &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_mgain&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_modal_gain&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Rename get_mgain to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_modal_gain&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;write_config_on_file&lt;/code&gt; from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AoSupervisor&lt;/code&gt;, and rename it &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;getConfigFab&lt;/code&gt; in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;canapassSupervisor&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Rename &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_global_r0&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_r0&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Rename &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;getIFsparse&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_influ_basis&lt;/code&gt; (to make difference with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_influ&lt;/code&gt;)&lt;/li&gt;
+  &lt;li&gt;Rename &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;getIFtt&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_tt_influ_basis&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Rename &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;getIFdm&lt;/code&gt; to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;compute_influ_basis&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;getTarAmpliPup&lt;/code&gt; (unused)&lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reset&lt;/code&gt; function, use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reset_simu&lt;/code&gt; instead&lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;setModalBasis&lt;/code&gt; : unused&lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;computePh2ModesFits&lt;/code&gt; : unused&lt;/li&gt;
+  &lt;li&gt;Rename &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;setPyrSourceArray&lt;/code&gt; in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_pyr_modulation_points&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_pyr_modulation&lt;/code&gt; becomes &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_pyr_modulation_ampli&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Signature changes in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;setPyr*Source&lt;/code&gt; : wfs_index first is mandatory&lt;/li&gt;
+  &lt;li&gt;Add new parameter in PWFS : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;p_wfs._pyr_scale_pos&lt;/code&gt; to store the scale applied to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pyr_cx&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pyr_cy&lt;/code&gt; before upload. Useful for Milan functions&lt;/li&gt;
+  &lt;li&gt;Rename recordCB in &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;record_ao_circular_buffer&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Signature changes for &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_fourier_mask&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_noise&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_gs_mask&lt;/code&gt; : wfs_index as first argument and mandatory&lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;compute_wfs_images&lt;/code&gt; : not used&lt;/li&gt;
+  &lt;li&gt;Rename &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_dm_shape_from&lt;/code&gt; into &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_command&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Add new parameter in PDMS : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;p_dms[0]._dim_screen&lt;/code&gt; to store the dimension of the DM shape screen&lt;/li&gt;
+  &lt;li&gt;Add components module : this module defines classes to handle implementation of AO components such as Wfs, Dm, Rtc and so on. For now, only compass implementations are coded, but an abstraction for each component will be developed to allow third party library implementation&lt;/li&gt;
+  &lt;li&gt;Add optimizers module : this module defines classes to operate on the supervisor components for AO optimization. It could include many algorithms, define in some “thematic” class. For now, it includes &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ModalBasis&lt;/code&gt; class (for modal basis computations) and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Calibration&lt;/code&gt; class (for interaction and command matrices). User defined algorithms that do not fit into one of those classes should be written in an other new class with an explicit name to be used by the supervisor.&lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;abstractSupervisor&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aoSupervisor&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Remove the simulator module : methods have been moved into the right component&lt;/li&gt;
+  &lt;li&gt;Add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CONTRIBUTING.md&lt;/code&gt; file to define code guidelines&lt;/li&gt;
+  &lt;li&gt;Add unit tests for each method accessible from a &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;compassSupervisor&lt;/code&gt; using pytest. Each contribution should define a new unit test&lt;/li&gt;
+  &lt;li&gt;Add templates for issue and merge request&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Report bugs and issues on &lt;a href=&quot;https://github.com/ANR-COMPASS/shesha/issues&quot;&gt;this page&lt;/a&gt;&lt;/p&gt;</content><author><name>ANR-COMPASS</name></author><category term="2020," /><category term="v5" /><summary type="html">The goal of this release is to improve the code quality. This is a major (and disruptive) update, there are changes in most supervisor codes : scripts need to be updated according to these changes. This is an on-going work in the rc branch of the COMPASS GitLab. This note will try to summarize all the major changes PEP 8 naming convention Basicaly, it can be summurised like this: class name = CamelCase function and variable names = snake_case For example: class MyBeautifulClass: def my_favorite_function(self, my_variable_with_explicit_name): &quot;&quot;&quot; snake_case for functions and variable name Explicit names are required : avoid single letter variable for example &quot;&quot;&quot; All names must be explicit, even for temporary variable : avoid single letter variable, acronym, and so on…. It has been already applied to all supervisor classes. For example, applyVoltGetSlopes became apply_volt_and_get_slopes Then, all the function written in camel case has changed, so the scripts which were using it must be adapted also. This convention is also the baseline for the C++ API. more info about PEP8 and Google C++ Style Guide Code documentation All the class and method must be documented following a Doxygen compatible format. In the class documentation, attributes of the class must be listed and described : class MyBeautifulClass: &quot;&quot;&quot; Brief description of the class Detailed description Attributes: toto: (dict) : toto description tata : (float) : tata description &quot;&quot;&quot; In the method documentation, follow the docstring template below: def my_favorite_function(self, file_path : str, wfs_index : int, optional_argument : bool=False) -&amp;gt; int: &quot;&quot;&quot; Brief description of the function Detailed description Parameters: file_path : (str) : parameter description wfs_index : (int) : parameter description optional_argument : (bool, optional) : parameter description. Default value is False Return: something : (int) : return description &quot;&quot;&quot; The typing python module must be used to also described the variable and return type in function signature, as in the example above. Respect the docstring template described above, including attention to alinea, line break between parameters… As COMPASS had become quite huge with time, code documentation will be a long term objective which will require contributions from everyone : do not hesitate to reformat, complete or modify docstrings that do not respect the above rules. We are counting on you all… For Visual Studio code users, we recommends to use Doxygen Documentation Generator. It really useful, it will generate a template based on the function signature. more info Supervisor modifications Main developments made for this release, on top of applying the above conventions, aims at supervisor code factorization, as all the contributions (which are welcome) made the code more and more heavy. The goal is to change the current supervisor architecture more modular in order to gain in code readability and maintainability. This is an on-going work led by Florian. The detailed future architecture is still to be defined. You can follow here all the modifications made during this work. It will be updated as frequently as possible : PEP 8 application in shesha.supervisor PEP 8 style in carma / sutra Add CUDA 11 support Make MAGMA an optional dependency New supervisor architecture using components and optimizers Remove get_centroids –&amp;gt; becomes get_slopes Old behavior of get_slopes was to call compute_slopes, which compute and return. Directly use compute_slopes instead Remove get_all_data_loop functions from abstractSupervisor and AoSupervisor : unused Remove computeImatModal from AoSupervisor : not used and not implemented set_gain was able to set mgain also depending on the parameter given. Change the function to be more explicit : set_gain only set scalar loop gain while set_modal_gain set the modal gain vector Rename set_mgain to set_modal_gain Rename get_mgain to get_modal_gain Remove write_config_on_file from AoSupervisor, and rename it getConfigFab in canapassSupervisor Rename set_global_r0 to set_r0 Rename getIFsparse to get_influ_basis (to make difference with get_influ) Rename getIFtt to get_tt_influ_basis Rename getIFdm to compute_influ_basis Remove getTarAmpliPup (unused) Remove reset function, use reset_simu instead Remove setModalBasis : unused Remove computePh2ModesFits : unused Rename setPyrSourceArray in set_pyr_modulation_points set_pyr_modulation becomes set_pyr_modulation_ampli Signature changes in setPyr*Source : wfs_index first is mandatory Add new parameter in PWFS : p_wfs._pyr_scale_pos to store the scale applied to pyr_cx and pyr_cy before upload. Useful for Milan functions Rename recordCB in record_ao_circular_buffer Signature changes for set_fourier_mask, set_noise, set_gs_mask : wfs_index as first argument and mandatory Remove compute_wfs_images : not used Rename set_dm_shape_from into set_command Add new parameter in PDMS : p_dms[0]._dim_screen to store the dimension of the DM shape screen Add components module : this module defines classes to handle implementation of AO components such as Wfs, Dm, Rtc and so on. For now, only compass implementations are coded, but an abstraction for each component will be developed to allow third party library implementation Add optimizers module : this module defines classes to operate on the supervisor components for AO optimization. It could include many algorithms, define in some “thematic” class. For now, it includes ModalBasis class (for modal basis computations) and Calibration class (for interaction and command matrices). User defined algorithms that do not fit into one of those classes should be written in an other new class with an explicit name to be used by the supervisor. Remove abstractSupervisor Remove aoSupervisor Remove the simulator module : methods have been moved into the right component Add CONTRIBUTING.md file to define code guidelines Add unit tests for each method accessible from a compassSupervisor using pytest. Each contribution should define a new unit test Add templates for issue and merge request Report bugs and issues on this page</summary></entry><entry><title type="html">Release of v4.4.1</title><link href="https://anr-compass.github.io/compass/2020/03/31/Release-of-v4.4.1.html" rel="alternate" type="text/html" title="Release of v4.4.1" /><published>2020-03-31T00:00:00+00:00</published><updated>2020-03-31T00:00:00+00:00</updated><id>https://anr-compass.github.io/compass/2020/03/31/Release-of-v4.4.1</id><content type="html" xml:base="https://anr-compass.github.io/compass/2020/03/31/Release-of-v4.4.1.html">&lt;ul&gt;
+  &lt;li&gt;handle different shape for raw images and cal images (using the LUT feature)&lt;/li&gt;
+  &lt;li&gt;possibility to attach a stream to centroiders&lt;/li&gt;
+  &lt;li&gt;opimization of pyramid HR wfs&lt;/li&gt;
+  &lt;li&gt;debug &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;do_centroids_ref&lt;/code&gt; method&lt;/li&gt;
+  &lt;li&gt;debug &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;init_custom_dm&lt;/code&gt; method&lt;/li&gt;
+  &lt;li&gt;add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;requirements*.txt&lt;/code&gt; file to install python dependencies&lt;/li&gt;
+  &lt;li&gt;add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Jenkinsfile&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;update Doxyfile script and documentation rst&lt;/li&gt;
+  &lt;li&gt;generate gcov trace in debug&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Report bugs and issues on &lt;a href=&quot;https://github.com/ANR-COMPASS/shesha/issues&quot;&gt;this page&lt;/a&gt;&lt;/p&gt;</content><author><name>ANR-COMPASS</name></author><category term="2020," /><category term="v4" /><summary type="html">handle different shape for raw images and cal images (using the LUT feature) possibility to attach a stream to centroiders opimization of pyramid HR wfs debug do_centroids_ref method debug init_custom_dm method add requirements*.txt file to install python dependencies add Jenkinsfile update Doxyfile script and documentation rst generate gcov trace in debug Report bugs and issues on this page</summary></entry><entry><title type="html">Release of v4.4.0</title><link href="https://anr-compass.github.io/compass/2020/01/15/Release-of-v4.4.0.html" rel="alternate" type="text/html" title="Release of v4.4.0" /><published>2020-01-15T00:00:00+00:00</published><updated>2020-01-15T00:00:00+00:00</updated><id>https://anr-compass.github.io/compass/2020/01/15/Release-of-v4.4.0</id><content type="html" xml:base="https://anr-compass.github.io/compass/2020/01/15/Release-of-v4.4.0.html">&lt;ul&gt;
+  &lt;li&gt;Debug issue with Kepler architecture&lt;/li&gt;
+  &lt;li&gt;Multi GPU controller reworked&lt;/li&gt;
+  &lt;li&gt;Update pages-doc&lt;/li&gt;
+  &lt;li&gt;Add useful keyworks in&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rtc_cacao&lt;/code&gt; loopframe&lt;/li&gt;
+  &lt;li&gt;Add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reset_coms&lt;/code&gt; function in&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sutra_controller&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Update Jenkinsfile&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Report bugs and issues on &lt;a href=&quot;https://github.com/ANR-COMPASS/shesha/issues&quot;&gt;this page&lt;/a&gt;&lt;/p&gt;</content><author><name>ANR-COMPASS</name></author><category term="2020," /><category term="v4" /><summary type="html">Debug issue with Kepler architecture Multi GPU controller reworked Update pages-doc Add useful keyworks inrtc_cacao loopframe Add reset_coms function insutra_controller Update Jenkinsfile Report bugs and issues on this page</summary></entry><entry><title type="html">Release of v4.3.2</title><link href="https://anr-compass.github.io/compass/2019/11/27/Release-of-v4.3.2.html" rel="alternate" type="text/html" title="Release of v4.3.2" /><published>2019-11-27T00:00:00+00:00</published><updated>2019-11-27T00:00:00+00:00</updated><id>https://anr-compass.github.io/compass/2019/11/27/Release-of-v4.3.2</id><content type="html" xml:base="https://anr-compass.github.io/compass/2019/11/27/Release-of-v4.3.2.html">&lt;ul&gt;
+  &lt;li&gt;Support for controller delay &amp;gt; 2.0&lt;/li&gt;
+  &lt;li&gt;Multi-GPU controller&lt;/li&gt;
+  &lt;li&gt;Debug FP16 feature&lt;/li&gt;
+  &lt;li&gt;Debug 2matrices mode of generic controller&lt;/li&gt;
+  &lt;li&gt;Minor debug&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Report bugs and issues on &lt;a href=&quot;https://github.com/ANR-COMPASS/shesha/issues&quot;&gt;this page&lt;/a&gt;&lt;/p&gt;</content><author><name>ANR-COMPASS</name></author><category term="2019," /><category term="v4" /><summary type="html">Support for controller delay &amp;gt; 2.0 Multi-GPU controller Debug FP16 feature Debug 2matrices mode of generic controller Minor debug Report bugs and issues on this page</summary></entry><entry><title type="html">Release of v4.3.1</title><link href="https://anr-compass.github.io/compass/2019/09/26/Release-of-v4.3.1.html" rel="alternate" type="text/html" title="Release of v4.3.1" /><published>2019-09-26T00:00:00+00:00</published><updated>2019-09-26T00:00:00+00:00</updated><id>https://anr-compass.github.io/compass/2019/09/26/Release-of-v4.3.1</id><content type="html" xml:base="https://anr-compass.github.io/compass/2019/09/26/Release-of-v4.3.1.html">&lt;ul&gt;
+  &lt;li&gt;Add spider rotation and circular obstruction for ELT-like pupils&lt;/li&gt;
+  &lt;li&gt;New feature : image with the selected pixels of the maskedpix centroider&lt;/li&gt;
+  &lt;li&gt;Debug maskedpix to divide the image by the mean value of the pixels instead of the sum&lt;/li&gt;
+  &lt;li&gt;Fix maskedpix get_type method&lt;/li&gt;
+  &lt;li&gt;Add cone effect for the altitude conjugated DM in case of LGS WFS&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Report bugs and issues on &lt;a href=&quot;https://github.com/ANR-COMPASS/shesha/issues&quot;&gt;this page&lt;/a&gt;&lt;/p&gt;</content><author><name>ANR-COMPASS</name></author><category term="2019," /><category term="v4" /><summary type="html">Add spider rotation and circular obstruction for ELT-like pupils New feature : image with the selected pixels of the maskedpix centroider Debug maskedpix to divide the image by the mean value of the pixels instead of the sum Fix maskedpix get_type method Add cone effect for the altitude conjugated DM in case of LGS WFS Report bugs and issues on this page</summary></entry><entry><title type="html">Release of v4.3.0</title><link href="https://anr-compass.github.io/compass/2019/09/11/Release-of-v4.3.0.html" rel="alternate" type="text/html" title="Release of v4.3.0" /><published>2019-09-11T00:00:00+00:00</published><updated>2019-09-11T00:00:00+00:00</updated><id>https://anr-compass.github.io/compass/2019/09/11/Release-of-v4.3.0</id><content type="html" xml:base="https://anr-compass.github.io/compass/2019/09/11/Release-of-v4.3.0.html">&lt;ul&gt;
+  &lt;li&gt;change license to GNU LGPL-v3&lt;/li&gt;
+  &lt;li&gt;add Turing support&lt;/li&gt;
+  &lt;li&gt;add DM registration feature&lt;/li&gt;
+  &lt;li&gt;add AoSupervisor class on top of CompassSupervisor and BenchSupervisor&lt;/li&gt;
+  &lt;li&gt;SH WFS can handle big subapertures (before it was limited to 20x20)&lt;/li&gt;
+  &lt;li&gt;add LUTpix in calibration process to reorder pixels&lt;/li&gt;
+  &lt;li&gt;possibility to compute target SR fitted on a0 sinc function&lt;/li&gt;
+  &lt;li&gt;modification of pyramid centroider to use CUB&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Report bugs and issues on &lt;a href=&quot;https://github.com/ANR-COMPASS/shesha/issues&quot;&gt;this page&lt;/a&gt;&lt;/p&gt;</content><author><name>ANR-COMPASS</name></author><category term="2019," /><category term="v4" /><summary type="html">change license to GNU LGPL-v3 add Turing support add DM registration feature add AoSupervisor class on top of CompassSupervisor and BenchSupervisor SH WFS can handle big subapertures (before it was limited to 20x20) add LUTpix in calibration process to reorder pixels possibility to compute target SR fitted on a0 sinc function modification of pyramid centroider to use CUB Report bugs and issues on this page</summary></entry><entry><title type="html">Release of v4.2.0</title><link href="https://anr-compass.github.io/compass/2019/05/24/Release-of-v4.2.0.html" rel="alternate" type="text/html" title="Release of v4.2.0" /><published>2019-05-24T00:00:00+00:00</published><updated>2019-05-24T00:00:00+00:00</updated><id>https://anr-compass.github.io/compass/2019/05/24/Release-of-v4.2.0</id><content type="html" xml:base="https://anr-compass.github.io/compass/2019/05/24/Release-of-v4.2.0.html">&lt;ul&gt;
+  &lt;li&gt;add pyramid focal plane visualization&lt;/li&gt;
+  &lt;li&gt;add md report generation in check.py&lt;/li&gt;
+  &lt;li&gt;update documentation generation using doxygen&lt;/li&gt;
+  &lt;li&gt;add natural integration of FP16 and complex in python&lt;/li&gt;
+  &lt;li&gt;add KECK aperture type&lt;/li&gt;
+  &lt;li&gt;better ELT Pupil generation&lt;/li&gt;
+  &lt;li&gt;drop BRAHMA, use CACAO interface instead&lt;/li&gt;
+  &lt;li&gt;computes PSF in every iteration&lt;/li&gt;
+  &lt;li&gt;add frame calibration&lt;/li&gt;
+  &lt;li&gt;remove KALMAN support&lt;/li&gt;
+  &lt;li&gt;add pyramid modulation weight&lt;/li&gt;
+  &lt;li&gt;add &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter_TT&lt;/code&gt; parameter in centroider&lt;/li&gt;
+  &lt;li&gt;add modal integrator control law&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;for Internal developments:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;add custom pyr modulation script to handle natural guide dual-stars and resolved NGS&lt;/li&gt;
+  &lt;li&gt;add hunter integration optional&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Report bugs and issues on &lt;a href=&quot;https://github.com/ANR-COMPASS/shesha/issues&quot;&gt;this page&lt;/a&gt;&lt;/p&gt;</content><author><name>ANR-COMPASS</name></author><category term="2019," /><category term="v4" /><summary type="html">add pyramid focal plane visualization add md report generation in check.py update documentation generation using doxygen add natural integration of FP16 and complex in python add KECK aperture type better ELT Pupil generation drop BRAHMA, use CACAO interface instead computes PSF in every iteration add frame calibration remove KALMAN support add pyramid modulation weight add filter_TT parameter in centroider add modal integrator control law for Internal developments: add custom pyr modulation script to handle natural guide dual-stars and resolved NGS add hunter integration optional Report bugs and issues on this page</summary></entry><entry><title type="html">Release of v4.1.0</title><link href="https://anr-compass.github.io/compass/2019/03/15/Release-of-v4.1.0.html" rel="alternate" type="text/html" title="Release of v4.1.0" /><published>2019-03-15T00:00:00+00:00</published><updated>2019-03-15T00:00:00+00:00</updated><id>https://anr-compass.github.io/compass/2019/03/15/Release-of-v4.1.0</id><content type="html" xml:base="https://anr-compass.github.io/compass/2019/03/15/Release-of-v4.1.0.html">&lt;ul&gt;
+  &lt;li&gt;Add multiple input/computation/output type for RTC module&lt;/li&gt;
+  &lt;li&gt;uniformize axis in widget display&lt;/li&gt;
+  &lt;li&gt;better ELT Pupil generation&lt;/li&gt;
+  &lt;li&gt;add unit tests of rtc module&lt;/li&gt;
+  &lt;li&gt;add DM petal&lt;/li&gt;
+  &lt;li&gt;add fake camera input&lt;/li&gt;
+  &lt;li&gt;debug &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;load_config_from_file&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;debug &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wfs_init&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;for Internal developments:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;add compile script&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Report bugs and issues on &lt;a href=&quot;https://github.com/ANR-COMPASS/shesha/issues&quot;&gt;this page&lt;/a&gt;&lt;/p&gt;</content><author><name>ANR-COMPASS</name></author><category term="2019," /><category term="v4" /><summary type="html">Add multiple input/computation/output type for RTC module uniformize axis in widget display better ELT Pupil generation add unit tests of rtc module add DM petal add fake camera input debug load_config_from_file debug wfs_init for Internal developments: add compile script Report bugs and issues on this page</summary></entry><entry><title type="html">Release of v4.0.1</title><link href="https://anr-compass.github.io/compass/2019/02/02/Release-of-v4.0.1.html" rel="alternate" type="text/html" title="Release of v4.0.1" /><published>2019-02-02T00:00:00+00:00</published><updated>2019-02-02T00:00:00+00:00</updated><id>https://anr-compass.github.io/compass/2019/02/02/Release-of-v4.0.1</id><content type="html" xml:base="https://anr-compass.github.io/compass/2019/02/02/Release-of-v4.0.1.html">&lt;ul&gt;
+  &lt;li&gt;minor changes&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Report bugs and issues on &lt;a href=&quot;https://github.com/ANR-COMPASS/shesha/issues&quot;&gt;this page&lt;/a&gt;&lt;/p&gt;</content><author><name>ANR-COMPASS</name></author><category term="2019," /><category term="v4" /><summary type="html">minor changes Report bugs and issues on this page</summary></entry></feed>

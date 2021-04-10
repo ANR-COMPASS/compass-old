@@ -1,0 +1,12 @@
+I"Å<ul>
+  <li>update CUDA with 9.1</li>
+  <li>update magma with 2.3.0</li>
+  <li>update centroider_pyr method</li>
+  <li>remove used functions in sutra_target</li>
+  <li>add set_seed and refresh_screen in sutra_turbu</li>
+  <li>update parameter files</li>
+  <li>update documentation</li>
+  <li>Wrap sutra_bind to handle import error</li>
+  <li>update widget with multi-display</li>
+</ul>
+:ET

@@ -1,0 +1,30 @@
+I"U<p>Just for information, COMPASS can run under WSL.</p>
+
+<p>follow this tutorial: <a href="https://docs.nvidia.com/cuda/wsl-user-guide/index.html#installing-wip">CUDA on WSL :: CUDA Toolkit Documentation</a></p>
+
+<p>Some important points:</p>
+
+<ul>
+  <li>you must register in the Microsoft Windows Insider Program in the dev channel in order to have a build version 20145 or higher</li>
+  <li>Install the nvidia CUDA on WSL driver</li>
+  <li>Install the cuda-toolkit-11-1 instead of the cuda-toolkit-11-0</li>
+  <li>Do not choose the cuda, cuda-11-1, or cuda-drivers meta-packages under WSL 2</li>
+</ul>
+
+<p>Afterwards, it’s quite easy.</p>
+
+<p>For the X11, you have to install Xming</p>
+
+<p>Important points:</p>
+
+<ul>
+  <li>Windows Terminal is pretty cool application</li>
+  <li>in wsl’s .bashrc, add:
+    <pre><code class="language-bashrc">export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2&gt;/dev/null):0
+export LIBGL_ALWAYS_INDIRECT=1
+</code></pre>
+  </li>
+</ul>
+
+<p>For COMPASS itself: <a href="https://anr-compass.github.io/compass/install.html">COMPASS installation</a></p>
+:ET

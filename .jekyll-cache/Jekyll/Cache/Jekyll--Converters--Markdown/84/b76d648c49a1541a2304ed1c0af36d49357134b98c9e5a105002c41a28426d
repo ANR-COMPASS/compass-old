@@ -1,0 +1,78 @@
+I"p<h2 id="requirements">Requirements</h2>
+
+<ul>
+  <li>Linux distribution</li>
+  <li>Nvidia GPU card with CUDA toolkit &gt;= 10.0 (Older versions could be available on request)</li>
+</ul>
+
+<h2 id="installation-of-anacondaminiconda">Installation of Anaconda/Miniconda</h2>
+
+<p>COMPASS binaries, which contain the optimized GPU code, can be installed via Anaconda.
+Then, you have to install Anaconda 3 or Miniconda 3 (python 3 is required).</p>
+
+<p>We recommend Miniconda instead of Anaconda as it is much lighter, but it’s up to you.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">CONDA_ROOT</span><span class="o">=</span><span class="nv">$HOME</span>/miniconda3
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh <span class="nt">-b</span> <span class="nt">-p</span> <span class="nv">$CONDA_ROOT</span>
+</code></pre></div></div>
+
+<p>Don’t forget to add your Miniconda or Anaconda directory to your PATH:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$CONDA_ROOT</span>/bin:<span class="nv">$PATH</span>
+</code></pre></div></div>
+
+<h2 id="installation-of-compass-via-conda">Installation of COMPASS via conda</h2>
+<p>Once Miniconda is installed, installing the COMPASS binaries is easy :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conda <span class="nb">install</span> <span class="nt">-c</span> compass compass <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>Note: conda main channel is compiled with CUDA 11.0, for previous version please use:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conda <span class="nb">install</span> <span class="nt">-c</span> compass/label/cuda102 compass <span class="nt">-y</span>
+conda <span class="nb">install</span> <span class="nt">-c</span> compass/label/cuda101 compass <span class="nt">-y</span>
+conda <span class="nb">install</span> <span class="nt">-c</span> compass/label/cuda100 compass <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>This command line will also install dependencies in your conda environment.</p>
+
+<h2 id="installation-of-shesha-package-for-compass">Installation of SHESHA package for COMPASS</h2>
+
+<p>Finally, you can get the Shesha package of COMPASS. This python package is the user level of COMPASS. It also contains all the initialization functions.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/ANR-COMPASS/shesha.git
+</code></pre></div></div>
+
+<p>You will need to set some environment variables:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">SHESHA_ROOT</span><span class="o">=</span><span class="nv">$HOME</span>/shesha
+<span class="nb">export </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="nv">$SHESHA_ROOT</span>:<span class="nv">$PYTHONPATH</span>
+<span class="nb">export </span><span class="nv">PYTHONDONTWRITEBYTECODE</span><span class="o">=</span>1
+</code></pre></div></div>
+
+<h2 id="test-your-installation">Test your installation</h2>
+
+<p>Once the installation is complete, verify that everything is working fine :</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> <span class="nv">$SHESHA_ROOT</span>/tests
+./checkCompass.sh
+</code></pre></div></div>
+<p>This test will basically launch fast simulation test cases and it will print if those cases have been correctly initialised.</p>
+
+<h2 id="run-the-simulation">Run the simulation</h2>
+
+<p>You are ready !
+You can try it with one of our paramaters file:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> <span class="nv">$SHESHA_ROOT</span>
+ipython <span class="nt">-i</span> shesha/scripts/closed_loop.py data/par/par4bench/scao_sh_16x16_8pix.py
+</code></pre></div></div>
+
+<p>And if you want to launch the GUI:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> <span class="nv">$SHESHA_ROOT</span>
+ipython <span class="nt">-i</span> shesha/widgets/widget_ao.py
+</code></pre></div></div>
+
+<p>Browse through the <a href="manual.html">manual</a> to understand how to use COMPASS.</p>
+:ET

@@ -1,0 +1,37 @@
+I"�<h2 id="refereed-publications-using-compass">Refereed publications using COMPASS</h2>
+
+<ul>
+  <li><a href="https://doi.org/10.1051/0004-6361/201832579"><em>Ferreira, F. et al.</em>, “Numerical estimation of wavefront error breakdown in adaptive optics”, A&amp;A 2018</a></li>
+  <li><em>Ferreira, F. et al</em>, “COMPASS: an efficient GPU-based simulation software for adaptive optics systems”, HPCS 2018, To be published</li>
+  <li><a href="https://dl.acm.org/citation.cfm?id=2929920"><em>Ltaief, H. et al.</em>, “Adaptive Optics Simulation for the World’s Largest Telescope on Multicore Architectures with Multiple GPUs”, ACM PASC 2016</a></li>
+  <li><a href="https://www.aanda.org/articles/aa/abs/2015/11/aa25469-14/aa25469-14.html"><em>Clénet, Y. et al.</em>, “Anisoplanatism effect on the E-ELT SCAO point spread function. A preserved coherent core across the field”, Astronomy &amp; Astrophysics, Volume 583, id.A102, 10 pp. (2015)</a></li>
+  <li><a href="http://ieeexplore.ieee.org/document/7013009/"><em>Charara, A. et al.</em>, “Pipelining computational stages of the tomographic reconstructor for multi-object adaptive optics on a multi-gpu system”, High Performance Computing, Networking, Storage and Analysis, SC14 : International Conference for, pages 262–273, Nov (2014)</a></li>
+</ul>
+
+<h2 id="compass-in-international-conferences">COMPASS in international conferences</h2>
+
+<ul>
+  <li><a href="https://doi.org/10.1117/12.2311631"><em>Deo, V. et al.</em>,”A modal approach to optical gain compensation for the pyramid wavefront sensor”, SPIE 2018</a></li>
+  <li><a href="https://doi.org/10.1117/12.2312593"><em>Ferreira, F. et al.</em>, “Real-time end-to-end AO simulations at ELT scale on multiple GPUs with the COMPASS platform”, SPIE 2018</a></li>
+  <li><a href="http://www.iac.es/congreso/AO4ELT5/pages/proceeding.php?id=55"><em>Ferreira, F. et al.</em>, “AO error breakdown: anisoplanatism and bandwidth error correlation with ROKET”, AO4ELT5 2017</a></li>
+  <li><a href="http://www.iac.es/congreso/AO4ELT5/pages/proceeding.php?id=43"><em>Vidal, F. et al.</em>, “End-to-end simulations for the MICADO-MAORY SCAO mode”, AO4ELT5 2017</a></li>
+  <li><a href="http://www.iac.es/congreso/AO4ELT5/pages/proceeding.php?id=61"><em>Deo, V. et al.</em>,”Enlarging the Control Space of the Pyramid Wavefront Sensor: Numerical Simulations and Bench Validation”, AO4ELT5 2017</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9909/1/Deriving-comprehensive-error-breakdown-for-wide-field-adaptive-optics-systems/10.1117/12.2231573.short"><em>Ferreira, F. et al.</em>, “Deriving comprehensive error breakdown for wide field adaptive optics systems using end-to-end simulations”, SPIE, 2016</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9909/1/Joint-MICADO-MAORY-SCAO-mode--specifications-prototyping-simulations-and/10.1117/12.2231192.short"><em>Clénet, Y. et al.</em>, “Joint MICADO-MAORY SCAO mode: specifications, prototyping, simulations and preliminary design
+“, SPIE, 2016</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9909/1/COMPASS-status-update-and-long-term-development-plan/10.1117/12.2232681.short?SSO=1"><em>Gratadour, D. et al</em>, “COMPASS: status update and long term develoment plan”, SPIE, 2016</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9148/1/COMPASS--an-efficient-scalable-and-versatile-numerical-platform-for/10.1117/12.2056358.short"><em>Gratadour, D. et al</em>, “COMPASS: an efficient, scalable and versatile numerical platform for the development of ELT AO systems”, SPIE, 2014</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9147/1/Simulations-of-high-z-galaxy-observations-with-an-ELT-MOS/10.1117/12.2055161.full?SSO=1"><em>Disseau, K et al</em>, “Simulations of high-z galaxy observations with an ELT-MOS”, SPIE, 2014</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9148/1/Modelization-of-a-pyramid-wavefront-sensor-for-the-E-ELT/10.1117/12.2056782.full"><em>Carlotti, A. et al</em>, “Modelization of a pyramid wavefront sensor for the E-ELT in the context of the COMPASS project”, SPIE, 2014</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9148/1/A-novel-fast-and-accurate-pseudo-analytical-simulation-approach-for/10.1117/12.2055911.full"><em>Gendron, É. et al</em>, “A novel fast and accurate pseudo-analytical simulation approach for MOAO”, SPIE, 2014</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9148/1/Adaptive-optics-simulations-for-the-MICADO-SCAO-system/10.1117/12.2055863.full"><em>Vidal, F. et al</em>, “Adaptive optics simulations for the MICADO SCAO system”, SPIE, 2014</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9147/1/The-high-contrast-imaging-modes-of-MICADO/10.1117/12.2057010.full"><em>Baudoz, P. et al</em>, “The high contrast imaging modes of MICADO”, SPIE, 2014</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9148/1/Enabling-technologies-for-GPU-driven-adaptive-optics-real-time-control/10.1117/12.2055770.full"><em>Sevin, A. et al</em>, “Enabling technologies for GPU driven adaptive optics real-time control”, SPIE, 2014</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9147/1/Sky-background-subtraction-with-fiber-fed-spectrographs/10.1117/12.2055137.full"><em>Puech, M. et al</em>, “Sky background subtraction with fiber-fed spectrographs”, SPIE, 2014</a></li>
+  <li><a href="https://link.springer.com/chapter/10.1007/978-3-319-09873-9_59"><em>Abdelfattah, A. et al</em>, “High Performance Pseudo-analytical Simulation of Multi-object Adaptive Optics over Multi-GPU Systems”. Euro-Par conference 2014 on Parallel Processing</a></li>
+  <li><a href="http://ao4elt3.arcetri.astro.it/proceedings/fulltext_13354.pdf"><em>Gratadour, D. et al.</em>, “Building a reliable, scalable and affordable RTC for AO instruments on ELTs”, AO4ELT3, 2013</a></li>
+  <li><a href="http://ao4elt3.arcetri.astro.it/proceedings/fulltext_13240.pdf"><em>Clénet, Y. et al</em>, “First GPU-based end-to-end AO simulations to dimension the E-ELT MICADO SCAO mode”, AO4ELT3, 2013</a></li>
+  <li><a href="http://sf2a.eu/semaine-sf2a/2013/proceedings/2013sf2a.conf..0273D.pdf"><em>Disseau, K. et al</em>, “Web-based scientific simulation tools for E-ELT instruments”, Proceedings of the Annual meeting of the French Society of Astronomy and Astrophysics, 2013</a></li>
+  <li><a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/8447/1/GPUs-for-adaptive-optics-simulations-and-real-time-control/10.1117/12.925723.short"><em>Gratadour, D. et al</em>, “GPUs for adaptive optics: simulations and real-time control”, SPIE, 2012</a></li>
+</ul>
+:ET

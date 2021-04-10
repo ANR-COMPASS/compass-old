@@ -1,0 +1,10 @@
+I"6<p>the Easter Bunny came and before hiding chocolate eggs everywhere, it came with a new update of compass V1.1</p>
+
+<ul>
+  <li>update parameter files</li>
+  <li>add pyr_misalignments</li>
+  <li>add rtc_standalone</li>
+  <li>add dm_standalone</li>
+  <li>add supervisor between simulation and widget</li>
+</ul>
+:ET

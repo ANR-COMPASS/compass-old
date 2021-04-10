@@ -1,0 +1,10 @@
+I"ê<ul>
+  <li>Add spider rotation and circular obstruction for ELT-like pupils</li>
+  <li>New feature : image with the selected pixels of the maskedpix centroider</li>
+  <li>Debug maskedpix to divide the image by the mean value of the pixels instead of the sum</li>
+  <li>Fix maskedpix get_type method</li>
+  <li>Add cone effect for the altitude conjugated DM in case of LGS WFS</li>
+</ul>
+
+<p>Report bugs and issues on <a href="https://github.com/ANR-COMPASS/shesha/issues">this page</a></p>
+:ET

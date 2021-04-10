@@ -1,0 +1,11 @@
+I"<ul>
+  <li>Debug issue with Kepler architecture</li>
+  <li>Multi GPU controller reworked</li>
+  <li>Update pages-doc</li>
+  <li>Add useful keyworks in<code class="language-plaintext highlighter-rouge">rtc_cacao</code> loopframe</li>
+  <li>Add <code class="language-plaintext highlighter-rouge">reset_coms</code> function in<code class="language-plaintext highlighter-rouge">sutra_controller</code></li>
+  <li>Update Jenkinsfile</li>
+</ul>
+
+<p>Report bugs and issues on <a href="https://github.com/ANR-COMPASS/shesha/issues">this page</a></p>
+:ET

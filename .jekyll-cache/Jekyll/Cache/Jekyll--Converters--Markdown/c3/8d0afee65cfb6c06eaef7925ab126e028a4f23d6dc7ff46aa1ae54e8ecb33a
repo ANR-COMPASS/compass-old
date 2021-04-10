@@ -1,0 +1,101 @@
+I"�<h2 id="what-is-compass">What is COMPASS?</h2>
+
+<p>The COMPASS platform was designed to meet the need of high-performance for the simulation of AO systems. The final product includes a software package for simulating all the critical subcomponents of AO, particularly in the context of the ELT and a real-time core based on several control approaches, with performances consistent with its integration into an instrument. Taking advantage of the specific hardware architecture of the GPU, the COMPASS tool allows to achieve adequate execution speeds to conduct large simulation campaigns caled to the ELT.
+The COMPASS platform can be used to carry a wide variety of simulations to
+both test specific components of AO of the E-ELT (such as wavefront analysis
+device with a pyramid or elongated Laser star), and various systems
+configurations such as multi-conjugate AO.</p>
+
+<h2 id="get-started">Get started</h2>
+
+<p>COMPASS is available on <a href="https://github.com/ANR-COMPASS/shesha.git">GitHub</a> for Linux platform only, equiped with a Nvidia GPU card.</p>
+
+<p>Follow the <a href="install.html">installation instructions</a> to get all the dependencies.
+The <a href="manual.html">user manual</a> is available.</p>
+
+<p><strong>Please, check the News section to get informed of what’s new on COMPASS and of important update.</strong></p>
+
+<h2 id="performance">Performance</h2>
+
+<p>COMPASS computing performance is scalable according to the Nvidia GPU card used. A speed up of 9 has been reached with the last Nvidia V100 GPU compared to the project start’s state of the art GPU, without changing a single line of code.</p>
+
+<p>Current performance leads to around 1 kHz for a SPHERE scale, 300 Hz for a SCAO ELT scale. Performance will continue to evolve with next GPU generations. Here is the performance obtained with the current state of the art Nvidia’s GPU V100 for various simulation scale and the evolution with GPU generation measured on a SCAO ELT scale.</p>
+
+<p><img src="assets/images/perf-GPUs.png" alt="perfs" height="auto" width="410px" />
+<img src="assets/images/perfs-V100.png" alt="perfs-v100" height="auto" width="410px" /></p>
+
+<h2 id="main-features">Main features</h2>
+
+<h3 id="models">Models</h3>
+
+<p>COMPASS simulates atmosphere disturbance, telescope pupil, WFS, DM and RTC. The output is the long exposure PSF.</p>
+
+<h4 id="telescope">Telescope</h4>
+
+<p><span class="inner"><img src="assets/images/ELT-pupil.png" alt="text" height="250px" width="250px" /></span></p>
+
+<ul>
+  <li>Customizable spiders</li>
+  <li>ELT pupil features including missing segments and reflectivity</li>
+  <li>Phase aberration between segments including piston, tip and tilt</li>
+  <li>NCPA</li>
+</ul>
+
+<h4 id="atmosphere">Atmosphere</h4>
+
+<ul>
+  <li>User defined number of independent turbulent layers</li>
+  <li>Kolmogorov or Von Karman spectrum</li>
+  <li>Customizable r0, outer scale and profile</li>
+</ul>
+
+<h4 id="wfs">WFS</h4>
+
+<p><span class="inner"><img src="assets/images/High-res-pyr.png" alt="pyrhr" height="250px" width="250px" /></span></p>
+
+<ul>
+  <li>Customizable spiders</li>
+  <li>Shack-Hartmann WFS</li>
+  <li>High resolution pyramid WFS</li>
+  <li>LGS with cone effect and elongation</li>
+  <li>“Geomtric” model : the average phase gradient at each sub-aperture, based on the phase itself</li>
+</ul>
+
+<h4 id="dm">DM</h4>
+
+<ul>
+  <li>piezo-stack type DM with multiple influence functions available</li>
+  <li>tip-tilt mirror</li>
+  <li>Karhunen-Loeve mirror</li>
+  <li>Possibility to insert any custom DM in the simulation via HDF5 file</li>
+</ul>
+
+<h4 id="rtc">RTC</h4>
+
+<ul>
+  <li>Multiple centroiding methods : CoG, thresholded CoG, brightest pixels, etc…</li>
+  <li>Various wavefront reconstruction models : least-square, minimum variance, CuReD, phase projection, etc…</li>
+</ul>
+
+<h3 id="user-interface">User interface</h3>
+
+<p>COMPASS UI is coded in Python 3, allowing easy interactions with the simulation.</p>
+
+<h4 id="gui">GUI</h4>
+
+<p>A pyQtgraph based graphical interface is available</p>
+
+<p><img src="assets/images/compass_widget.gif" alt="gui" /></p>
+
+<h4 id="script">Script</h4>
+
+<p>Object oriented programmation of COMPASS makes scripts of simulation light and easy to write.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">shesha.sim.simulator</span> <span class="kn">import</span> <span class="n">Simulator</span>
+<span class="n">arguments</span> <span class="o">=</span> <span class="n">docopt</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+<span class="n">param_file</span> <span class="o">=</span> <span class="s">"&lt;parameters_filename&gt;"</span>
+<span class="n">sim</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">param_file</span><span class="p">)</span>
+<span class="n">sim</span><span class="p">.</span><span class="n">init_sim</span><span class="p">()</span>
+<span class="n">sim</span><span class="p">.</span><span class="n">loop</span><span class="p">(</span><span class="n">sim</span><span class="p">.</span><span class="n">config</span><span class="p">.</span><span class="n">p_loop</span><span class="p">.</span><span class="n">niter</span><span class="p">)</span>
+</code></pre></div></div>
+:ET

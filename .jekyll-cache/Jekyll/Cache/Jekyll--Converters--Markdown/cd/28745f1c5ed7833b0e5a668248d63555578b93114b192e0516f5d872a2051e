@@ -1,0 +1,14 @@
+I"$<ul>
+  <li>handle different shape for raw images and cal images (using the LUT feature)</li>
+  <li>possibility to attach a stream to centroiders</li>
+  <li>opimization of pyramid HR wfs</li>
+  <li>debug <code class="language-plaintext highlighter-rouge">do_centroids_ref</code> method</li>
+  <li>debug <code class="language-plaintext highlighter-rouge">init_custom_dm</code> method</li>
+  <li>add <code class="language-plaintext highlighter-rouge">requirements*.txt</code> file to install python dependencies</li>
+  <li>add <code class="language-plaintext highlighter-rouge">Jenkinsfile</code></li>
+  <li>update Doxyfile script and documentation rst</li>
+  <li>generate gcov trace in debug</li>
+</ul>
+
+<p>Report bugs and issues on <a href="https://github.com/ANR-COMPASS/shesha/issues">this page</a></p>
+:ET

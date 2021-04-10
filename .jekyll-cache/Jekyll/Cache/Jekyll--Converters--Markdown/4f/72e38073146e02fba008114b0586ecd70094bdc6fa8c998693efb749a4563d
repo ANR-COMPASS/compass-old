@@ -1,0 +1,2515 @@
+I"�3<p>This is the user manual for COMPASS. We will try to be as exhaustive as possible, but if you don’t get the answer you are looking for, <a href="https://github.com/anr-compass/shesha">contact us on the GitHub project</a>.</p>
+
+<h2 id="1-quick-start">1. Quick start</h2>
+
+<h3 id="1-basic-simulation">1. Basic simulation</h3>
+
+<p>To launch a basic simulation with COMPASS, you can use our script with a parameter file as an argument :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> <span class="nv">$SHESHA_ROOT</span>
+ipython <span class="nt">-i</span> shesha/scripts/closed_loop.py path_to_your_parfile/parfile.py
+</code></pre></div></div>
+
+<p>Some basic parameter files are provided in the directory <code class="language-plaintext highlighter-rouge">$SHESHA_ROOT/data/par/par4bench</code> and an example is provided <a href="#2-parameter-file">here</a></p>
+
+<p>After an initialization phase, the script will prompt in the terminal the short exposure Strehl ratio, the long exposure one, an estimation time remaining and the mean framerate of the simulation :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">----------------------------------------------------</span>
+| iter# | S.E. SR | L.E. SR | ETR <span class="o">(</span>s<span class="o">)</span> | Framerate <span class="o">(</span>Hz<span class="o">)</span> |
+| <span class="nt">-----</span> |
+100 	 0.748 	  0.748	     1.3 	 683.2
+200 	 0.733 	  0.740	     1.2 	 683.9
+300 	 0.742 	  0.741	     1.0 	 683.9
+400 	 0.724 	  0.737	     0.9 	 684.1
+500 	 0.740 	  0.737	     0.7 	 684.1
+600 	 0.789 	  0.746	     0.6 	 684.3
+700 	 0.710 	  0.741	     0.4 	 684.3
+800 	 0.743 	  0.741	     0.3 	 684.2
+900 	 0.696 	  0.736	     0.1 	 684.2
+1000 	 0.709 	  0.733	     0.0 	 684.2
+ loop execution <span class="nb">time</span>: 1.4643762111663818   <span class="o">(</span> 1000 iterations<span class="o">)</span>,  0.0014643762111663818 <span class="o">(</span>mean<span class="o">)</span>   682.8846251220482 Hz
+</code></pre></div></div>
+
+<h3 id="2-parameter-file">2. Parameter file</h3>
+
+<p>For COMPASS, a parameter file is a python file where the parameter classes are instantiated and set to be imported by the simulation script. All the parameter classes are described in details <a href="#3-sheshaconfig-parameter-classes">here</a>.
+To write your own parameter file, remember those important points :</p>
+
+<ul>
+  <li>Starts by importing the <code class="language-plaintext highlighter-rouge">shesha.config</code> module: it contains all the parameter classes</li>
+  <li>Instantiates the paramater classes you need for your simulation. <strong>Note that some of those classes are required to perform a simulation : Param_loop, Param_geom, Param_tel and Param_atmos.</strong> You also have to set a list of Param_target called <code class="language-plaintext highlighter-rouge">p_targets</code>, a list of Param_wfs called <code class="language-plaintext highlighter-rouge">p_wfss</code>, a list of Param_dm called <code class="language-plaintext highlighter-rouge">p_dms</code>, a list of Param_centroider called <code class="language-plaintext highlighter-rouge">p_centroiders</code> and a list of Param_controller called <code class="language-plaintext highlighter-rouge">p_controllers</code>.</li>
+  <li>Set the classes parameters using the setter functions. Those functions are usually named as <code class="language-plaintext highlighter-rouge">set_&lt;parameter name&gt;</code>.</li>
+</ul>
+
+<p>An example of parameter file follows and others can be found in <code class="language-plaintext highlighter-rouge">$SHESHA_ROOT/data/par/par4bench</code> directory</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">shesha.config</span> <span class="k">as</span> <span class="n">conf</span>
+
+<span class="n">simul_name</span> <span class="o">=</span> <span class="s">"scao_sh_40m_80_8pix"</span>
+
+<span class="c1"># loop
+</span><span class="n">p_loop</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">Param_loop</span><span class="p">()</span>
+
+<span class="n">p_loop</span><span class="p">.</span><span class="n">set_niter</span><span class="p">(</span><span class="mi">5000</span><span class="p">)</span>
+<span class="n">p_loop</span><span class="p">.</span><span class="n">set_ittime</span><span class="p">(</span><span class="mf">0.002</span><span class="p">)</span>
+
+<span class="c1"># geom
+</span><span class="n">p_geom</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">Param_geom</span><span class="p">()</span>
+
+<span class="n">p_geom</span><span class="p">.</span><span class="n">set_zenithangle</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+
+<span class="c1"># tel
+</span><span class="n">p_tel</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">Param_tel</span><span class="p">()</span>
+
+<span class="n">p_tel</span><span class="p">.</span><span class="n">set_diam</span><span class="p">(</span><span class="mf">40.0</span><span class="p">)</span>
+<span class="n">p_tel</span><span class="p">.</span><span class="n">set_cobs</span><span class="p">(</span><span class="mf">0.12</span><span class="p">)</span>
+
+<span class="c1"># atmos
+</span><span class="n">p_atmos</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">Param_atmos</span><span class="p">()</span>
+
+<span class="n">p_atmos</span><span class="p">.</span><span class="n">set_r0</span><span class="p">(</span><span class="mf">0.16</span><span class="p">)</span>
+<span class="n">p_atmos</span><span class="p">.</span><span class="n">set_nscreens</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">p_atmos</span><span class="p">.</span><span class="n">set_frac</span><span class="p">([</span><span class="mf">1.0</span><span class="p">])</span>
+<span class="n">p_atmos</span><span class="p">.</span><span class="n">set_alt</span><span class="p">([</span><span class="mf">0.0</span><span class="p">])</span>
+<span class="n">p_atmos</span><span class="p">.</span><span class="n">set_windspeed</span><span class="p">([</span><span class="mf">20.0</span><span class="p">])</span>
+<span class="n">p_atmos</span><span class="p">.</span><span class="n">set_winddir</span><span class="p">([</span><span class="mi">45</span><span class="p">])</span>
+<span class="n">p_atmos</span><span class="p">.</span><span class="n">set_L0</span><span class="p">([</span><span class="mf">1.e5</span><span class="p">])</span>
+
+<span class="c1"># target
+</span><span class="n">p_targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">conf</span><span class="p">.</span><span class="n">Param_target</span><span class="p">()]</span>
+
+<span class="n">p_targets</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">set_xpos</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">p_targets</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">set_ypos</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">p_targets</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">set_Lambda</span><span class="p">(</span><span class="mf">1.65</span><span class="p">)</span>
+<span class="n">p_targets</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">set_mag</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># wfs
+</span><span class="n">p_wfs0</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">Param_wfs</span><span class="p">()</span>
+<span class="n">p_wfs1</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">Param_wfs</span><span class="p">()</span>
+<span class="n">p_wfss</span> <span class="o">=</span> <span class="p">[</span><span class="n">p_wfs0</span><span class="p">]</span>
+
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_type</span><span class="p">(</span><span class="s">"sh"</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_nxsub</span><span class="p">(</span><span class="mi">80</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_npix</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_pixsize</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_fracsub</span><span class="p">(</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_xpos</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_ypos</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_Lambda</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_gsmag</span><span class="p">(</span><span class="mf">3.</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_optthroughput</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_zerop</span><span class="p">(</span><span class="mf">1.e11</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_noise</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">p_wfs0</span><span class="p">.</span><span class="n">set_atmos_seen</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># dm
+</span><span class="n">p_dm0</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">Param_dm</span><span class="p">()</span>
+<span class="n">p_dm1</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">Param_dm</span><span class="p">()</span>
+<span class="n">p_dms</span> <span class="o">=</span> <span class="p">[</span><span class="n">p_dm0</span><span class="p">,</span> <span class="n">p_dm1</span><span class="p">]</span>
+<span class="n">p_dm0</span><span class="p">.</span><span class="n">set_type</span><span class="p">(</span><span class="s">"pzt"</span><span class="p">)</span>
+<span class="n">nact</span> <span class="o">=</span> <span class="n">p_wfs0</span><span class="p">.</span><span class="n">nxsub</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">p_dm0</span><span class="p">.</span><span class="n">set_nact</span><span class="p">(</span><span class="n">nact</span><span class="p">)</span>
+<span class="n">p_dm0</span><span class="p">.</span><span class="n">set_alt</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+<span class="n">p_dm0</span><span class="p">.</span><span class="n">set_thresh</span><span class="p">(</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">p_dm0</span><span class="p">.</span><span class="n">set_coupling</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">p_dm0</span><span class="p">.</span><span class="n">set_unitpervolt</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">p_dm0</span><span class="p">.</span><span class="n">set_push4imat</span><span class="p">(</span><span class="mf">100.</span><span class="p">)</span>
+
+<span class="n">p_dm1</span><span class="p">.</span><span class="n">set_type</span><span class="p">(</span><span class="s">"tt"</span><span class="p">)</span>
+<span class="n">p_dm1</span><span class="p">.</span><span class="n">set_alt</span><span class="p">(</span><span class="mf">0.</span><span class="p">)</span>
+<span class="n">p_dm1</span><span class="p">.</span><span class="n">set_unitpervolt</span><span class="p">(</span><span class="mf">0.0005</span><span class="p">)</span>
+<span class="n">p_dm1</span><span class="p">.</span><span class="n">set_push4imat</span><span class="p">(</span><span class="mf">10.</span><span class="p">)</span>
+
+<span class="c1"># centroiders
+</span><span class="n">p_centroider0</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">Param_centroider</span><span class="p">()</span>
+<span class="n">p_centroiders</span> <span class="o">=</span> <span class="p">[</span><span class="n">p_centroider0</span><span class="p">]</span>
+
+<span class="n">p_centroider0</span><span class="p">.</span><span class="n">set_nwfs</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">p_centroider0</span><span class="p">.</span><span class="n">set_type</span><span class="p">(</span><span class="s">"cog"</span><span class="p">)</span>
+
+<span class="c1"># controllers
+</span><span class="n">p_controller0</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">Param_controller</span><span class="p">()</span>
+<span class="n">p_controllers</span> <span class="o">=</span> <span class="p">[</span><span class="n">p_controller0</span><span class="p">]</span>
+
+<span class="n">p_controller0</span><span class="p">.</span><span class="n">set_type</span><span class="p">(</span><span class="s">"ls"</span><span class="p">)</span>
+<span class="n">p_controller0</span><span class="p">.</span><span class="n">set_nwfs</span><span class="p">([</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">p_controller0</span><span class="p">.</span><span class="n">set_ndm</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">p_controller0</span><span class="p">.</span><span class="n">set_maxcond</span><span class="p">(</span><span class="mi">1500</span><span class="p">)</span>
+<span class="n">p_controller0</span><span class="p">.</span><span class="n">set_delay</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">p_controller0</span><span class="p">.</span><span class="n">set_gain</span><span class="p">(</span><span class="mf">0.4</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="3-script">3. Script</h3>
+
+<p>Thanks to the architecture of COMPASS, writing a script is easy.</p>
+
+<p>Let’s take a look at our <code class="language-plaintext highlighter-rouge">closed_loop.py</code> script :</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">shesha.supervisor.compassSupervisor</span> <span class="kn">import</span> <span class="n">CompassSupervisor</span>
+<span class="kn">from</span> <span class="nn">shesha.util.utilities</span> <span class="kn">import</span> <span class="n">load_config_from_file</span>
+<span class="kn">from</span> <span class="nn">docopt</span> <span class="kn">import</span> <span class="n">docopt</span>
+<span class="n">arguments</span> <span class="o">=</span> <span class="n">docopt</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+
+<span class="n">param_file</span> <span class="o">=</span> <span class="n">arguments</span><span class="p">[</span><span class="s">"&lt;parameters_filename&gt;"</span><span class="p">]</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">load_config_from_file</span><span class="p">(</span><span class="n">param_file</span><span class="p">)</span>
+
+<span class="n">supervisor</span> <span class="o">=</span> <span class="n">CompassSupervisor</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="n">supervisor</span><span class="p">.</span><span class="n">loop</span><span class="p">(</span><span class="n">supervisor</span><span class="p">.</span><span class="n">config</span><span class="p">.</span><span class="n">p_loop</span><span class="p">.</span><span class="n">niter</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Let’s go step-by-step :</p>
+
+<ul>
+  <li>The first two lines import the <code class="language-plaintext highlighter-rouge">shesha.supervisor.compassSupervisor</code> module, it contains the Supervisor class used to handle the simulation. This class is described properly <a href="#2-sheshasupervisor--supervisor-class">here</a>, and an utility function that will returns a configuration module from the given parameter file.</li>
+  <li>The next lines :</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">docopt</span> <span class="kn">import</span> <span class="n">docopt</span>
+<span class="n">arguments</span> <span class="o">=</span> <span class="n">docopt</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+<span class="n">param_file</span> <span class="o">=</span> <span class="n">arguments</span><span class="p">[</span><span class="s">"&lt;parameters_filename&gt;"</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>are used to get the parameter file name. <code class="language-plaintext highlighter-rouge">docopt</code> module is a command line arguments parser for python that can also set proper usage pattern and options for your script. For more information, visit <a href="http://docopt.org/">docopt.org</a></p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">supervisor = Supervisor(config)</code> instantiates the Supervisor class</li>
+  <li><code class="language-plaintext highlighter-rouge">supervisor.loop(supervisor.config.p_loop.niter)</code> runs the simulation for <code class="language-plaintext highlighter-rouge">niter</code> iterations</li>
+</ul>
+
+<h3 id="4-interactions-through-the-supervisor">4. Interactions through the Supervisor</h3>
+
+<p>If you had launched your script with python or ipython in interaction mode (<code class="language-plaintext highlighter-rouge">-i</code> option), you will have access to the prompt after the iterations loop. At this point, you can interact with your simulation to display images (PSF, command matrix…) or to access at any internal quantity for debug. You can also modify your simulation and launch new iterations.</p>
+
+<p>The Supervisor class has been created for modularity. It is composed of several components (atmos, wfs, rtc, dms, etc…) that offer interfaces (setter/getter) with the corresponding GPU objects.</p>
+
+<p>Some of the most useful functions are listed below:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Method</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>supervisor.target.get_tar_image(0, expo_type=”le”)</strong></td>
+      <td style="text-align: left">Return the long exposure PSF. Use <code class="language-plaintext highlighter-rouge">"se"</code> to get the short exposure one</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>supervisor.target.get_tar_phase(0)</strong></td>
+      <td style="text-align: left">Return the residual phase</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>supervisor.wfs.get_wfs_image(0)</strong></td>
+      <td style="text-align: left">Return the WFS image</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>supervisor.dms.get_dm_shape(0)</strong></td>
+      <td style="text-align: left">Return the DM shape</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>supervisor.rtc.get_slopes(0)</strong></td>
+      <td style="text-align: left">Return the lastest slopes (X measurements first, then Y)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>supervisor.rtc.get_voltages(0)</strong></td>
+      <td style="text-align: left">Return the lastest DM commands</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>supervisor.rtc.get_interaction_matrix(0)</strong></td>
+      <td style="text-align: left">Return the interaction matrix</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>supervsor.rtc.get_command_matrix(0)</strong></td>
+      <td style="text-align: left">Return the command matrix</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The Supervisor class will be described with more details in a <a href="#2-sheshasupervisor--supervisor-class">following section</a>.</p>
+
+<p>You can find a full description of this class (and all the others) in the <a href="https://lesia.obspm.fr/compass">compass code documentation</a>, autogenerated from the source code documentation using Doxygen. You can also use the <code class="language-plaintext highlighter-rouge">help</code> command of python to get information about a function.</p>
+
+<h3 id="5-using-the-gui">5. Using the GUI</h3>
+
+<h4 id="basic-mode">Basic mode</h4>
+
+<p>To launch the GUI :</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ipython -i $SHESHA_ROOT/widgets/widget_ao.py
+</code></pre></div></div>
+
+<p><img src="assets/images/compass_gui_annotated.png" alt="gui" width="600px" /></p>
+
+<p>To start your simulation, follows those steps:</p>
+
+<ul>
+  <li><strong>Step 1</strong>: Browse to your parameter file using the button next to the Load button</li>
+  <li><strong>Step 2</strong>: Load the parameters by cliking the <em>Load</em> button</li>
+  <li><strong>Step 3</strong>: Initialize the simulation by clicking the <em>Init</em> button. The initialization phase is finished once the <em>Init</em> button is available again. Note that you can follow the process in the terminal.</li>
+  <li><strong>Step 4</strong>: Run your simulation with the <em>Run</em> button. By default, it will run infinite iterations. You can stop it by clicking again the button. You can also select a specific number of iterations to run. To do so, uncheck the <em>forever</em> button and enter the number of iterations you want in the text box. The <em>Next</em> button performs only one iteration.</li>
+</ul>
+
+<h4 id="display-management">Display management</h4>
+
+<p><img src="assets/images/gui_display.png" alt="display" width="600px" /></p>
+
+<p>By default, nothing is displayed when you launched the simulation. You can choose what to display by cheking the corresponding boxes in the drop down menus. Then, you can rearrange the displays as you wish by drag and drop. You can also detach the display area from the main window by clicking the button in the bottom right corner of the main window.</p>
+
+<p>You have also the possibility to save your layout area disposition. Once you have organized your display area, press the <em>Save</em> button of the <em>Layout Area Display</em>. You will be able to load it for further simulations with the <em>Load</em> button.</p>
+
+<h4 id="interactions-in-the-terminal">Interactions in the terminal</h4>
+
+<p>The terminal is also available when you are using the GUI, as for a classical simulation. All the commands listed in the section <a href="#4-interactions">Interactions</a> (and all the other) remain valids, but you have to add <code class="language-plaintext highlighter-rouge">wao.</code> before each command. For example, <code class="language-plaintext highlighter-rouge">supervisor.target.get_tar_image(0,expo_type="le")</code> becomes <code class="language-plaintext highlighter-rouge">wao.supervisor.target.get_tar_image(0,expo_type="le")</code></p>
+
+<h2 id="2-features-implementation">2. Features implementation</h2>
+
+<h3 id="1-random-number-generation">1. Random number generation</h3>
+
+<p>COMPASS requires the generation of several sets of random numbers which are used for :</p>
+
+<ul>
+  <li>turbulent phase generation</li>
+  <li>WFS image generation</li>
+</ul>
+
+<p>In both cases a pseudo random number generator (PRNG), of the Mersenne Twister family which generates 64 distinct sequences based on different parameter sets for the basic algorithm, is used. More details can be found in the <a href="http://docs.nvidia.com/cuda/curand/host-api-overview.html">cuRAND library documentation</a> (see details on the MTGP32 generator).</p>
+
+<p>Several sets of random numbers are generated following a Normal distribution to be used in the two above mentioned subsystems. In the case of the simulation of noise for the WFS, an additional set of random numbers is generated following a Poisson distribution, using the raw WFS image to simulate for photon noise. This function returns a set of Poisson-distributed unsigned integers based on a Poisson distribution with the given set of lambda values (i.e. intensities in the image model). It relies on Knuth’s algorithm when the parameter lambda is less than 64, and uses a normal approximation when lambda is greater than 4000. In between 64 and 400, it uses a rejection algorithm based on the <a href="https://people.maths.ox.ac.uk/gilesm/codes/poissinv/paper.pdf">incomplete gamma function approximation</a></p>
+
+<h3 id="2-quantum-pixels-and-size-of-the-simulation-arrays">2. Quantum pixels and size of the simulation arrays</h3>
+
+<p>A critical parameter in the simulation model is the quantum pixel size. It is the size (expressed in arcsec) of the smallest turbulence cell that can produce a significant optical path difference between two rays of the light beam. It defines how the turbulent phase is sampled in the simulation and put constraints on the size of the largest arrays in the simulation. In COMPASS, the quantum pixel size is computed differently for Shack Hartmann and Pyramid WFS. Concerning the SH WFS, the sampling of the phase in a subaperture is computed as the ratio between the seeing obtained from the Fried parameter at the wavefront sensing wavelength, and the diffraction limit obtained using the physical subaperture diameter (subapdiam). An arbitrary factor in then chosen to determine the final field of view simulated for a subaperture. To ensure that the final image in a subaperture contains most of the speckles of the spot image, we chose a constant value for this arbitrary k factor in our simulation (k=6) and the initial size of the square array containing the phase for a given subaperture is computed as :</p>
+
+<p><code class="language-plaintext highlighter-rouge">pdiam = long(k * subapdiam / r0)</code></p>
+
+<p>This number is then slightly tweaked in order to :</p>
+
+<ul>
+  <li>use an integer rebin factor to downsample the high resolution image for a subaperture to the actual pixel size requested by the user</li>
+  <li>an adequate array size (Nfft) for optimizing the performance of Fast Fourier Transforms on these high resolution images, assuming Nyquist sampling</li>
+</ul>
+
+<p>The quantum pixel size is then estimated as :</p>
+
+<p><code class="language-plaintext highlighter-rouge">qpixsize = pdiam * lambda / subapdiam * RASC / Nfft</code></p>
+
+<p>where lambda is the observing wavelength of the WFS and RASC is the conversion factor between radians and arcsec. In this case, the size of the turbulent phase screen array to be simulated is</p>
+
+<p><code class="language-plaintext highlighter-rouge">nphase = pdiam*Nssp</code></p>
+
+<p>with Nssp the number of subapertures in the telescope diameter.</p>
+
+<p>Concerning the pyramid WFS, the sampling of the phase is chosen as a trade-off between several parameters. Similarly to the case of a single subaperture of the SH WFS, we should ensure a good sampling of the turbulence and avoid speckle aliasing in the final image. Hence, P, the pupil diameter (in pixels), i.e. the size of turbulent phase screen array to be simulated, should be larger than several times the ratio between the seeing and the diffraction limit, but this time for the whole telescope aperture.</p>
+
+<p><code class="language-plaintext highlighter-rouge">P &gt; long(D / r0 * m)</code></p>
+
+<p>with m an integer factor similar to the k factor in the case of the SH WFS and D the diameter of the telescope.</p>
+
+<p>Additionally, in the case of the pyramid, an ideal field stop radius is given by :</p>
+
+<p><code class="language-plaintext highlighter-rouge">Fs = lambda / D . Nssp / 2</code></p>
+
+<p>with Nssp the number of pyramid measurement points along the diameter of the pupil. The radius of the simulated field of view, is given by :</p>
+
+<p><code class="language-plaintext highlighter-rouge">Rf = Fs . N . D / lambda / P</code></p>
+
+<p>where N is the size of Fourier transform support of the high resolution image. N should is usually chosen to optimize the execution of the FFT algorithm (power of 2).
+Finally, we need to avoid as much as possible the overlap of diffractions effects from the 4 pupil images, which is linked to the pyramid angle, and leave enough room between the centers of these pupil images on the final high resolution image. Hence :</p>
+
+<p><code class="language-plaintext highlighter-rouge">Nfft &gt; P*(2 + 3S)</code></p>
+
+<p>with S close to 1. To ease computation we also chose Nssp as a divisor of P. In this case, the scaling factor between the high resolution pupil images in pyramid model and actual pupil size on the camera images would be P / Nssp.</p>
+
+<p>The quantum pixel size in arcsec is given by:</p>
+
+<p><code class="language-plaintext highlighter-rouge">qpixsize = pdiam * Lambda / D * RASC / Nfft</code></p>
+
+<h3 id="3-telescope">3. Telescope</h3>
+
+<p><span class="inner"><img src="assets/images/ELT-ab.png" alt="ELTab" height="300px" /></span></p>
+
+<p>COMPASS includes the ability to use customizable telescope pupil: the diameter and the eventual central obstruction are parameters of the simulation. ELT and VLT pupils have been also implemented, including spiders, hexagonal segments, and missing segments. Phase aberration due to misalignment of the pupil segments are also configurable by specifying the amount of piston and tip-tilt errors. Reflectivity error between each segment can also be taken into account.</p>
+
+<h3 id="4-atmosphere">4. Atmosphere</h3>
+
+<p>Turbulence is generated on-the-fly during the iterations of the simulation by <a href="https://www.osapublishing.org/oe/abstract.cfm?id=87803">the extrusion of Kolmogorov or Von Karman type phase screens</a>. It is possible to simulate several independent turbulent layers at any set of user-defined altitudes. Each layer has its own arbitrary Fried parameter r0, outer scale values L0, wind speed and direction. The assumption is that the overall turbulence will result from the addition of the phase of these discrete, statistically independent layers, through an appropriate ray-tracing algorithm through each of them taking into account the direction of observation of each WFS and target object. Those phase screens are expressed in terms of optical path difference, in microns.</p>
+
+<h3 id="5-wave-front-sensor">5. Wave-front sensor</h3>
+
+<h4 id="shack-hartmann-wfs">Shack-Hartmann WFS</h4>
+
+<p><span class="inner"><img src="assets/images/SH-proc.png" alt="SH-proc" width="500px" /></span></p>
+
+<p>COMPASS includes a Shack-Hartmann wave-front sensor model based on Fast Fourier Transforms (FFT) of the portion of the complex amplitude of the wave-front seen by each subaperture. This wave-front is computed by raytracing the turbulent layer and/or the DM shape in the guide star (GS) direction. The number of subapertures, the number of pixels per subaperture and the pixel size are specified by the user.</p>
+
+<p>A special care has been brought on the sampling of the wave-front and on the support of the FFT in order to ensure a proper sampling of the PSF, together with an adequate field of view (set to at least 6 times larger than the seeing value) to include most of the speckles. The seeing is user-defined.</p>
+
+<p>The sub-images are simulated at a high spatial resolution, binned to the WFS pixel size, then cropped to match the required field of view. Detector read-out noise and photon noise are simulated using random numbers generation, respectively following Normal and Poisson distributions. The standard deviations of those distributions depend respectively on the read-out noise and on the number of photons per subapertures, both defined by the user through dedicated parameters. The number of photons per subapertures is computed as:</p>
+
+<p><code class="language-plaintext highlighter-rouge">Nphotons = F0 * 10**(-0.4*m) * dt * T * S</code></p>
+
+<p>where:</p>
+
+<ul>
+  <li>F0 is the flux at magnitude 0, expressed in photons/m2/s</li>
+  <li>M is the guide star magnitude</li>
+  <li>dt is the loop iteration time</li>
+  <li>T is the optical throughput</li>
+  <li>S is the subaperture surface in m²</li>
+</ul>
+
+<p>Each of those parameters are user-defined. The generation of the noise can be switched on or off on demand.
+This model is called “diffractive”, as it results from a computation of Fraunhofer diffraction, using a Fourier transform.</p>
+
+<h4 id="laser-guide-stars">Laser guide stars</h4>
+
+<p><span class="inner"><img src="assets/images/LGS-proc.png" alt="LGS-spot" width="500px" /></span></p>
+
+<p>Laser Guide Stars can be included in the simulation. It takes into account the sodium profile to compute elongation on each sub-aperture, and also the cone effect.  Elongation is computed by convolving the high resolution image on each subaperture by a high resolution elongated spot model. This spot model is computed in respect with the sodium profile that could be analytical (Gaussian) or experimental (read from a file), and with each sub-apertures positions in relation to the laser launch position.</p>
+
+<p>The cone effect, due to the finite height of the sodium layer where the LGS is produced, is taking into account in the simulation thanks to a GPU parallelized raytracing algorithm. For each pixel of the phase screen seen by the WFS, we calculate the sum of the corresponding pixels on each phase screen of the atmosphere layers. Each term is weighting by a the Cn² coefficient of its atmosphere layer. A linear interpolation is performed between the 4-near pixels of the atmosphere layer seen by the pixel of the WFS phase screen. Basically, this is equivalent to do a “zoom” on each phase screen and summing them.</p>
+
+<p>Note that there isn’t tip-tilt indetermination for LGS in COMPASS.</p>
+
+<h4 id="pyramid-wfs">Pyramid WFS</h4>
+
+<p><span class="inner"><img src="assets/images/pyr-func.png" alt="pyr-func" width="300px" /></span></p>
+
+<p>COMPASS features a pyramid wavefront sensor model based on the concept described in <a href="http://www.tandfonline.com/doi/abs/10.1080/09500349608232742">Ragazzoni 1996</a>. The PSF on the tip of the pyramid is obtained as the square modulus of the EM field in the pyramid plane. The latter is computed at high resolution as the Fourier transform of the EM field in the pupil plane for which the amplitude is given by the pupil intensity distribution and the phase is obtained as a combination of the actual residual phase from atmospheric disturbance (evaluated by raytracing through the turbulence and compensation from the DM) and the phase introduced by modulation.
+The phase term introduced by the pyramid itself is added to this EM field and another Fourier Transform accounting for the relay lens, provides the EM field on the plane of the camera.</p>
+
+<p>Concerning the modulation, the corresponding Tip-Tilt term is introduced following regularly spaced distribution leading to a circular pattern around the tip of the pyramid. The 4 images of the pupil obtained at each modulation position as the square modulus of the EM field in the camera plane are stacked to form the final short exposure image on the WFS.</p>
+
+<p>Proper undersampling to the users parameters and flux normalization are then performed. Photon and detector noise can then be added if specified.</p>
+
+<p><span class="inner"><img src="assets/images/pyrimg.png" alt="pyrimg" width="400px" /><img src="assets/images/High-res-pyr.png" alt="pyrhr" width="400px" /></span></p>
+
+<p>Here a pseudo-code of the algorithm :</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>for each modulation point k:
+      create phase_modu(k)
+      get phase and multiply by exp(i*phase_modu) and by pupil amplitude
+      do FFT
+      apply field stop
+      multiply by exp(i*pyramid_function)
+      do IFFT
+      do modulus square
+      add to previous modulation image
+do FFT
+Multiply by sinc (pixels transfer function)
+Rebin the image
+Normalize
+Add noise
+</code></pre></div></div>
+
+<p>With COMPASS 3.0, it is now possible to run simulate N faces pyramid. Set in the parameter file <code class="language-plaintext highlighter-rouge">p_wfss[0].set_nPupils(3)</code> to use a 3-faces pyramid for example. Note that if N is not equal to 4, the only centroider available is <a href="#masked-pixels">“maskedpix”</a>.</p>
+
+<h4 id="geometric-wfs">“Geometric” WFS</h4>
+
+<p>COMPASS also features a so-called “geometric model” emulating an ideal Shack-Hartmann wavefront sensor. This algorithm directly computes the average phase gradient at each subaperture, based on the phase itself, with no noise. This estimation of the average slope of the wavefront is considered as an “ideal” measurement, with perfect linearity over an infinite range and that does not suffer from any kind of sampling effect by a detector. This geometric model is embedded in all the WFS in COMPASS. Use the command <code class="language-plaintext highlighter-rouge">supervisor.rtc.do_centroids_geom(0)</code> to compute it.</p>
+
+<p>Finally, a last level of abstraction is reached with the third type of wave surface analyzer, which is purely theoretical: it is a direct projection of the phase onto the DM influence functions, resulting in a set of DM voltages that best fit the wavefront in a least-square sense. It is fully linear and is free from any WFS effect or reconstruction effect, it is in particular free from aliasing. We call this method “DM projection”, it behaves as a theoretical, perfect WFS. To use it, set your controller type to “geo” : <code class="language-plaintext highlighter-rouge">p_controllers[0].type = "geo"</code></p>
+
+<h3 id="6-deformable-mirrors">6. Deformable mirrors</h3>
+
+<p>COMPASS models the DM as a weighted sum of local influence functions. Several types of built-in influence functions are available, all of them close to a bell-shaped function. They have different analytical expressions, that fit different types of DMs. Each influence function is defined on a local support, chosen to be small with respect to the simulated pupil.</p>
+
+<p>The model also allows the user to tune the width of the influence function, using a user-defined coupling factor between neighbouring actuators. The final DM shape is computed as the sum of the contribution of the influence functions, weighted by their voltage, at each point of the pupil. It is perfectly linear and does not include any kind of hysteresis or non-linearity. The actuators can be placed either across a rectangular, or an hexagonal grid, of selectable pitch.</p>
+
+<p>The second type of DM is a so called tip-tilt mirror, which produces some pure tip and tilt over the pupil area.</p>
+
+<p>Other type of DM is Karhunen-Loeve ones, which produces pure atmospherical Karhunen-Loeve modes.</p>
+
+<p>COMPASS can handle any number of DMs, each of them conjugated at any arbitrary altitude. This parameter is taken into account during the ray-tracing step of the beams through the layers and the Dms.</p>
+
+<h4 id="custom-dm">Custom DM</h4>
+
+<p>It is also possible to use your own influence function. To do so, you have to provide a FITS file where you have saved your influence function and other informations on your DM 
+The simulation will then automatically resize and interpolate properly your influence functions. The needed informations in the dataFrame are listed below:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Name</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Unit</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">xC</td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">DM center along X</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">yC</td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">DM center along Y</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">pitchPix</td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">actuators pitch, not required</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">pitchMeters</td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">actuators pitch</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">hi_i1, hi_j1</td>
+      <td style="text-align: left">np.array(ndim=2)</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">Coordinates of the influence function maps</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">influ</td>
+      <td style="text-align: left">np.array(ndim=3,dtype=np.float32)</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Cube containing your influence functions. Cube size is (influ_size x influ_size x nactus). Influence functions must be ordered as the xpos and ypos vectors</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">xpos, ypos</td>
+      <td style="text-align: left">np.array(ndim=2, dtype=np.float32)</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">actuators coordinates</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">pixsize</td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">The size of the pixel in the fits support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">pupm</td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">Size of the DM pupil</td>
+    </tr>
+  </tbody>
+</table>
+
+<!--
+| Name        | Type                               | Unit                   | Description                                                                                                                                                                       |
+| :---------- | :--------------------------------- | :--------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| xpos        | np.array(ndim=1, dtype=np.float32) | meters                 | X positions of the actuators                                                                                                                                                      |
+| ypos        | np.array(ndim=1, dtype=np.float32) | meters                 | Y positions of the actuators                                                                                                                                                      |
+| center      | np.array(ndim=1, dtype=np.float32) | meters                 | 2-elements vector defining the origin of xpos and ypos in relation to the physical center of the DM                                                                               |
+| res         | float                              | m/pix                  | Pixel resolution of your influence function                                                                                                                                       |
+| dm_diam     | float                              | meters                 | DM diameter                                                                                                                                                                       |
+| dm_diam_pup | float                              | meters                 | DM diameter projected in the pupil plane                                                                                                                                          |
+| influ       | np.array(ndim=3,dtype=np.float32)  | Normalized deformation | Cube containing your influence functions. Cube size is (influ_size x influ_size x nactus). Influence functions must be ordered as the xpos and ypos vectors, and mormalized to 1. |
+
+The names given here are arbitrary : you have to provide the actual names of those fields in the parameter file.
+-->
+
+<h3 id="7-centroiders">7. Centroiders</h3>
+
+<h4 id="schack-hartmann-wfs-centroides">Schack-Hartmann WFS centroides</h4>
+
+<p>Several centroiding algorithms are implemented to compute the command to apply on the DM from the Schack-Hartmann WFS image and can be selected on demand:</p>
+
+<ul>
+  <li>Center of gravity (classical, no threshold)</li>
+  <li>Thresholded center of gravity</li>
+  <li>Weighted center of gravity</li>
+  <li><a href="https://academic.oup.com/mnras/article/419/2/1628/989454">Center of gravity on N brightest pixels</a></li>
+</ul>
+
+<p>The SH-WFS measurements is computed using those algorithms on each sub-aperture. For each sub-aperture, the centroid is computed both along X and Y-axis, leading to a measurement vector of size twice the number of sub-apertures. First half of this vector contains the X-measurements and the second half the Y ones.</p>
+
+<h5 id="classical-centroiding">Classical centroiding</h5>
+
+<p>The center of gravity on the X-axis is basically computed for each sub-aperture as:</p>
+
+<p><img src="https://render.githubusercontent.com/render/math?math=S_x%20%3D%20%5Cfrac%7B%5Csum_%7Bx%7Dx%20.%20I(x)%7D%7B%5Csum_%7Bx%7DI(x)%7D" alt="S_x = \frac{\sum_{x}x . I(x)}{\sum_{x}I(x)}" /></p>
+
+<p>where x is the pixel X-position and I(x) the intensity of the WFS image integrated along the Y-axis at this position. The output is the slopes vectors of size 2*Nssp: the first Nssp elements are the X-measurements and the other half contain the Y-measurement.</p>
+
+<p>Others center of gravity algorithm are variants of this one, where a threshold or weights are applied before computation, or just considering the <em>N brightest pixels</em> in the computation.</p>
+
+<h5 id="thresholded-center-of-gravity">Thresholded center of gravity</h5>
+
+<p>The algorithm of the thresholded CoG is a variant of the classical centroids computation, it can be described with this equation:</p>
+
+<p><img src="https://render.githubusercontent.com/render/math?math=S_x%20%3D%20%5Cfrac%7B%5Csum_%7Bx%7Dx%20.%20I_{thresh}(x)%7D%7B%5Csum_%7Bx%7DI_{thresh}(x)%7D" alt="S_x = \frac{\sum_{x}x . I_{thresh}(x)}{\sum_{x}I_{thresh}(x)}" /></p>
+
+<p>where: <img src="https://render.githubusercontent.com/render/math?math=I_%7Bthresh%7D(x)%3D%20%5Cbegin%7Bcases%7D%20I(x)%20-%20threshold%2C%20%5Ctext%7Bif%20%7D%20I(x)%5Cgeq%20threshold%20%5C%5C%200%2C%20%5Ctext%7Botherwise%7D%20%5Cend%7Bcases%7D" alt="I_{thresh}(x)= \begin{cases} I(x) - threshold, \text{if } I(x)\geq threshold \ 0, \text{otherwise} \end{cases}" /></p>
+
+<h5 id="brightest-pixels-algorithm">Brightest pixels algorithm</h5>
+
+<p>The algorithm <em>N brightest pixels</em> is using the thresholded CoG algorithm where <em>threshold</em> is the value of the <em>N+1</em> brightest pixel of the sub-aperture.</p>
+
+<h5 id="correlation">Correlation</h5>
+
+<p>The correlation algorithm requires a reference function to be correlated with the image. The reference function is computed through undersampling of a high resolution image of the spot in each subaperture obtained with no turbulence. Then the slope is estimated as the position of the maximum of the correlation function of the actual spot with turbulence and the reference function, for all subapertures. This position is determined at the sub-pixel level by performing a parabolic fit around the maximum.</p>
+
+<h4 id="pyramid-wfs-centroiders">Pyramid WFS centroiders</h4>
+
+<h5 id="slopes-based-centroiders">Slopes-based centroiders</h5>
+
+<p>In the case of the pyramid WFS, the slopes are computed following several approaches. The “local” approach is based on the original Ragazzoni paper, using the 4 corresponding pixels in pupil images : a, b, c and d:</p>
+
+<p><img src="https://render.githubusercontent.com/render/math?math=Sx%20%3D%20%5Cfrac%7B(a%20%2B%20b)%20-%20(c%20%2B%20d)%7D%7Ba%20%2B%20b%20%2B%20c%20%2B%20d%7D" alt="Sx = \frac{(a + b) - (c + d)}{a + b + c + d}" /> , <img src="https://render.githubusercontent.com/render/math?math=Sy%20%3D%20%5Cfrac%7B(a%20%2B%20c)%20-%20(b%20%2B%20d)%7D%7Ba%20%2B%20b%20%2B%20c%20%2B%20d%7D" alt="Sy = \frac{(a + c) - (b + d)}{a + b + c + d}" /></p>
+
+<p>expressed in arcsec using the modulation amplitude.</p>
+
+<p>A modified version of this approach called “global” is also implemented, in which the intensity over the 4 corresponding pixels is replaced by the average intensity I0 in the pupil images.</p>
+
+<p><img src="https://render.githubusercontent.com/render/math?math=Sx%20%3D%20%20%5Cfrac%7B(a%20%2B%20b)%20-%20(c%20%2B%20d)%7D%7BI_0%7D" alt="Sx =  \frac{(a + b) - (c + d)}{I_0}" /> , <img src="https://render.githubusercontent.com/render/math?math=Sy%20%3D%20%20%5Cfrac%7B(a%20%2B%20c)%20-%20(b%20%2B%20d)%7D%7BI_0%7D" alt="Sy =  \frac{(a + c) - (b + d)}{I_0}" /></p>
+
+<p>which is also expressed in arcsec using the modulation amplitude.</p>
+
+<p>On top of these two approaches, the user can also select to retrieve the actual phase gradient by using the sine function as described in <a href="http://www.sciencedirect.com/science/article/pii/S0030401804000628?via%3Dihub">Verinaud 2004</a>.</p>
+
+<h5 id="masked-pixels">Masked pixels</h5>
+
+<p>This centroider has to be used for pyramid WFS with more or less than 4 faces. It basically returns all the valid pixels of the WFS images. Then, the commands are computed directly on the pixels intensities.</p>
+
+<h3 id="8-controllers">8. Controllers</h3>
+
+<h4 id="least-square-approach">Least-square approach</h4>
+
+<p>The control matrix R is computed via singular value decomposition and pseudo-inversion of the interaction matrix. This reconstruction is plugged in the temporal compensator, an integrator with gain. So, the command vector c at iteration k is computed as:</p>
+
+<p><img src="https://render.githubusercontent.com/render/math?math=c_k%20%3D%20c_%7Bk-1%7D%20-%20g%20.%20R%20.%20s_k" alt="c_k = c_{k-1} - g . R . s_k" /></p>
+
+<p>This approach can handle modal optimization as defined by <a href="https://hal.archives-ouvertes.fr/tel-01418424">E. Gendron</a>.</p>
+
+<h4 id="minimum-variance">Minimum variance</h4>
+
+<p>The minimum variance reconstructor aims to minimize the variance of the difference between the estimated phase and the real one. If the statistical variables are gaussian, this is equivalent to a Maximum A Priori (MAP) approach where we want to maximize the probability of obtaining such measures knowing the phase. By solving this problem, the reconstructor can be written as :</p>
+
+<p><img src="https://render.githubusercontent.com/render/math?math=R%20%3DC%20%5Cvarphi%20.%20D%5ET%20.%20(D.C%5Cvarphi%20.D%5ET%20%2B%20Cn)%5E%7B-1%7D" alt="R = C\varphi . D^T . (D.C\varphi .D^T + Cn)^{-1}" /></p>
+
+<p>where Cφ is the phase covariance matrix, D is the DM interaction matrix (Dt is its transpose) and Cn the noise matrix.</p>
+
+<p>Considering that Dt<em>Cφ</em>D is equivalent to the measurements covariance matrix Cmm, we can rewrite the reconstructor as :</p>
+
+<p><img src="https://render.githubusercontent.com/render/math?math=R%20%3D%20C%5Cvarphi%20m%20.%20Cmm%5E%7B-1%7D" alt="R = C\varphi m . Cmm^{-1}" /></p>
+
+<p>where Cφm is a covariance matrix between the phase and the DM actuators</p>
+
+<p>Cφm and Cmm are computed from the same way described by <a href="https://www.spiedigitallibrary.org/conference-proceedings-of-spie/9148/1/A-novel-fast-and-accurate-pseudo-analytical-simulation-approach-for/10.1117/12.2055911.short?SSO=1">Eric Gendron et al.</a>
+Then, the reconstructor allows to compute the command matrix and the DM commands are computed thanks to Pseudo-Open Loop Control equations using the interaction matrix and previous commands to estimate open loop measurements from the closed loop one.</p>
+
+<h4 id="cured">CuReD</h4>
+
+<p>COMPASS also includes an implementation of the CuReD wavefront reconstruction. Find more information in <a href="https://www.osapublishing.org/josaa/abstract.cfm?uri=josaa-29-11-2328">M. Rosensteiner paper</a>.</p>
+
+<h4 id="direct-projection">Direct projection</h4>
+
+<p>A perfect behaviour of your AO system can also being simulated thanks to a direct projection of the input phase on the DM actuators :</p>
+
+<p><img src="https://render.githubusercontent.com/render/math?math=c_k%20%3D%20P.%5Cvarphi" alt="c_k = P.\varphi" /></p>
+
+<p>The projection matrix P is computed from the DM influence functions IF :</p>
+
+<p><img src="https://render.githubusercontent.com/render/math?math=P%20%3D%20(IF%5ET%20.%20IF)%5E%7B-1%7D%20.%20IF%5ET" alt="P = (IF^T . IF)^{-1} . IF^T" /></p>
+
+<p>and filtered from piston mode.</p>
+
+<h4 id="generic-controller">Generic controller</h4>
+
+<p>The generic controller can be used to perform simulation with flexible command laws. With this controller, COMPASS doesn’t compute any command matrix : you have to provide it, as you have to provide a decay factor and a matrix that will define the command law. Two modes can be used: “integrator” (default value) and “2matrices”.</p>
+
+<p>Indeed, with this controller, the command c is computed as:</p>
+
+<p><code class="language-plaintext highlighter-rouge">c[k] = decay_factor * E.dot(c[k-1]) + g*CMAT.dot(s[k])</code></p>
+
+<p>with:</p>
+
+<ul>
+  <li>decay_factor a float value</li>
+  <li>E a matrix that you have to provide</li>
+  <li>g is the loop gain</li>
+  <li>CMAT the command matrix you have to provide</li>
+  <li>s[k] the slopes vector at iteration k</li>
+</ul>
+
+<p>If the mode is set at “integrator”, matrix E is automatically set as identity.
+Use the command <code class="language-plaintext highlighter-rouge">supervisor.rtc.set_2matrices_law(0)</code> to switch to the “2matrices” mode.</p>
+
+<h4 id="voltage-computation">Voltage computation</h4>
+
+<p>The loop delay d is then taken into account and also an eventual perturbation voltage p set by the user. Finally, the voltage vector v that will be apply at iteration k on the DM is computed as:</p>
+
+<p><code class="language-plaintext highlighter-rouge">v[k] = (a * c[k] + b * c[k-1] + e * c[k-2]) + p[k]</code></p>
+
+<p>with:</p>
+
+<ul>
+  <li>(a = 1-b ; b = floor(d) ; e = 0) if 0 &lt;= d &lt;= 1</li>
+  <li>(a = 0 ; b = 1-e ; e= floor(d) - 1) if 1 &lt; d &lt;= 2</li>
+</ul>
+
+<h3 id="9-image-formation">9. Image formation</h3>
+
+<p><span class="inner"><img src="assets/images/PSF-spiders.png" alt="PSF-spiders" width="300px" /></span></p>
+
+<p>The output of a classical COMPASS simulation is the PSF of the simulated system. It is computed as the Fourier transform of the complex field amplitude obtained after a ray-tracing through the turbulent layer screens and the DM shape screen. The wavelength of this PSF is a user parameter; the phase is scaled accordingly. The size of the support for achieving the FFT is chosen among the integer powers of 2 immediately greater than twice the pupil size, in order to provide the user with an adequate sampling of the PSF (in general slightly finer than Nyquist).
+The PSF intensity is normalized in such a way that its maximum value corresponds to the Strehl ratio. Each loop iteration produces a short-exposure PSF, which is averaged over the iterations to produce the long-exposure PSF. As it results from a Monte-Carlo simulation, the PSF includes the statistical non convergence limitation.</p>
+
+<p>The user also has the ability to change the pupil just for PSF computation as shown above. It is useful for example to study the impact of spiders on the PSF without including side effects as differential piston in the AO loop.</p>
+
+<h2 id="3-the-shesha-package">3. The shesha package</h2>
+
+<h3 id="1-compass-architecture">1. COMPASS architecture</h3>
+
+<p><span class="inner"><img src="assets/images/compass-archi.png" alt="archi" height="280px" />&gt;</span></p>
+
+<p>The initial objective behind the development of COMPASS was to get a numerical simulation platform able to deliver short exposure PSF (i.e. per WFS frame) with a time-to-solution in the range of the 10th of seconds for an AO system at the E-ELT scale. To reach such performance, the use of GPU as hardware accelerators appeared as the best option.</p>
+
+<p>A comprehensive software stack has been designed to provide at the same time, both high performance computing, brought by core massively parallel algorithms running on GPU and ease of use, brought by a user interface based on python and a graphics toolkit.</p>
+
+<p>The stack is composed of three main layers. The lowest level is where the optimized libraries are located and in which the memory allocation routines can be found. The intermediate layer is a binding layer, where the arrays in memory are manipulated through addresses. The upper layer is the user interface in which python code interacts with the lower level classes and methods. A number of high level routines can also be found in the upper layer, mostly for initialisation and AO loop data post-processing. All of these layers are composed of libraries and modules that are described in the following section.</p>
+
+<p>On top of this standard stack, a programming interface (API) is available in python to run command-line or scripted simulations and a collection of widgets for an easy-to-use GUI is available, based on the use of the Qt toolkit and the pyQtGraph library. On the other hand, the platform uses the HDF5 file format to maintain a database of simulation parameters and results, which is managed using the Pandas tool. The diagnosis of the results of the simulation can be optimized using the Bokeh tool. Finally, the documentation for the platform is generated automatically using the Sphynx tool.</p>
+
+<p><strong>Only the shesha package source code is distributed on GitHub. The deeper layers are provided as binaries via conda environment. This configuration already gives to users the possibility to change the behaviour of COMPASS (via hacking/contributing to the shesha package). Users who want to contribute to the core layers for their applications are invited to contact the COMPASS team via the GitHub project.</strong></p>
+
+<p>COMPASS versions &gt; 3.0 use <a href="https://pybind11.readthedocs.io/en/master/">pyBind11</a> to bind the Pyhon user interface with the C++ core libraries.
+It allows a complete read-access of the instantiated GPU objects and arrays, very usefull for debug if you are a developer. On the other hand, it highly depends on the structures defined by those C++ classes : the konwledge of the core internal structures of COMPASS is then required to use those capabilities properly.
+However, unless you are a developer for COMPASS, it is generally useless to get access to all those informations. Hence, COMPASS embeds abstraction layers that allow generic user to interact easily with the simulation.</p>
+
+<h3 id="2-sheshasupervisor--supervisor-classes">2. shesha.supervisor : Supervisor classes</h3>
+
+<p>This module defines so called Supervisor classes which act as a simulator engine. A supervisor is composed of <em>components</em> instances, which handle each AO subsystems (WFS, DM, RTC, etc…). A supervisor inherits from the <em>GenericSupervisor</em> class which declare as abstract methods the initialisation of each components. It allows easy-to-write user-specific supervisor which instantiates components coming from COMPASS, user or even third party library, and interface them together to make a simulation run. Those components classes will be described in the next section.</p>
+
+<p>The supervisor role is then to handle the AO loop execution by sending the right command to the right component sequentially, in order to perform a single simulation iteration : this sequence is defined by the <em>supervisor.next()</em> method. The <em>supervisor.loop()</em> method then call the <em>supervisor.next()</em> for a given number of iterations, and display some informations regularly, such as Strehl ratio, remaining time, etc… The <em>CompassSupervisor</em> that comes natvely with the <em>shesha</em> package performs an iteration as follow : 
+<span class="inner"><img src="assets/images/loop-process.png" alt="loop" width="480px" /></span></p>
+
+<p>On top of that, a supervisor can also instantiates some <em>optimizer</em> classes that can perform operation on the supervisor component in order to optimize the AO loop. The <em>shesha</em> package comes with two optimizers : <em>ModalBasis</em> for modal basis related computations, and <em>Calibration</em> for interaction matrix calibration for instance.</p>
+
+<p>You will find the complete documentation of :</p>
+<ul>
+  <li>the CompassSupervisor <a href="https://lesia.obspm.fr/compass/rc/classshesha_1_1supervisor_1_1compass_supervisor_1_1_compass_supervisor.html">here</a></li>
+  <li>the components <a href="https://lesia.obspm.fr/compass/rc/namespaceshesha_1_1supervisor_1_1components.html">here</a></li>
+  <li>the optimizers <a href="https://lesia.obspm.fr/compass/rc/namespaceshesha_1_1supervisor_1_1optimizers.html">here</a></li>
+</ul>
+
+<p>To make the writing of new components easier, the further minor versions upgrade of COMPASS will aim to abstract all the components interfaces.</p>
+
+<h3 id="3-sheshaconfig-parameter-classes">3. shesha.config: parameter classes</h3>
+
+<p>We describe here all the parameters used in COMPASS and all the classes attributes that could be retrieved by the user during or after the simulation. The following tables give, for each class, the attribute name, a boolean that says if this attribute is settable in the parameters file, its default value and its unit. <span style="color:red"> Parameters displayed in red </span> need to be set by the user in the parameter file if its associated class is instantiated.</p>
+
+<h4 id="param_loop">Param_loop</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Attribute name</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Units</th>
+      <th style="text-align: left">Settable</th>
+      <th style="text-align: left">Default</th>
+      <th style="text-align: left">Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>ittime</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">seconds</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Loop iteration time</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>niter</strong></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">frames</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Number of iterations to perform</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>devices</strong></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">[0]</td>
+      <td style="text-align: left">List of GPU devices to use</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="param_geom">Param_geom</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Attribute name</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Units</th>
+      <th style="text-align: left">Settable</th>
+      <th style="text-align: left">Default</th>
+      <th style="text-align: left">Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>pupdiam</strong></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Pupil diameter in pixels</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>zenithangle</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">degree</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Zenithal angle</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_ipupil</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Pupil in the full size support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_mpupil</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Pupil in the medium size support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_spupil</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Pupil in the small size support (equal to pupdiam)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_n</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Size of _mpupil support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>ssize</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Size of the _ipupil support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_n1</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Coordinate of the left side of _mpupil in the _ipupil support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_n2</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Coordinate of the left side of _mpupil in the _ipupil support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_p1</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Coordinate of the left side of _spupil in the _ipupil support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_p2</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Coordinate of the left side of _spupil in the _ipupil support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_cent</em></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Center point of the simulation</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_phase_ab_M1</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">microns</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Phase aberration in _spupil (will be used if referr, std_piston or std_tt are set in Param_tel)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_phase_ab_M1_m</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">microns</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Phase aberration in _mpupil (will be used if referr, std_piston or std_tt are set in Param_tel)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="param_tel">Param_tel</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Attribute name</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Units</th>
+      <th style="text-align: left">Settable</th>
+      <th style="text-align: left">Default</th>
+      <th style="text-align: left">Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>diam</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Telescope diameter</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>cobs</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">ratio of diam</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Central obstruction size</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>type_ap</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">“generic”</td>
+      <td style="text-align: left">Aperture type available : “generic” (ie. round pupil), “EELT_NOMINAL”, “EELT_BP1”, “EELT_BP3, “EELT_BP5”, “EELT_CUSTOM”, “VLT”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>spiders_type</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">None</td>
+      <td style="text-align: left">Spiders type: “four” or “six”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>t_spiders</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">ratio of diam</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Spiders size</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>pupangle</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">degree</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Pupil rotation angle</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>nbrmissing</strong></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Number of missing segments for ELT pupil</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>referr</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">std of reflectivity errors for ELT pupil segments</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>std_piston</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">microns</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">std of piston error for ELT pupil segments</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>std_tt</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">microns</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">std of tip-tilt errors for ELT pupil segments</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="param_atmos">Param_atmos</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Attribute name</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Units</th>
+      <th style="text-align: left">Settable</th>
+      <th style="text-align: left">Default</th>
+      <th style="text-align: left">Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>nscreens</strong> </span></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of layers</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>r0</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Fried parameters @ 500 nm</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>alt</strong> </span></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Layers altitudes</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>L0</strong> </span></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Layers outer scale</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>frac</strong> </span></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">fraction</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Layers fraction of r0</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>winddir</strong> </span></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">degree</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Wind direction for each layer</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>windspeed</strong> </span></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">m/s</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Wind speed for each layer</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>seeds</strong></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">1234+layer indice</td>
+      <td style="text-align: left">RNG seeds for each layer</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_deltax</em></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">pix/iter</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">X translation speed of each layer</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_deltay</em></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">pix/iter</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Y translation speed of each layer</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_dim_screens</em></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Size of each layer screen</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_pupixsize</em></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Layer screens pixel size</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="param_target">Param_target</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Attribute name</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Units</th>
+      <th style="text-align: left">Settable</th>
+      <th style="text-align: left">Default</th>
+      <th style="text-align: left">Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>Lambda</strong> </span></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">microns</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Wavelength for each target</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>xpos</strong> </span></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">arcsec</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">X position of each target in the FoV</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>ypos</strong> </span></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">arcsec</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Y position of each target in the FoV</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>mag</strong> </span></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Magnitude of each target</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>zerop</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">degree</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">1</td>
+      <td style="text-align: left">Flux for magnitude 0</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>dms_seens</strong></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">all DMs</td>
+      <td style="text-align: left">List of DM indices seen by the target</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="param_wfs">Param_wfs</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Attribute name</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Units</th>
+      <th style="text-align: left">Settable</th>
+      <th style="text-align: left">Default</th>
+      <th style="text-align: left">Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>type</strong> </span></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Type of WFS : “sh” or “pyrhr”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>nxsub</strong> </span></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of subaperture along the pupil diameter</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>npix</strong> </span></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of pixels per subaperture</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>pixsize</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">arcsec</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Pixel size</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>Lambda</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">microns</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Wavelength</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>optthroughput</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Optiical throughput coefficient</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>fracsub</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Minimal illumination fraction for valid subap.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>xpos</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">arcsec</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">X position of the guide star in the FoV</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>ypos</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">arcsec</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Y position of the guide star in the FoV</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>gsmag</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Guide star magnitude</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>zerop</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">photons/m²/s</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Zero point in the bandwidth of the WFS</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>noise</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">electrons</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Std of electronic noise. If &lt;0, no noise, if =0 photon noise enabled, if &gt;0 add electronic noise</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>pyr_ampl</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">units of lambda/D</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Pyramid modulation amplitude (pyramid only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>pyr_npts</strong> </span></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of modulation point along the circle</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>openloop</strong></td>
+      <td style="text-align: left">bool</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">False</td>
+      <td style="text-align: left">If True, the WFS don’t see the DMs</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>fstop</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">“none”</td>
+      <td style="text-align: left">Field stop : “square”, “round” or “none”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>fssize</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">arcsec</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Size of the field stop</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>atmos_seen</strong></td>
+      <td style="text-align: left">bool</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">False</td>
+      <td style="text-align: left">If False, the WFS don’t see the atmosphere layers</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>dms_seen</strong></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">All DMs</td>
+      <td style="text-align: left">Indices of DMs seen by the WFS</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>gsalt</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Guide star altitude: 0 for NGS, &gt;0 for LGS</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>lltx</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">X position of the laser launch telescope</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>llty</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Y position of the laser launch telescope</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>laserpower</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">Watts</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Laser power</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>lgsreturnperwatt</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">ph/cm²/s/W</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Return per watt factor</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>proftype</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">“gauss”</td>
+      <td style="text-align: left">Sodium profile type: “gauss” or “ Exp”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>beamsize</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">arcsec</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">laser beam FWHM</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>G</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">1</td>
+      <td style="text-align: left">Magnifying factor (for misalignment)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>thetaML</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">degree</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">WFS rotation angle in the pupil</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>dx</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">X axis misalignment</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>dy</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Y axis misalignment</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>pyr_pos</strong></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">positions for modulation points. Overwrite pyr_ampl and pyr_npts</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>nPupils</strong></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">4</td>
+      <td style="text-align: left">Number of faces of the Pyramid WFS</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>pyr_loc</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">“after”</td>
+      <td style="text-align: left">Location of the modulation, “before” or “after” the field stop</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>pyr_pup_sep</strong></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">nxsub</td>
+      <td style="text-align: left">Pyramid pupils separation</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>pyr_compute_focalplane</strong></td>
+      <td style="text-align: left">bool</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">False</td>
+      <td style="text-align: left">Compute modulated PSF</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_pdiam</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Subap. diameter</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_Nftt</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Size of FFT support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_Ntot</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Size of high resolution support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_nrebin</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Rebin factor from HR image to final one</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_nvalid</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of valid subap.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_nphotons</em></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">photons</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of photons per subap. (or total number for a pyramid)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_nphotons4imat</em></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">photons</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left">1e5</td>
+      <td style="text-align: left">Number of photons per subap when doing imat</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_subapd</em></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Subap. diameter</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_fluxPerSub</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Fraction of _nphotons for each subap.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_qpixsize</em></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">arcsec</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Quantum pixel size</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_istart</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">X position of the bottom left corner of each subap. in the _spupil support (1-indexed)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_jstart</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Y position of the bottom left corner of each subap. in the _spupil support (1-indexed)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_validsubsx</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">X indices of valid subap.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_validsubsy</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Y indices of valid subap.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_isvalid</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Array of 0 or 1 for valid subap.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_phasemap</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Transform from phase screen to subap. screen</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_hrmap</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_sincar</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left"> </td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_binmap</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Transform from HR image to binned image</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_halfxy</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Phase offset of 0.5 pixel shift (SH) or pyramid function (pyrhr)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_submask</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Field stop for each subap.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_lgskern</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">LGS kernel convolution</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_profna</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Sodium profile</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_altna</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Corresponding altitude</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_prof1d</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">HR profile</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_profcum</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Cumulated HR profile</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_beam</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">1D beam function</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_ftbeam</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">1D beam function FFT</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_azimuth</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Rotation angle for each spot</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_pyr_cx</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">arcsec</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">X position of the modulation points</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_pyr_cy</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">arcsec</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Y position of the modulation points</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="param_dm">Param_dm</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Attribute name</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Units</th>
+      <th style="text-align: left">Settable</th>
+      <th style="text-align: left">Default</th>
+      <th style="text-align: left">Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>type</strong> </span></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">DM type: “pzt”, “kl” or “tt”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>nact</strong> </span></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of actuators along the diameter (“pzt” only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>nkl</strong> </span></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of KL modes produced by the DM (“kl” only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>alt</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">meters</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Conjugation altitude</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>thresh</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">fraction</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Threshold on response for selection of valid actuators. Expressed in fraction of the maximal response</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>type_pattern</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">“square”</td>
+      <td style="text-align: left">Actuators position pattern: “square” or “hexa”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>influ_type</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">“default”</td>
+      <td style="text-align: left">Influence function to use: “default”, “radialSchwartz”, “squareSchwartz”, “blacknutt”, “gaussian”, “bessel” or “petal”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>file_influ_fits</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">None</td>
+      <td style="text-align: left">FITS file name of custom influence functions. Overwrites influ_type, type_pattern, nact</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>center_name</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">None</td>
+      <td style="text-align: left">Column name in the HDF5 pandaDataFrame where the center is stored</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>cube_name</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">None</td>
+      <td style="text-align: left">Column name in the HDF5 pandaDataFrame where the influence function cube is stored</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>x_name</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">None</td>
+      <td style="text-align: left">Column name in the HDF5 pandaDataFrame where the actuators X coordinates are stored</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>y_name</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">None</td>
+      <td style="text-align: left">Column name in the HDF5 pandaDataFrame where the actuators Y coordinates are stored</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>influ_res</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">None</td>
+      <td style="text-align: left">Column name in the HDF5 pandaDataFrame where the influence functions resolution is stored</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>diam_dm</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">None</td>
+      <td style="text-align: left">Column name in the HDF5 pandaDataFrame where the DM diameter is stored</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>diam_dm_proj</strong></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">None</td>
+      <td style="text-align: left">Column name in the HDF5 pandaDataFrame where the DM diameter in the pupil plane is stored</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>coupling</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">fraction</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0.2</td>
+      <td style="text-align: left">Coupling between actuators</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>gain</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">1</td>
+      <td style="text-align: left">Actuator gain</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>unitpervolt</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">microns/volt (“pzt”), arcsec/volt (“tt”)</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0.01</td>
+      <td style="text-align: left">Influence function sensitivity</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>push4imat</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">volt</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">1</td>
+      <td style="text-align: left">Nominal voltage for imat</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>margin_out</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">pitch</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Outer margin for actuator selection on the pupil edge</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>margin_int</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">pitch</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Inner margin for actuator selection in the central obstruction</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>pzt_extent</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">pitch</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">5</td>
+      <td style="text-align: left">“pzt” DM extension</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_pitch</em></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">pixels</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Inter actuator space (“pzt” only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_ntotact</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Total number of valid actuators</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_influsize</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Influence function support size</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_n1</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Left border position of the DM support in _ipupil</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_n2</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Right border position of the DM support in _ipupil</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_influ</em></td>
+      <td style="text-align: left">cube</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Influence functions cube</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_xpos</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">X coordinates of the actuators in _ipupil</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_ypos</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Y coordinates of the actuators in _ipupil</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_i1</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">X coordinates of the bottom left corner of each influence function support in the DM support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_j1</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Y coordinates of the bottom left corner of each influence function support in the DM support</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_influpos</em></td>
+      <td style="text-align: left">cube</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Influence functions pixels that contributes to each DM pixel</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_ninflu</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of influence functions pixels that contributes to each DM pixel</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_influstart</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Index where to start a new DM pixel shape in the array influpos to each DM pixel</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_nr</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of radial points (KL only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_npp</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of elements (KL only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_ord</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Radial orders (KL only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_rabas</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Radial array (KL only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_azbas</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Azimuthal array (KL only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_ncp</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Grid dimension (KL only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_cr</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Radial coordinates in cartesian grid (KL only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_cp</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Phi coordinates in cartesian grid (KL only)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="param_centroider">Param_centroider</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Attribute name</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Units</th>
+      <th style="text-align: left">Settable</th>
+      <th style="text-align: left">Default</th>
+      <th style="text-align: left">Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>type</strong> </span></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Centroider type: “cog”, “tcog”, “wcog”, “bpcog”, “corr”, “pyr” or “maskedpix”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>nwfs</strong> </span></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">WFS index handled by this centroider</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>nmax</strong> </span></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of brightest pixels (“bpcog” only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>weights</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Weights applied for a “wcog”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>thresh</em></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">arcsec</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Absolute threshold for “tcog”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>type_fct</em></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">“gauss”</td>
+      <td style="text-align: left">Reference function for weights computing (“wcog”) : “gauss” or “model”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>width</em></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Gaussian width if type_fct = “gauss”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>method</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">1</td>
+      <td style="text-align: left">Method used for pyramid centroider. 0: no sinus, global. 1: sinus, global. 2: no sinus, local, 3: sinus, local</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>sizex</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">X size of the interpolation matrix for correlation</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>sizey</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Y size of the interpolation matrix for correlation</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>interpmat</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Interpolation matrix for correlation centroider</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="param_controller">Param_controller</h4>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Attribute name</th>
+      <th style="text-align: left">Type</th>
+      <th style="text-align: left">Units</th>
+      <th style="text-align: left">Settable</th>
+      <th style="text-align: left">Default</th>
+      <th style="text-align: left">Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>type</strong> </span></td>
+      <td style="text-align: left">string</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Controller type: “ls”, “mv”, “cured”, “geo” or “generic”</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>nwfs</strong> </span></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">WFS indices handled by this controller</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>ndm</strong> </span></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">DM indices handled by this controller</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>maxcond</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Conditioning number for imat.T.dot(imat) inversion</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>delay</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">frame</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Loop delay</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>gain</strong> </span></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">required</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Loop gain</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><span style="color:red"> <strong>cured_ndivs</strong> </span></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Subdivision levels for CuReD</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>modopti</strong></td>
+      <td style="text-align: left">bool</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">False</td>
+      <td style="text-align: left">Flag for modal optimization (“ls” only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>nrec</strong></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">2048</td>
+      <td style="text-align: left">Number of open loop samples for modal optimization computation (“ls” only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>nmodes</strong></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">ntotact</td>
+      <td style="text-align: left">Number of modes taken into account for modal optimization (“ls” only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>gmin</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Minimum gain for modal optimization (“ls” only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>gmax</strong></td>
+      <td style="text-align: left">float</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">1</td>
+      <td style="text-align: left">Maximum gain for modal optimization (“ls” only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>ngain</strong></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">15</td>
+      <td style="text-align: left">Number of gains to test between gmin and gmax (“ls” only)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>nstates</strong></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">yes</td>
+      <td style="text-align: left">0</td>
+      <td style="text-align: left">Number of states in the controller (free variables to store anything)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_nvalid</em></td>
+      <td style="text-align: left">list</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of valid subap. per WFS</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_nactu</em></td>
+      <td style="text-align: left">int</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Number of actuators per DM</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_imat</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Interaction matrix</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>_cmat</em></td>
+      <td style="text-align: left">array</td>
+      <td style="text-align: left">none</td>
+      <td style="text-align: left">no</td>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left">Command matrix</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="4-scripting-with-compass">4. Scripting with COMPASS</h2>
+
+<p>This section aims to provide some tips for writing your own script. We higly recommend to create your own class that inherits from the CompassSupervisor or GenericSupervisor class for obvious convenience reasons. If you want to use components that are not using COMPASS modules, you will also have to write it. Once you have created your own class, just write a python script that will use it properly, eventually inside a custom Supervisor class for easier usage.</p>
+<h3 id="1-inheritance">1. Inheritance</h3>
+
+<p>If you don’t know anything about inheritance with python, you can find information in the <a href="https://docs.python.org/3/tutorial/classes.html#inheritance">Python documentation</a>.</p>
+
+<p>Once you have written your own supervisor that instantiate eventually your own components and optimizers, the interesting functions to overwrite are <code class="language-plaintext highlighter-rouge">next</code> and eventually <code class="language-plaintext highlighter-rouge">loop</code>.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">next</code> function defines what happen during an iteration. You can basically rewrite this function if you want a specific behaviour for your loop.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">loop</code> function basically put the <code class="language-plaintext highlighter-rouge">next</code> function in a loop and performs some operations like PSF computation regularly.</p>
+
+<p>By overwriting those two functions in your own class, you can reach any wanted behaviour for your simulation.</p>
+
+<h3 id="2-batch-processing">2. Batch processing</h3>
+
+<p>Once you have wrote your script and tested it, you will probably want to perform a batch of simulations for parameters space exploration.</p>
+
+<p>To do so, we highly recommend to write your batch script as a shell script that will call your python script. Indeed, we have noticed some unexpected problems by performing a high number of simulation in an unique python session. A bash script allows then to close the python session at the end of a simulation and to opena new one for the next simulation, ensuring then correct results.</p>
+
+<p>We recommend to use <a href="http://docopt.org/">docopt</a> in your python file to easily parse arguments from the shell in your script. This tip will avoid you to write a parameter file per simulation case. Your python script will also have to include a function that will save the results of each simulations.</p>
+
+<p><strong>Example: performing simulations for various r0</strong></p>
+
+<ul>
+  <li><strong>Step 1</strong>: write your parameter file</li>
+  <li><strong>Step 2</strong>: write your own class that inherits from GenericSupervisor to perform whatever you want during the simulation process</li>
+  <li><strong>Step3</strong>: write your script using docopt. Here, we want to get r0 as a command line argument. The script should be like:</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""script for my simulation
+
+Usage:
+  my_script.py &lt;parameters_filename&gt; &lt;save_filename&gt; [options]
+
+with 'parameters_filename' the path to the parameters file
+
+Options:
+  -h --help                   Show this help message and exit
+  --r0 r0                     set the r0
+"""</span>
+
+<span class="kn">from</span> <span class="nn">docopt</span> <span class="kn">import</span> <span class="n">docopt</span>
+<span class="kn">from</span> <span class="nn">shesha.util.utilities</span> <span class="kn">import</span> <span class="n">load_config_from_file</span>
+<span class="kn">from</span> <span class="nn">shesha.supervisor.yourFile</span> <span class="kn">import</span> <span class="n">YourSupervisor</span>
+
+<span class="n">arguments</span> <span class="o">=</span> <span class="n">docopt</span><span class="p">(</span><span class="n">__doc__</span><span class="p">)</span>
+<span class="n">param_file</span> <span class="o">=</span> <span class="n">arguments</span><span class="p">[</span><span class="s">"&lt;parameters_filename&gt;"</span><span class="p">]</span>
+<span class="n">save_file</span> <span class="o">=</span> <span class="n">arguments</span><span class="p">[</span><span class="s">"&lt;save_filemane&gt;"</span><span class="p">]</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">load_config_from_file</span><span class="p">(</span><span class="n">param_file</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">arguments</span><span class="p">[</span><span class="s">"--r0"</span><span class="p">]:</span> <span class="c1"># Check if r0 has been given as arguments
+</span>    <span class="n">config</span><span class="p">.</span><span class="n">p_atmos</span><span class="p">.</span><span class="n">set_r0</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">arguments</span><span class="p">[</span><span class="s">"--r0"</span><span class="p">]))</span> <span class="c1"># Change the r0 before initalization
+</span>
+<span class="n">sup</span> <span class="o">=</span> <span class="n">YourSupervisor</span><span class="p">(</span><span class="n">config</span><span class="p">)</span> <span class="c1"># Instantiates your class and load parameters
+</span>
+<span class="n">sup</span><span class="p">.</span><span class="n">loop</span><span class="p">()</span>
+
+<span class="n">a_save_function</span><span class="p">(</span><span class="n">save_file</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>Step 4</strong>: write a shell script</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="nv">R0</span><span class="o">=</span><span class="s2">"0.12 0.14 0.16 0.18"</span>
+<span class="nv">script</span><span class="o">=</span><span class="s2">"/path_to_your_script/my_script.py"</span>
+<span class="nv">savepath</span><span class="o">=</span><span class="s2">"/path_where_to_save"</span>
+<span class="nv">OUTPUT</span><span class="o">=</span><span class="s2">"/path/logfile.log"</span>
+
+<span class="k">for </span>r <span class="k">in</span> <span class="nv">$R0</span>
+<span class="k">do
+    </span><span class="nv">CMD</span><span class="o">=</span><span class="s2">"python </span><span class="nv">$script</span><span class="s2"> </span><span class="nv">$savepath</span><span class="s2">/sim_with_r0_"</span><span class="nv">$r</span><span class="s2">".h5 -- --r0 </span><span class="nv">$r</span><span class="s2">"</span>
+    <span class="nb">echo</span> <span class="s2">"execute </span><span class="nv">$CMD</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$OUTPUT</span>
+    <span class="nv">$CMD</span> 2&gt;&gt; <span class="nv">$OUTPUT</span> <span class="o">&gt;&gt;</span> <span class="nv">$OUTPUT</span>
+<span class="k">done</span>
+</code></pre></div></div>
+
+<h2 id="5-advanced-features--guardians-package">5. Advanced features : GUARDIANS package</h2>
+
+<h3 id="1-guardians-package-content">1. GUARDIANS package content</h3>
+
+<p><span class="inner"><img src="assets/images/guardians.png" alt="guardians" width="400px" /></span></p>
+
+<p>GUARDIANS is a Python package distributed with COMPASS which provides tools dedicated to the numerical estimation and modeling of the AO error breakdown.
+This package contains 3 main modules :</p>
+
+<ul>
+  <li>ROKET, which provides a complete error breakdown estimation as an additional output of a COMPASS simulation</li>
+  <li>GAMORA, which allows fast PSF reconstruction using the so-called <a href="https://doi.org/10.1051/0004-6361:20065135">Vii algorithm</a> and GPU acceleration</li>
+  <li>GROOT, which provides a new approach for AO error modeling based on covariance matrix computation</li>
+</ul>
+
+<p>Those modules come with two additionnal tools :</p>
+
+<ul>
+  <li>DRAX, which provides a set of functions dedicated to ROKET output exploitation</li>
+  <li>STARLORD, which contains CPU version of the algorithms for phase structure functions used by GROOT</li>
+</ul>
+
+<h3 id="2-roket--error-breakdown-estimation-tool">2. ROKET : error breakdown estimation tool</h3>
+
+<p>ROKET is the error breakdown estimation tool developed within COMPASS. It provides as an output of a COMPASS simulation a HDF5 file containing temporal buffers of the following AO errors :</p>
+
+<ul>
+  <li>Anisoplanatism error</li>
+  <li>Bandwidth error</li>
+  <li>Noise error</li>
+  <li>Aliasing error</li>
+  <li>WFS deviations error</li>
+  <li>Filtered modes error</li>
+  <li>Fitting error</li>
+</ul>
+
+<p>Those estimations are directly made on the DM actuators space, except for the fitting error which is directly given as a PSF.
+For now, ROKET only works on SCAO system.</p>
+
+<p>To use it, you just has to set a dedicated flag on your COMPASS parameter file :</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p_wfs0</span> <span class="o">=</span> <span class="n">conf</span><span class="p">.</span><span class="n">Param_wfs</span><span class="p">(</span><span class="n">roket</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Then, just use the dedicated script to run the simulation :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> <span class="nv">$SHESHA_ROOT</span>/shesha/guardians/scripts
+ipython script_roket.py &lt;your_parameter_file&gt; <span class="nt">--</span> <span class="nt">-s</span> &lt;savefile_name&gt;
+</code></pre></div></div>
+
+<p>The HDF5 file will be saved in the directory set by the environment variable $DATA_GUARDIAN. It contains all the temporal buffers along with critical components used for the estimation, such as the modal basis, the DM influence functions, etc…
+Please, use the functions provided by DRAX to expoit this file easily.</p>
+
+<p>Obviously, using this feature will considerably slow down the simulation framerate because of the additionnal operations needed to get the error breakdown at each iteration.</p>
+
+<p>A formal description of ROKET equations is written in this <a href="https://doi.org/10.1051/0004-6361/201832579">A&amp;A article</a>.</p>
+
+<h3 id="3-drax--roket-exploitation-tool">3. DRAX : ROKET exploitation tool</h3>
+
+<p>DRAX defines a set a functions usefull for the ROKET output file exploitation. You will be able to find those functions in the <a href="https://shesha.readthedocs.io/en/master/guardians.html">shesha documentation</a>.</p>
+
+<p>Here a few examples of functions provided by DRAX :</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Method</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>drax.get_breakdown</strong></td>
+      <td style="text-align: left">Return the error breakdown distribution in nm rms from the ROKET file</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>drax.get_covmat_contrib</strong></td>
+      <td style="text-align: left">Return the total covariance matrix of the specified contributors</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>drax.get_err</strong></td>
+      <td style="text-align: left">Return the sum of all error contributors in the DM actuators space</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>drax.get_P</strong></td>
+      <td style="text-align: left">Return the Volts to Modes matrix</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>drax.get_Btt</strong></td>
+      <td style="text-align: left">Return the Modes to Volts matrix</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="4-gamora--psf-reconstruction">4. GAMORA : PSF reconstruction</h3>
+
+<p>GAMORA is a GPU accelerated module for PSF reconstruction. It is based on the <a href="https://doi.org/10.1051/0004-6361:20065135">Vii algorithm</a> and it was initially developed to reconstruct PSF from ROKET buffers.</p>
+
+<h3 id="5-groot--error-breakdown-modeling">5. GROOT : error breakdown modeling</h3>
+
+<p>GROOT is a new approach for error breakdown modeling based on the computation of modified phase structure functions to get the residual error covariance matrix directly expressed in the DM actuators space. <a href="https://doi.org/10.1051/0004-6361/201832579">Details are given in the second part of this article.</a>.</p>
+
+<p>The module includes GPU and CPU version of the developed algorithms. It includes :</p>
+
+<ul>
+  <li>Anisoplanatism error model</li>
+  <li>Bandwidth error model</li>
+  <li>Anisoplanatism and bandwidth error covariance model</li>
+  <li>Aliasing model</li>
+  <li>Fitting model</li>
+</ul>
+
+<p>For now, the functions that compute those models take as an input a ROKET file as it contains all the simulation parameters needed by the models. However, it would be easy to make it independent from ROKET by modifying the signature functions to make it able to take external parameters.</p>
+:ET

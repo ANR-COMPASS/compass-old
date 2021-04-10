@@ -1,0 +1,19 @@
+I"n<ul>
+  <li>Add multiple input/computation/output type for RTC module</li>
+  <li>uniformize axis in widget display</li>
+  <li>better ELT Pupil generation</li>
+  <li>add unit tests of rtc module</li>
+  <li>add DM petal</li>
+  <li>add fake camera input</li>
+  <li>debug <code class="language-plaintext highlighter-rouge">load_config_from_file</code></li>
+  <li>debug <code class="language-plaintext highlighter-rouge">wfs_init</code></li>
+</ul>
+
+<p>for Internal developments:</p>
+
+<ul>
+  <li>add compile script</li>
+</ul>
+
+<p>Report bugs and issues on <a href="https://github.com/ANR-COMPASS/shesha/issues">this page</a></p>
+:ET

@@ -1,0 +1,13 @@
+I"Ú<ul>
+  <li>Binding based on pyBind11</li>
+  <li>N-faces pyramid WFS</li>
+  <li>Introduce masked pixels centroider</li>
+  <li>Introduce GUARDIANS package</li>
+  <li>Introduce a way to check installation</li>
+  <li>Debug pupil alignment (for non circular pupil)</li>
+  <li>Shesha supervisor module improvement</li>
+  <li>Remove the use of bytes (string instead)</li>
+</ul>
+
+<p>Report bugs and issues on <a href="https://github.com/ANR-COMPASS/shesha/issues">this page</a></p>
+:ET

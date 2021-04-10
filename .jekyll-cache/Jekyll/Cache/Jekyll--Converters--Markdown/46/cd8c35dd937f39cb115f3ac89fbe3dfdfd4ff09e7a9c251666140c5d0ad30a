@@ -1,0 +1,13 @@
+I"@<ul>
+  <li>change license to GNU LGPL-v3</li>
+  <li>add Turing support</li>
+  <li>add DM registration feature</li>
+  <li>add AoSupervisor class on top of CompassSupervisor and BenchSupervisor</li>
+  <li>SH WFS can handle big subapertures (before it was limited to 20x20)</li>
+  <li>add LUTpix in calibration process to reorder pixels</li>
+  <li>possibility to compute target SR fitted on a0 sinc function</li>
+  <li>modification of pyramid centroider to use CUB</li>
+</ul>
+
+<p>Report bugs and issues on <a href="https://github.com/ANR-COMPASS/shesha/issues">this page</a></p>
+:ET

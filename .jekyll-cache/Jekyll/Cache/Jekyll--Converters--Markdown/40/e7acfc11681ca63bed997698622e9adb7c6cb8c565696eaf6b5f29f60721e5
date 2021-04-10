@@ -1,0 +1,25 @@
+I"±<ul>
+  <li>add pyramid focal plane visualization</li>
+  <li>add md report generation in check.py</li>
+  <li>update documentation generation using doxygen</li>
+  <li>add natural integration of FP16 and complex in python</li>
+  <li>add KECK aperture type</li>
+  <li>better ELT Pupil generation</li>
+  <li>drop BRAHMA, use CACAO interface instead</li>
+  <li>computes PSF in every iteration</li>
+  <li>add frame calibration</li>
+  <li>remove KALMAN support</li>
+  <li>add pyramid modulation weight</li>
+  <li>add <code class="language-plaintext highlighter-rouge">filter_TT</code> parameter in centroider</li>
+  <li>add modal integrator control law</li>
+</ul>
+
+<p>for Internal developments:</p>
+
+<ul>
+  <li>add custom pyr modulation script to handle natural guide dual-stars and resolved NGS</li>
+  <li>add hunter integration optional</li>
+</ul>
+
+<p>Report bugs and issues on <a href="https://github.com/ANR-COMPASS/shesha/issues">this page</a></p>
+:ET

@@ -1,0 +1,132 @@
+I"�/<p>The goal of this release is to improve the code quality.
+This is a major (and disruptive) update, there are changes in most supervisor codes : scripts <strong>need</strong> to be updated according to these changes.
+This is an on-going work in the rc branch of the COMPASS GitLab.</p>
+
+<p>This note will try to summarize all the major changes</p>
+
+<h2 id="pep-8-naming-convention">PEP 8 naming convention</h2>
+
+<p>Basicaly, it can be summurised like this:</p>
+
+<ul>
+  <li>class name = CamelCase</li>
+  <li>function and variable names = snake_case</li>
+</ul>
+
+<p>For example:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyBeautifulClass</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">my_favorite_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">my_variable_with_explicit_name</span><span class="p">):</span>
+        <span class="s">""" snake_case for functions and variable name
+        Explicit names are required : avoid single letter variable for example
+        """</span>
+</code></pre></div></div>
+
+<p>All names must be explicit, even for temporary variable : avoid single letter variable, acronym, and so on….</p>
+
+<p>It has been already applied to all supervisor classes.
+For example, <code class="language-plaintext highlighter-rouge">applyVoltGetSlopes</code> became <code class="language-plaintext highlighter-rouge">apply_volt_and_get_slopes</code>
+Then, all the function written in camel case has changed, so the scripts which were using it must be adapted also.</p>
+
+<p>This convention is also the baseline for the C++ API.</p>
+
+<p>more info about <a href="https://www.python.org/dev/peps/pep-0008/">PEP8</a> and <a href="https://google.github.io/styleguide/cppguide.html">Google C++ Style Guide</a></p>
+
+<h2 id="code-documentation">Code documentation</h2>
+
+<p>All the class and method must be documented following a Doxygen compatible format.
+In the class documentation, attributes of the class must be listed and described :</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">MyBeautifulClass</span><span class="p">:</span>
+    <span class="s">""" Brief description of the class
+
+    Detailed description
+
+    Attributes:
+        toto: (dict) : toto description
+
+        tata : (float) : tata description
+    """</span>
+
+</code></pre></div></div>
+
+<p>In the method documentation, follow the docstring template below:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">my_favorite_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span> <span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">wfs_index</span> <span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+                         <span class="n">optional_argument</span> <span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="s">""" Brief description of the function
+
+    Detailed description
+
+    Parameters:
+        file_path : (str) : parameter description
+
+        wfs_index : (int) : parameter description
+
+        optional_argument : (bool, optional) : parameter description. Default value is False
+
+    Return:
+        something : (int) : return description
+    """</span>
+</code></pre></div></div>
+
+<p>The <a href="https://docs.python.org/3/library/typing.html">typing</a> python module must be used to also described the variable and return type in function signature, as in the example above.
+Respect the docstring template described above, including attention to alinea, line break between parameters…</p>
+
+<p>As COMPASS had become quite huge with time, code documentation will be a long term objective which will require contributions from everyone : do not hesitate to reformat, complete or modify docstrings that do not respect the above rules. We are counting on you all…</p>
+
+<p>For Visual Studio code users, we recommends to use <a href="https://marketplace.visualstudio.com/items?itemName=cschlosser.doxdocgen">Doxygen Documentation Generator</a>. It really useful, it will generate a template based on the function signature.</p>
+
+<p><a href="http://www.doxygen.nl/manual/docblocks.html">more info</a></p>
+
+<h2 id="supervisor-modifications">Supervisor modifications</h2>
+
+<p>Main developments made for this release, on top of applying the above conventions, aims at supervisor code factorization, as all the contributions (which are welcome) made the code more and more heavy. The goal is to change the current supervisor architecture more modular in order to gain in code readability and maintainability.</p>
+
+<p>This is an on-going work led by Florian. The detailed future architecture is still to be defined.</p>
+
+<p>You can follow here all the modifications made during this work. It will be updated as frequently as possible :</p>
+
+<ul>
+  <li>PEP 8 application in <code class="language-plaintext highlighter-rouge">shesha.supervisor</code></li>
+  <li>PEP 8 style in <code class="language-plaintext highlighter-rouge">carma</code> / <code class="language-plaintext highlighter-rouge">sutra</code></li>
+  <li>Add CUDA 11 support</li>
+  <li>Make MAGMA an optional dependency</li>
+  <li>New supervisor architecture using components and optimizers</li>
+  <li>Remove <code class="language-plaintext highlighter-rouge">get_centroids</code> –&gt; becomes <code class="language-plaintext highlighter-rouge">get_slopes</code></li>
+  <li>Old behavior of <code class="language-plaintext highlighter-rouge">get_slopes</code> was to call <code class="language-plaintext highlighter-rouge">compute_slopes</code>, which compute and return. Directly use <code class="language-plaintext highlighter-rouge">compute_slopes</code> instead</li>
+  <li>Remove <code class="language-plaintext highlighter-rouge">get_all_data_loop</code> functions from <code class="language-plaintext highlighter-rouge">abstractSupervisor</code> and <code class="language-plaintext highlighter-rouge">AoSupervisor</code> : unused</li>
+  <li>Remove <code class="language-plaintext highlighter-rouge">computeImatModal</code> from <code class="language-plaintext highlighter-rouge">AoSupervisor</code> : not used and not implemented</li>
+  <li><code class="language-plaintext highlighter-rouge">set_gain</code> was able to set mgain also depending on the parameter given. Change the function to be more explicit : <code class="language-plaintext highlighter-rouge">set_gain only</code> set scalar loop gain while <code class="language-plaintext highlighter-rouge">set_modal_gain</code> set the modal gain vector</li>
+  <li>Rename <code class="language-plaintext highlighter-rouge">set_mgain</code> to <code class="language-plaintext highlighter-rouge">set_modal_gain</code></li>
+  <li>Rename get_mgain to <code class="language-plaintext highlighter-rouge">get_modal_gain</code></li>
+  <li>Remove <code class="language-plaintext highlighter-rouge">write_config_on_file</code> from <code class="language-plaintext highlighter-rouge">AoSupervisor</code>, and rename it <code class="language-plaintext highlighter-rouge">getConfigFab</code> in <code class="language-plaintext highlighter-rouge">canapassSupervisor</code></li>
+  <li>Rename <code class="language-plaintext highlighter-rouge">set_global_r0</code> to <code class="language-plaintext highlighter-rouge">set_r0</code></li>
+  <li>Rename <code class="language-plaintext highlighter-rouge">getIFsparse</code> to <code class="language-plaintext highlighter-rouge">get_influ_basis</code> (to make difference with <code class="language-plaintext highlighter-rouge">get_influ</code>)</li>
+  <li>Rename <code class="language-plaintext highlighter-rouge">getIFtt</code> to <code class="language-plaintext highlighter-rouge">get_tt_influ_basis</code></li>
+  <li>Rename <code class="language-plaintext highlighter-rouge">getIFdm</code> to <code class="language-plaintext highlighter-rouge">compute_influ_basis</code></li>
+  <li>Remove <code class="language-plaintext highlighter-rouge">getTarAmpliPup</code> (unused)</li>
+  <li>Remove <code class="language-plaintext highlighter-rouge">reset</code> function, use <code class="language-plaintext highlighter-rouge">reset_simu</code> instead</li>
+  <li>Remove <code class="language-plaintext highlighter-rouge">setModalBasis</code> : unused</li>
+  <li>Remove <code class="language-plaintext highlighter-rouge">computePh2ModesFits</code> : unused</li>
+  <li>Rename <code class="language-plaintext highlighter-rouge">setPyrSourceArray</code> in <code class="language-plaintext highlighter-rouge">set_pyr_modulation_points</code></li>
+  <li><code class="language-plaintext highlighter-rouge">set_pyr_modulation</code> becomes <code class="language-plaintext highlighter-rouge">set_pyr_modulation_ampli</code></li>
+  <li>Signature changes in <code class="language-plaintext highlighter-rouge">setPyr*Source</code> : wfs_index first is mandatory</li>
+  <li>Add new parameter in PWFS : <code class="language-plaintext highlighter-rouge">p_wfs._pyr_scale_pos</code> to store the scale applied to <code class="language-plaintext highlighter-rouge">pyr_cx</code> and <code class="language-plaintext highlighter-rouge">pyr_cy</code> before upload. Useful for Milan functions</li>
+  <li>Rename recordCB in <code class="language-plaintext highlighter-rouge">record_ao_circular_buffer</code></li>
+  <li>Signature changes for <code class="language-plaintext highlighter-rouge">set_fourier_mask</code>, <code class="language-plaintext highlighter-rouge">set_noise</code>, <code class="language-plaintext highlighter-rouge">set_gs_mask</code> : wfs_index as first argument and mandatory</li>
+  <li>Remove <code class="language-plaintext highlighter-rouge">compute_wfs_images</code> : not used</li>
+  <li>Rename <code class="language-plaintext highlighter-rouge">set_dm_shape_from</code> into <code class="language-plaintext highlighter-rouge">set_command</code></li>
+  <li>Add new parameter in PDMS : <code class="language-plaintext highlighter-rouge">p_dms[0]._dim_screen</code> to store the dimension of the DM shape screen</li>
+  <li>Add components module : this module defines classes to handle implementation of AO components such as Wfs, Dm, Rtc and so on. For now, only compass implementations are coded, but an abstraction for each component will be developed to allow third party library implementation</li>
+  <li>Add optimizers module : this module defines classes to operate on the supervisor components for AO optimization. It could include many algorithms, define in some “thematic” class. For now, it includes <code class="language-plaintext highlighter-rouge">ModalBasis</code> class (for modal basis computations) and <code class="language-plaintext highlighter-rouge">Calibration</code> class (for interaction and command matrices). User defined algorithms that do not fit into one of those classes should be written in an other new class with an explicit name to be used by the supervisor.</li>
+  <li>Remove <code class="language-plaintext highlighter-rouge">abstractSupervisor</code></li>
+  <li>Remove <code class="language-plaintext highlighter-rouge">aoSupervisor</code></li>
+  <li>Remove the simulator module : methods have been moved into the right component</li>
+  <li>Add <code class="language-plaintext highlighter-rouge">CONTRIBUTING.md</code> file to define code guidelines</li>
+  <li>Add unit tests for each method accessible from a <code class="language-plaintext highlighter-rouge">compassSupervisor</code> using pytest. Each contribution should define a new unit test</li>
+  <li>Add templates for issue and merge request</li>
+</ul>
+
+<p>Report bugs and issues on <a href="https://github.com/ANR-COMPASS/shesha/issues">this page</a></p>
+:ET

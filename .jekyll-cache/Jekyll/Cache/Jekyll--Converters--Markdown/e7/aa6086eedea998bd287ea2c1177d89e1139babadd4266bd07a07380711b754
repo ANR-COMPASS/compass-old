@@ -1,0 +1,10 @@
+I".<ul>
+  <li>Support for controller delay &gt; 2.0</li>
+  <li>Multi-GPU controller</li>
+  <li>Debug FP16 feature</li>
+  <li>Debug 2matrices mode of generic controller</li>
+  <li>Minor debug</li>
+</ul>
+
+<p>Report bugs and issues on <a href="https://github.com/ANR-COMPASS/shesha/issues">this page</a></p>
+:ET

@@ -1,0 +1,10 @@
+I"<ul>
+  <li>code refactored</li>
+  <li>Debug SH spots and PSF moves</li>
+  <li>Debug Widget</li>
+  <li>Fix build failure with cython 0.28</li>
+  <li>Other minor debug</li>
+</ul>
+
+<p>Report bugs and issues on <a href="https://github.com/ANR-COMPASS/shesha/issues">this page</a></p>
+:ET

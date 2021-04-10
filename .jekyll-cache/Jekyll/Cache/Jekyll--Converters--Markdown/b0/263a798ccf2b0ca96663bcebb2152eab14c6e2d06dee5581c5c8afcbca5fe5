@@ -1,0 +1,15 @@
+I"�<p>Today, an important update has been made on the project.</p>
+
+<p>Please, checkout on the <em>main</em> branch (the <em>develop</em> one is now deprecated and not used) and pull the update.</p>
+
+<p>Off-axis WFS simulations and DM conjugated in altitude was not running correctly… Fortunately, we have solved the problem in this update.</p>
+
+<p>The patch note follows:</p>
+
+<ul>
+  <li>Turbulent layer size was not taking into account possible off-axis WFS –&gt; corrected</li>
+  <li>DM size was wrong if conjugated in altitude –&gt; corrected</li>
+  <li>Thanks to these debugs, MCAO works now</li>
+  <li>Add possibility to set a negative margin_out in Param_dm, so actuators inside the pupil diameter can be filtered</li>
+</ul>
+:ET

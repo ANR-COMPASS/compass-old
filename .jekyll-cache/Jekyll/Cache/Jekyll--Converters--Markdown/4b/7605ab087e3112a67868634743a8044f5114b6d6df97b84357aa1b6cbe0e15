@@ -1,0 +1,14 @@
+I"V<ul>
+  <li>Naga anf Shesha are pur-python module</li>
+  <li>CarmaWrap and SheshaWrap are pur-wrapper module using pybind</li>
+  <li>minor debug</li>
+</ul>
+
+<p>for Internal developments:</p>
+
+<ul>
+  <li>rename internal variables</li>
+</ul>
+
+<p>Report bugs and issues on <a href="https://github.com/ANR-COMPASS/shesha/issues">this page</a></p>
+:ET

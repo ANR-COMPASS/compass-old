@@ -1,0 +1,12 @@
+I"+<p>For the valentine’s day, we can offer you to test new features on COMPASS:</p>
+
+<ul>
+  <li>kernel reduce uses thrust to have more repeatability</li>
+  <li>the pyr centroider method uses by default nosin_global method</li>
+  <li>cleaner implementation of sutra_controller::comp_voltage</li>
+  <li>cleaner implementation of sutra_source::raytrace</li>
+  <li>add default areas for SCAO models</li>
+  <li>factorization of shesha_simulator initializations</li>
+  <li>widget can take “-d” option to use specific devices (separated by comma)</li>
+</ul>
+:ET
