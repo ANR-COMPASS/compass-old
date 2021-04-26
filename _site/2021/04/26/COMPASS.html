@@ -3,7 +3,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Plan for COMPASS - COMPASS</title>
 
-<meta name="description" content="Just for information, COMPASS roadmap is not frozen. For COMPASS, we are looking the API provided by NVIDIA and cupy to simplify the code.Refences:  https://...">
+<meta name="description" content="We want to share with you our view of COMPASS roadmap after today’s release of v5.1.0.If COMPASS is efficient as of today, we also want to make it easier to ...">
 <link rel="canonical" href="https://anr-compass.github.io/compass/2021/04/26/COMPASS.html"><link rel="alternate" type="application/rss+xml" title="COMPASS" href="/compass/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/compass/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/compass/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/compass/assets/favicon-16x16.png"><link rel="manifest" href="/compass/assets/site.webmanifest"><link rel="mask-icon" href="/compass/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/compass/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/compass/assets/browserconfig.xml">
@@ -295,7 +295,17 @@
     <meta itemprop="keywords" content="2021,,cuda,,python"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
-<div class="article__content" itemprop="articleBody"><p>Just for information, COMPASS roadmap is not frozen. For COMPASS, we are looking the API provided by NVIDIA and cupy to simplify the code.</p>
+<div class="article__content" itemprop="articleBody"><p>We want to share with you our view of COMPASS roadmap after today’s release of v5.1.0.</p>
+
+<p>If COMPASS is efficient as of today, we also want to make it easier to use and to contribute for.
+We are aware of the current software architecture may be a bit complex with all those layers (Python, C++, CUDA) : we are looking for the API provided by NVIDIA and third party libraries like CuPy to simplify the code, and maybe converging into a full Python stack while keeping the performance as high as today and even better.</p>
+
+<p>An other important point for the future of COMPASS is portability : today, we fully rely on CUDA, and we want to make COMPASS compatible with any hardware. We aim to provide some kind of abstraction layers which will make the hardware implementation transparent for the code, and so make as easy as possible COMPASS portability on any platform.</p>
+
+<p>Those points have to be seen as mid/long term goal for COMPASS. Meanwhile, we will continue to provide new versions of COMPASS that follow our developments.</p>
+
+<p>Thanks for using and supporting COMPASS !
+The COMPASS Team</p>
 
 <p>Refences:</p>
 

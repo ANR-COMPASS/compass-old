@@ -1,0 +1,19 @@
+I"è<p>We want to share with you our view of COMPASS roadmap after todayâ€™s release of v5.1.0.</p>
+
+<p>If COMPASS is efficient as of today, we also want to make it easier to use and to contribute for.
+We are aware of the current software architecture may be a bit complex with all those layers (Python, C++, CUDA) : we are looking for the API provided by NVIDIA and third party libraries like CuPy to simplify the code, and maybe converging into a full Python stack while keeping the performance as high as today and even better.</p>
+
+<p>An other important point for the future of COMPASS is portability : today, we fully rely on CUDA, and we want to make COMPASS compatible with any hardware. We aim to provide some kind of abstraction layers which will make the hardware implementation transparent for the code, and so make as easy as possible COMPASS portability on any platform.</p>
+
+<p>Those points have to be seen as mid/long term goal for COMPASS. Meanwhile, we will continue to provide new versions of COMPASS that follow our developments.</p>
+
+<p>Thanks for using and supporting COMPASS !
+The COMPASS Team</p>
+
+<p>Refences:</p>
+
+<ul>
+  <li>https://developer.nvidia.com/blog/unifying-the-cuda-python-ecosystem/</li>
+  <li>https://cupy.dev/</li>
+</ul>
+:ET
