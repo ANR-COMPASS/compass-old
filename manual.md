@@ -880,14 +880,14 @@ Options:
 """
 
 from docopt import docopt
-from shesha.util.utilities import load_config_from_file
+from shesha.config import ParamConfig
 from shesha.supervisor.yourFile import YourSupervisor
 
 arguments = docopt(__doc__)
 param_file = arguments["<parameters_filename>"]
 save_file = arguments["<save_filemane>"]
 
-config = load_config_from_file(param_file)
+config = ParamConfig(param_file)
 if arguments["--r0"]: # Check if r0 has been given as arguments
     config.p_atmos.set_r0(float(arguments["--r0"])) # Change the r0 before initalization
 
