@@ -311,11 +311,14 @@ bash Miniconda3-latest-Linux-x86_64.sh <span class="nt">-b</span> <span class="n
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conda <span class="nb">install</span> <span class="nt">-c</span> compass compass <span class="nt">-y</span>
 </code></pre></div></div>
 
-<p>Note: conda main channel is compiled with CUDA 11.0, for previous version please use:</p>
+<p>Note: conda main channel is compiled with CUDA 11.3.0, for previous version please use:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conda <span class="nb">install</span> <span class="nt">-c</span> compass/label/cuda102 compass <span class="nt">-y</span>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conda <span class="nb">install</span> <span class="nt">-c</span> compass/label/cuda113 compass <span class="nt">-y</span>
+conda <span class="nb">install</span> <span class="nt">-c</span> compass/label/cuda112 compass <span class="nt">-y</span>
+conda <span class="nb">install</span> <span class="nt">-c</span> compass/label/cuda111 compass <span class="nt">-y</span>
+conda <span class="nb">install</span> <span class="nt">-c</span> compass/label/cuda110 compass <span class="nt">-y</span>
+conda <span class="nb">install</span> <span class="nt">-c</span> compass/label/cuda102 compass <span class="nt">-y</span>
 conda <span class="nb">install</span> <span class="nt">-c</span> compass/label/cuda101 compass <span class="nt">-y</span>
-conda <span class="nb">install</span> <span class="nt">-c</span> compass/label/cuda100 compass <span class="nt">-y</span>
 </code></pre></div></div>
 
 <p>This command line will also install dependencies in your conda environment.</p>
