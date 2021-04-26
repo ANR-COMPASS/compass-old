@@ -1,10 +1,10 @@
 <!DOCTYPE html><html lang="en">
   <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>COMPASS on WSL - COMPASS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Plan for COMPASS - COMPASS</title>
 
-<meta name="description" content="Just for information, COMPASS can run under WSL.follow this tutorial: CUDA on WSL :: CUDA Toolkit DocumentationSome important points:  you must register in t...">
-<link rel="canonical" href="https://anr-compass.github.io/compass/2020/12/17/COMPASS-on-WSL.html"><link rel="alternate" type="application/rss+xml" title="COMPASS" href="/compass/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/compass/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/compass/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/compass/assets/favicon-16x16.png"><link rel="manifest" href="/compass/assets/site.webmanifest"><link rel="mask-icon" href="/compass/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/compass/assets/favicon.ico">
+<meta name="description" content="Just for information, COMPASS roadmap is not frozen. For COMPASS, we are looking the API provided by NVIDIA and cupy to simplify the code.Refences:  https://...">
+<link rel="canonical" href="https://anr-compass.github.io/compass/2021/04/26/COMPASS.html"><link rel="alternate" type="application/rss+xml" title="COMPASS" href="/compass/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ --><link rel="apple-touch-icon" sizes="180x180" href="/compass/assets/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/compass/assets/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/compass/assets/favicon-16x16.png"><link rel="manifest" href="/compass/assets/site.webmanifest"><link rel="mask-icon" href="/compass/assets/safari-pinned-tab.svg" color="#fc4d50"><link rel="shortcut icon" href="/compass/assets/favicon.ico">
 
 <meta name="msapplication-TileColor" content="#ffc40d"><meta name="msapplication-config" content="/compass/assets/browserconfig.xml">
 
@@ -277,51 +277,33 @@
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
 <!-- end custom main top snippet -->
-<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>COMPASS on WSL</h1></header><span class="split-space">&nbsp;</span>
+<article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>Plan for COMPASS</h1></header><span class="split-space">&nbsp;</span>
           <a class="edit-on-github"
             title="Edit on Github"
-            href="https://github.com/ANR-COMPASS/compass/tree/main/_posts/2020-12-17-COMPASS-on-WSL.md">
-            <i class="far fa-edit"></i></a></div><meta itemprop="headline" content="COMPASS on WSL"><div class="article__info clearfix"><ul class="left-col menu"><li>
+            href="https://github.com/ANR-COMPASS/compass/tree/main/_posts/2021-04-26-COMPASS.md">
+            <i class="far fa-edit"></i></a></div><meta itemprop="headline" content="Plan for COMPASS"><div class="article__info clearfix"><ul class="left-col menu"><li>
               <a class="button button--secondary button--pill button--sm"
-                href="/compass/archive.html?tag=2020%2C">2020,</a>
+                href="/compass/archive.html?tag=2021%2C">2021,</a>
             </li><li>
               <a class="button button--secondary button--pill button--sm"
-                href="/compass/archive.html?tag=WSL">WSL</a>
-            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Dec 17, 2020</span>
-            </li></ul></div><meta itemprop="author" content="ANR-COMPASS"/><meta itemprop="datePublished" content="2020-12-17T00:00:00+00:00">
-    <meta itemprop="keywords" content="2020,,WSL"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+                href="/compass/archive.html?tag=cuda%2C">cuda,</a>
+            </li><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/compass/archive.html?tag=python">python</a>
+            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Apr 26, 2021</span>
+            </li></ul></div><meta itemprop="author" content="ANR-COMPASS"/><meta itemprop="datePublished" content="2021-04-26T00:00:00+00:00">
+    <meta itemprop="keywords" content="2021,,cuda,,python"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
 <!-- end custom article top snippet -->
-<div class="article__content" itemprop="articleBody"><p>Just for information, COMPASS can run under WSL.</p>
+<div class="article__content" itemprop="articleBody"><p>Just for information, COMPASS roadmap is not frozen. For COMPASS, we are looking the API provided by NVIDIA and cupy to simplify the code.</p>
 
-<p>follow this tutorial: <a href="https://docs.nvidia.com/cuda/wsl-user-guide/index.html#installing-wip">CUDA on WSL :: CUDA Toolkit Documentation</a></p>
-
-<p>Some important points:</p>
+<p>Refences:</p>
 
 <ul>
-  <li>you must register in the Microsoft Windows Insider Program in the dev channel in order to have a build version 20145 or higher</li>
-  <li>Install the nvidia CUDA on WSL driver</li>
-  <li>Install the cuda-toolkit-11-1 instead of the cuda-toolkit-11-0</li>
-  <li>Do not choose the cuda, cuda-11-1, or cuda-drivers meta-packages under WSL 2</li>
+  <li>https://developer.nvidia.com/blog/unifying-the-cuda-python-ecosystem/</li>
+  <li>https://cupy.dev/</li>
 </ul>
-
-<p>Afterwards, it’s quite easy.</p>
-
-<p>For the X11, you have to install Xming</p>
-
-<p>Important points:</p>
-
-<ul>
-  <li>Windows Terminal is pretty cool application</li>
-  <li>in wsl’s .bashrc, add:
-    <pre><code class="language-bashrc">export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2&gt;/dev/null):0
-export LIBGL_ALWAYS_INDIRECT=1
-</code></pre>
-  </li>
-</ul>
-
-<p>For COMPASS itself: <a href="https://anr-compass.github.io/compass/install.html">COMPASS installation</a></p>
-</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2020-12-17T00:00:00+00:00"><!-- start custom article footer snippet -->
+</div><section class="article__sharing d-print-none"></section><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2021-04-26T00:00:00+00:00"><!-- start custom article footer snippet -->
 
 <!-- end custom article footer snippet -->
 <div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/compass/feed.xml">Subscribe</a></div>
@@ -332,7 +314,7 @@ export LIBGL_ALWAYS_INDIRECT=1
       </a>
     </p>
   </div></div></footer>
-<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/compass/2020/09/03/Release-of-v5.0.0.html">Release of v5.0.0</a></div><div class="next"><span>NEXT</span><a href="/compass/2021/04/26/COMPASS.html">Plan for COMPASS</a></div></div></div>
+<div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/compass/2020/12/17/COMPASS-on-WSL.html">COMPASS on WSL</a></div></div></div>
 
 </div>
 
