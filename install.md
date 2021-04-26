@@ -36,12 +36,15 @@ Once Miniconda is installed, installing the COMPASS binaries is easy :
 conda install -c compass compass -y
 ```
 
-Note: conda main channel is compiled with CUDA 11.0, for previous version please use:
+Note: conda main channel is compiled with CUDA 11.3.0, for previous version please use:
 
 ```bash
+conda install -c compass/label/cuda113 compass -y
+conda install -c compass/label/cuda112 compass -y
+conda install -c compass/label/cuda111 compass -y
+conda install -c compass/label/cuda110 compass -y
 conda install -c compass/label/cuda102 compass -y
 conda install -c compass/label/cuda101 compass -y
-conda install -c compass/label/cuda100 compass -y
 ```
 
 This command line will also install dependencies in your conda environment.
