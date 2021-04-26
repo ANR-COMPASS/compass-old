@@ -39,12 +39,12 @@ conda install -c compass compass -y
 Note: conda main channel is compiled with CUDA 11.3.0, for previous version please use:
 
 ```bash
-conda install -c compass/label/cuda113 compass -y  // support for compute capability 3.5 – 8.6
-conda install -c compass/label/cuda112 compass -y  // support for compute capability 3.5 – 8.6
-conda install -c compass/label/cuda111 compass -y  // support for compute capability 3.5 – 8.6
-conda install -c compass/label/cuda110 compass -y  // support for compute capability 3.5 – 8.0
-conda install -c compass/label/cuda102 compass -y  // support for compute capability 3.5 – 7.5
-conda install -c compass/label/cuda101 compass -y  // support for compute capability 3.5 – 7.5
+conda install -c compass/label/cuda113 compass -y  # support for compute capability 3.5 – 8.6
+conda install -c compass/label/cuda112 compass -y  # support for compute capability 3.5 – 8.6
+conda install -c compass/label/cuda111 compass -y  # support for compute capability 3.5 – 8.6
+conda install -c compass/label/cuda110 compass -y  # support for compute capability 3.5 – 8.0
+conda install -c compass/label/cuda102 compass -y  # support for compute capability 3.5 – 7.5
+conda install -c compass/label/cuda101 compass -y  # support for compute capability 3.5 – 7.5
 ```
 
 This command line will also install dependencies in your conda environment.
