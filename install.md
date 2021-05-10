@@ -8,7 +8,7 @@ aside:
 ## Requirements
 
 - Linux distribution
-- Nvidia GPU card with CUDA toolkit >= 10.1 (Older versions could be available on request)
+- Nvidia GPU card with [CUDA toolkit](https://developer.nvidia.com/cuda-downloads) >= 10.1 (Older versions could be available on request)
 
 ## Installation of Anaconda/Miniconda
 
