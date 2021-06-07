@@ -557,6 +557,29 @@ with:
 
 - (a = 1-b ; b = floor(d) ; e = 0) if 0 <= d <= 1
 - (a = 0 ; b = 1-e ; e= floor(d) - 1) if 1 < d <= 2
+- 
+#### Modal gain optimisation with CLOSE
+
+When using a pyramid based wavefront sensor, one might have to deal with the modal dependant sensitivity.
+To overcome that effect, COMPASS includes an implementation of the CLOSE algorithm that uses an autocorrelation based method to optimize the value of modal gains.
+Detailed information about this method can be found in [this paper](https://doi.org/10.1051/0004-6361/202040216).
+
+To use this implementation, the controller tye should be switched to `"modal_integrator"`.
+
+To ensure functionning of the loop, the modal basis should be a square matrix of shape (Nactu, Nactu), the mask vector should be of shape (Nactu) and the modal command matrix has the shape (Nactu, Nslopes).
+This mask is used for both avoiding divisions by zero in autocorrelation estimator (and though should contain no more ones than the nummber of controllable modes) and for filtering modes (by setting the corresponding value to zero).
+The matrices should be loaded directly in the optimizer (that will automatically load them in the controller) using the following functions :
+```python
+supervisor.modalgains.set_modal_basis(modalbasis)
+supervisor.modalgains.set_cmat_modal(cmatmodal)
+supervisor.modalgains.set_mask(mask)
+```
+To activate the CLOSE algorithm in a simulation, one must set the corresponding flag to True :
+```python
+supervisor.modalgains.adapt_modal_gains(True)
+```
+
+The function `supervisor.modalgains.reset_close()` can be used to reset modal gains to initial value, the autocorrelation estimator to zeros, and disables CLOSE optimisation.
 
 ### 9. Image formation
 
@@ -832,6 +855,11 @@ We describe here all the parameters used in COMPASS and all the classes attribut
 | **gmax**                                         | float  | none  | yes      | 1       | Maximum gain for modal optimization ("ls" only)                            |
 | **ngain**                                        | int    | none  | yes      | 15      | Number of gains to test between gmin and gmax ("ls" only)                  |
 | **nstates**                                      | int    | none  | yes      | 0       | Number of states in the controller (free variables to store anything)       |
+| **close_opti**                                   | bool   | none  | yes      | False        | Flag for modal gain optimization with CLOSE     |
+| **mgain_init**                                   | float  | none  | yes      | 1.0          | Initial value for all the modal gains           |
+| **lfdownup**                                     | tuple  | none  | yes      | (0.01, 0.01) | Learning factor for modal gain calculation      |
+| **close_learning_factor**                        | float  | none  | yes      | 0.3          | Learning factor for autocorrelation estimation  |
+| **close_target**                                 | float  | none  | yes      | 0.0          | Target value for the autocorrelation ratio      |
 | *_nvalid*                                        | list   | none  | no       |         | Number of valid subap. per WFS                                             |
 | *_nactu*                                         | int    | none  | no       |         | Number of actuators per DM                                                 |
 | *_imat*                                          | array  | none  | no       |         | Interaction matrix                                                         |
